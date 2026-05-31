@@ -48,7 +48,7 @@ export const projects = [
       "Neon",
       "Docker",
       "Vercel",
-      "Clerk",
+      "BetterAuth",
       "JavaScript",
       "React.js",
       "Next.js",
@@ -129,8 +129,8 @@ export const projects = [
     imageUrl: "/projects/spotify-clone.png",
   },
   {
-    id: "mern-github",
-    title: "MERN GitHub Viewer",
+    id: "github-scout",
+    title: "Github Scout",
     description:
       "A GitHub profile viewer built with the MERN stack that displays user info, repositories, and followers.",
     tags: [
@@ -141,10 +141,8 @@ export const projects = [
       "MongoDB",
       "Tailwind",
       "GitHub API",
-      "Render",
     ],
-    deployedUrl: "https://mern-github.onrender.com",
-    githubUrl: "https://github.com/FALAK097/mern-github",
+    githubUrl: "https://github.com/FALAK097/github-scout",
     imageUrl: "/projects/mern-github.png",
   },
   {

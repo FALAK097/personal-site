@@ -89,7 +89,7 @@ No-code platform to build waitlists, collect signups, and track analytics in rea
 
 ![Vercel](https://falakgala.dev/skills/vercel-light.svg)
 
-![Clerk](https://falakgala.dev/skills/clerk-light.svg)
+![BetterAuth](https://falakgala.dev/skills/betterauth-light.svg)
 
 [Live Demo](https://waitlyze.falakgala.dev)
 
@@ -191,7 +191,7 @@ A full-stack music streaming web app replicating core Spotify features like play
 
 ![Spotify Clone](https://falakgala.dev/_next/image?url=%2Fprojects%2Fspotify-clone.png&w=3840&q=75)
 
-## MERN GitHub Viewer
+## Github Scout
 
 A GitHub profile viewer built with the MERN stack that displays user info, repositories, and followers.
 
@@ -211,13 +211,9 @@ A GitHub profile viewer built with the MERN stack that displays user info, repos
 
 ![GitHub API](https://falakgala.dev/skills/github-light.svg)
 
-![Render](https://falakgala.dev/_next/image?url=%2Fskills%2Frender.jpg&w=48&q=75)
+[GitHub](https://github.com/FALAK097/github-scout)
 
-[GitHub](https://github.com/FALAK097/mern-github)
-
-[Live Demo](https://mern-github.onrender.com/)
-
-![MERN GitHub Viewer](https://falakgala.dev/_next/image?url=%2Fprojects%2Fmern-github.png&w=3840&q=75)
+![Github Scout](https://falakgala.dev/_next/image?url=%2Fprojects%2Fmern-github.png&w=3840&q=75)
 
 ## CodeToImage
 

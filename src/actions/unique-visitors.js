@@ -1,12 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { Redis } from "@upstash/redis";
-
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN,
-});
+import { trackUniqueVisitor } from "@/lib/site-data-store";
 
 const UniqueVisitorSchema = z.object({
   visitorId: z
@@ -15,10 +10,6 @@ const UniqueVisitorSchema = z.object({
     .max(100, "visitorId is too long"),
 });
 
-const UNIQUE_VISITORS_KEY = "site:unique_visitors";
-const UNIQUE_VISITORS_COUNT_KEY = "site:unique_visitors_count";
-const CACHE_TTL_SECONDS = 60;
-
 export async function uniqueVisitors(visitorId) {
   try {
     const validated = UniqueVisitorSchema.safeParse({ visitorId });
@@ -26,22 +17,7 @@ export async function uniqueVisitors(visitorId) {
       return { error: validated.error.issues[0].message };
     }
 
-    const cachedCount = await redis.get(UNIQUE_VISITORS_COUNT_KEY);
-    if (cachedCount !== null) {
-      return { uniqueVisitors: Number(cachedCount) };
-    }
-
-    const isMember = await redis.sismember(UNIQUE_VISITORS_KEY, visitorId);
-
-    if (!isMember) {
-      await redis.sadd(UNIQUE_VISITORS_KEY, visitorId);
-    }
-
-    const count = await redis.scard(UNIQUE_VISITORS_KEY);
-
-    await redis.set(UNIQUE_VISITORS_COUNT_KEY, count, {
-      ex: CACHE_TTL_SECONDS,
-    });
+    const count = await trackUniqueVisitor(validated.data.visitorId);
 
     return { uniqueVisitors: count };
   } catch (error) {

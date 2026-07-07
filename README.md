@@ -16,6 +16,10 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Cloudflare D1
+
+Server-side visitor tracking, AI response caching, and contact form rate limiting use Cloudflare D1. See [docs/cloudflare/upstash-to-d1-migration.md](docs/cloudflare/upstash-to-d1-migration.md) for the schema, required environment variables, and production verification steps.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

@@ -10,6 +10,13 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "personal-site",
+      "database_id": "27a1fc58-02cb-42ae-8712-cc58f3d79cea"
+    }
+  ],
   "workers_dev": false,
   "preview_urls": false,
   "observability": {

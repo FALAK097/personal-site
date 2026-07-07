@@ -2,6 +2,8 @@ packages:
   - "."
 
 allowBuilds:
-  '@vercel/speed-insights': true
+  '@tailwindcss/oxide': true
+  '@vercel/speed-insights': set this to true or false
   esbuild: true
+  sharp: true
   workerd: true

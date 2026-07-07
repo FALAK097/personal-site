@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "migrate:visitors": "node scripts/migrate-upstash-visitors-to-d1.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",

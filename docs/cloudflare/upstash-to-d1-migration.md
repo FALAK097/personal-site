@@ -36,7 +36,31 @@ wrangler d1 execute personal-site --remote --file docs/cloudflare/d1-schema.sql
 
 Create a Cloudflare API token with D1 read and write access scoped to this account/database.
 
-Add these production environment variables:
+Set these environment variables locally before running the one-time visitor migration:
+
+```env
+CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
+CLOUDFLARE_D1_DATABASE_ID=your-d1-database-id
+CLOUDFLARE_D1_API_TOKEN=your-d1-api-token
+UPSTASH_REDIS_REST_URL=your-current-upstash-rest-url
+UPSTASH_REDIS_REST_TOKEN=your-current-upstash-rest-token
+```
+
+Migrate the existing production visitor IDs from Upstash into D1:
+
+```bash
+pnpm migrate:visitors
+```
+
+If the Redis set key ever changes, override it with:
+
+```bash
+UPSTASH_UNIQUE_VISITORS_KEY=site:unique_visitors pnpm migrate:visitors
+```
+
+AI response cache entries and contact form rate-limit windows are not migrated because they are short-lived operational data.
+
+Add these production environment variables to your hosting provider:
 
 ```env
 CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
@@ -44,7 +68,7 @@ CLOUDFLARE_D1_DATABASE_ID=your-d1-database-id
 CLOUDFLARE_D1_API_TOKEN=your-d1-api-token
 ```
 
-Remove these old Upstash variables after deployment is verified:
+Remove these old Upstash variables only after the D1-backed deployment is verified:
 
 ```env
 UPSTASH_REDIS_REST_URL=

@@ -50,7 +50,10 @@ export default async function BlogPost(context) {
         [
           rehypePrettyCode,
           {
-            theme: "catppuccin-mocha",
+            theme: {
+              light: "github-light",
+              dark: "catppuccin-mocha",
+            },
           },
         ],
       ],

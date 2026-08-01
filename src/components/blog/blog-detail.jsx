@@ -16,7 +16,7 @@ export default function BlogDetail({ post, children, prevPost, nextPost }) {
   };
 
   return (
-    <div className="flex-1 w-full max-w-4xl px-4 py-12 mx-auto prose dark:prose-invert">
+    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-12 sm:px-6">
       <div className="mb-8">
         <a
           onClick={(e) => {
@@ -32,11 +32,14 @@ export default function BlogDetail({ post, children, prevPost, nextPost }) {
         </a>
       </div>
       <motion.article
+        className="blog-prose prose prose-slate max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-8 prose-li:text-muted-foreground prose-li:leading-7 prose-strong:text-foreground prose-code:font-medium prose-pre:my-0 prose-pre:bg-transparent prose-pre:p-0"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h1 className="mb-2 text-lg font-bold text-foreground">{post.title}</h1>
+        <h1 className="mb-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          {post.title}
+        </h1>
         <div className="flex flex-wrap gap-2 mb-8 text-sm text-muted-foreground border-b pb-4">
           <span>
             {new Date(post.date).toLocaleDateString("en-US", {

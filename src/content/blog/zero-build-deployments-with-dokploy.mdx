@@ -10,7 +10,7 @@ The result is a simple rule: **a merge to `main` should be enough to ship produc
 
 GitHub Actions builds our containers on GitHub-hosted runners, GitHub Container Registry (GHCR) stores the resulting artifacts, and Dokploy pulls those pre-built images onto a DigitalOcean Droplet. Dokploy then takes care of running the services, while its bundled Traefik proxy sends each public hostname to the correct container.
 
-![OutCallerAI deployment architecture: GitHub Actions builds images, GHCR stores them, and Dokploy deploys them on a DigitalOcean Droplet](/blog/outcaller-dokploy-architecture.svg)
+![OutCallerAI deployment architecture: GitHub Actions builds images, GHCR stores them, and Dokploy deploys them on a DigitalOcean Droplet](/blog/outcaller-dokploy-architecture.png)
 
 ### The Stack at a Glance
 

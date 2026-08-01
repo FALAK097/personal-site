@@ -246,6 +246,29 @@
 }
 
 @layer components {
+  .blog-prose :not(pre) > code {
+    @apply rounded-md border border-border bg-muted px-1.5 py-0.5 text-[0.88em] font-medium text-foreground;
+  }
+
+  .blog-prose :not(pre) > code::before,
+  .blog-prose :not(pre) > code::after {
+    content: none;
+  }
+
+  .blog-prose table p,
+  .blog-prose blockquote p {
+    margin: 0;
+  }
+
+  .blog-prose tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .blog-prose img {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .masonry-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

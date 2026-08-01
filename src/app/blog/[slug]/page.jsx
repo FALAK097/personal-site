@@ -1,10 +1,12 @@
 import { getPostBySlug, getAllPosts } from "@/lib/mdx";
 import { MDXRemote } from "next-mdx-remote-client/rsc";
 import rehypePrettyCode from "rehype-pretty-code";
+import remarkGfm from "remark-gfm";
 import { notFound } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { MdxCodeBlock } from "@/components/blog/mdx-code-block";
+import { mdxComponents } from "@/components/blog/mdx-components";
 import BlogDetail from "@/components/blog/blog-detail";
 
 export async function generateMetadata(context) {
@@ -43,11 +45,15 @@ export default async function BlogPost(context) {
 
   const options = {
     mdxOptions: {
+      remarkPlugins: [remarkGfm],
       rehypePlugins: [
         [
           rehypePrettyCode,
           {
-            theme: "catppuccin-mocha",
+            theme: {
+              light: "github-light",
+              dark: "catppuccin-mocha",
+            },
           },
         ],
       ],
@@ -67,6 +73,7 @@ export default async function BlogPost(context) {
           source={post.content}
           options={options}
           components={{
+            ...mdxComponents,
             pre: MdxCodeBlock,
           }}
         />

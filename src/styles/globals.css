@@ -246,6 +246,52 @@
 }
 
 @layer components {
+  .blog-prose :not(pre) > code {
+    @apply rounded-md border border-border bg-muted px-1.5 py-0.5 text-[0.88em] font-medium text-foreground;
+  }
+
+  .blog-prose code::before,
+  .blog-prose code::after {
+    content: none !important;
+  }
+
+  .blog-prose table {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .blog-prose table p,
+  .blog-prose blockquote p {
+    margin: 0;
+  }
+
+  .blog-prose tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .blog-prose img {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  :root:not(.dark) .blog-prose [data-theme*=" "] {
+    background-color: var(--shiki-light-bg) !important;
+    color: var(--shiki-light) !important;
+  }
+
+  :root:not(.dark) .blog-prose [data-theme*=" "] span {
+    color: var(--shiki-light) !important;
+  }
+
+  .dark .blog-prose [data-theme*=" "] {
+    background-color: var(--shiki-dark-bg) !important;
+    color: var(--shiki-dark) !important;
+  }
+
+  .dark .blog-prose [data-theme*=" "] span {
+    color: var(--shiki-dark) !important;
+  }
+
   .masonry-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

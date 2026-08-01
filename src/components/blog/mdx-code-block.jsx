@@ -32,8 +32,11 @@ export const MdxCodeBlock = ({ children, ...props }) => {
   };
 
   return (
-    <div className="relative">
-      <pre {...props} className="overflow-x-auto rounded-lg p-4 text-sm">
+    <div className="relative my-8 overflow-hidden rounded-xl border border-border bg-[#f6f8fa] shadow-sm dark:border-white/10 dark:bg-[#1e1e2e]">
+      <pre
+        {...props}
+        className="overflow-x-auto !px-6 !py-5 !pr-14 text-sm leading-7"
+      >
         {children}
       </pre>
 

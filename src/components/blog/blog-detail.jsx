@@ -32,7 +32,7 @@ export default function BlogDetail({ post, children, prevPost, nextPost }) {
         </a>
       </div>
       <motion.article
-        className="blog-prose prose prose-slate max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-8 prose-li:text-muted-foreground prose-li:leading-7 prose-strong:text-foreground prose-code:font-medium prose-pre:my-0 prose-pre:bg-transparent prose-pre:p-0"
+        className="blog-prose prose prose-slate max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-8 prose-li:text-muted-foreground prose-li:leading-7 prose-strong:text-foreground prose-code:font-medium prose-pre:my-0 prose-pre:bg-transparent"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}

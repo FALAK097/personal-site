@@ -173,7 +173,7 @@ Once the Droplet, Dokploy, registry, and DNS pattern exist, adding a project is 
 
 For common self-hosted software, even that can be shortened. Dokploy maintains a library of [390+ pre-configured templates](https://docs.dokploy.com/docs/templates) covering databases, analytics, CMSs, developer tools, and other open-source services. A template is not a reason to skip reviewing volumes, credentials, backups, and exposure, but it removes a lot of initial Compose wiring.
 
-This makes the same VPS useful beyond the primary product. Internal tools, status pages, analytics, webhook utilities, and experiments can live as separate Dokploy projects with their own domains and environment variables. Resource limits and isolation still matter—a single VPS remains a shared failure domain—but the setup cost for each new service becomes much smaller.
+This makes the same VPS useful beyond the primary product. Internal tools, status pages, analytics, webhook utilities, and experiments can live as separate Dokploy projects with their own domains and environment variables. Resource limits and isolation still matter because a single VPS remains a shared failure domain, but the setup cost for each new service becomes much smaller.
 
 ### Tradeoffs I Would Keep in Mind
 
@@ -196,7 +196,7 @@ The final workflow is easy to explain to the team:
 
 > Merge to `main`. GitHub builds the release. GHCR stores it. Dokploy pulls it. Traefik routes it.
 
-That sentence hides a lot of careful setup—multi-stage images, secret boundaries, health checks, migrations, worker pools, DNS, TLS, and managed data—but it gives day-to-day development a very small surface area.
+That sentence hides a lot of careful setup, including multi-stage images, secret boundaries, health checks, migrations, worker pools, DNS, TLS, and managed data. Even so, it gives day-to-day development a very small surface area.
 
 For a product made of Next.js, FastAPI, and Prefect, Dokploy on a DigitalOcean Droplet has been a strong balance of cost, control, and developer experience. We keep the flexibility of containers, avoid builds on the production server, and get a platform-like deployment workflow from infrastructure we can still understand and operate ourselves.
 

@@ -282,10 +282,6 @@ Retrieval quality answers one question: _did the system find useful evidence?_ I
 
 I integrated **NVIDIA NeMo Guardrails** as a separate safety boundary around the RAG workflow. It uses Colang 1.0 configuration together with custom asynchronous Python actions, allowing deterministic checks and contextual model-assisted decisions to coexist.
 
-<Callout title="Guardrails are an architectural layer, not a prompt suffix">
-  The production conversation endpoint runs input rails before retrieval, returns structured reasons and multilingual fallback responses, and records the decision in the same Langfuse trace as the rest of the query. The reusable guardrail wrapper also defines output-validation controls for guarded generation paths.
-</Callout>
-
 <Diagram
   src="/blog/graph-rag/nemo-guardrails-flow.svg"
   alt="NVIDIA NeMo Guardrails flow around the multilingual Graph RAG query path"

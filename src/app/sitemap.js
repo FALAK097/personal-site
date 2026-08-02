@@ -1,6 +1,16 @@
-export default function sitemap() {
+import { getAllPosts } from "@/lib/blog-source";
+
+export default async function sitemap() {
   const baseUrl =
     process.env.NEXT_PUBLIC_WEBSITE_URL || "https://falakgala.dev";
+
+  const posts = await getAllPosts();
+  const postEntries = posts.map((post) => ({
+    url: `${baseUrl}${post.url}`,
+    lastModified: new Date(post.updated || post.date),
+    changeFrequency: "monthly",
+    priority: 0.65,
+  }));
 
   return [
     {
@@ -39,5 +49,6 @@ export default function sitemap() {
       changeFrequency: "monthly",
       priority: 0.3,
     },
+    ...postEntries,
   ];
 }

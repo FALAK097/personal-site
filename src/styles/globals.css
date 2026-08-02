@@ -274,21 +274,21 @@
     margin-right: auto;
   }
 
-  :root:not(.dark) .blog-prose [data-theme*=" "] {
+  :root:not(.dark) .blog-prose pre[style*="--shiki-light"] {
     background-color: var(--shiki-light-bg) !important;
     color: var(--shiki-light) !important;
   }
 
-  :root:not(.dark) .blog-prose [data-theme*=" "] span {
+  :root:not(.dark) .blog-prose pre[style*="--shiki-light"] span {
     color: var(--shiki-light) !important;
   }
 
-  .dark .blog-prose [data-theme*=" "] {
+  .dark .blog-prose pre[style*="--shiki-dark"] {
     background-color: var(--shiki-dark-bg) !important;
     color: var(--shiki-dark) !important;
   }
 
-  .dark .blog-prose [data-theme*=" "] span {
+  .dark .blog-prose pre[style*="--shiki-dark"] span {
     color: var(--shiki-dark) !important;
   }
 

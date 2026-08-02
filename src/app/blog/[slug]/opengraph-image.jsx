@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { getPostBySlug } from "@/lib/mdx";
+import { getPostBySlug } from "@/lib/blog-source";
 
 export const alt = "Falak Gala's Blog";
 export const size = {

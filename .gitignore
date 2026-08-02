@@ -15,6 +15,7 @@
 
 # content layer
 /.contentlayer
+/.source
 
 # testing
 /coverage

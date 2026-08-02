@@ -5,7 +5,7 @@ import { Profile } from "@/components/profile";
 import { Footer } from "@/components/footer";
 import { GitHubCalendarChart } from "@/components/custom/github-calendar-chart";
 import { RecentPosts } from "@/components/blog/recent-posts";
-import { getAllPosts } from "@/lib/mdx";
+import { getAllPosts } from "@/lib/blog-source";
 // import { getNowPlaying } from "@/actions/spotify";
 // import { SpotifyNowPlaying } from "@/components/custom/spotify-now-playing";
 import { RecentProjects } from "@/components/recent-projects";

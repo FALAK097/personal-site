@@ -1,7 +1,4 @@
-import { getPostBySlug, getAllPosts } from "@/lib/mdx";
-import { MDXRemote } from "next-mdx-remote-client/rsc";
-import rehypePrettyCode from "rehype-pretty-code";
-import remarkGfm from "remark-gfm";
+import { getPostBySlug, getAllPosts } from "@/lib/blog-source";
 import { notFound } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
@@ -22,10 +19,25 @@ export async function generateMetadata(context) {
   }
 
   return {
-    title: `${post.title} | Falak Gala's Blog`,
-    description:
-      post.description ||
-      "Read my thoughts on software development and technology.",
+    title: post.title,
+    description: post.description,
+    alternates: {
+      canonical: `/blog/${slug}`,
+    },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.description,
+      url: `/blog/${slug}`,
+      publishedTime: new Date(post.date).toISOString(),
+      modifiedTime: new Date(post.updated || post.date).toISOString(),
+      tags: post.tags,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.description,
+    },
   };
 }
 
@@ -43,40 +55,28 @@ export default async function BlogPost(context) {
 
   if (!post) return notFound();
 
-  const options = {
-    mdxOptions: {
-      remarkPlugins: [remarkGfm],
-      rehypePlugins: [
-        [
-          rehypePrettyCode,
-          {
-            theme: {
-              light: "github-light",
-              dark: "catppuccin-mocha",
-            },
-          },
-        ],
-      ],
-    },
-  };
-
   const posts = await getAllPosts();
   const currentIndex = posts.findIndex((p) => p.slug === slug);
   const nextPost = posts[currentIndex + 1] || null;
   const prevPost = posts[currentIndex - 1] || null;
 
+  const Content = post.body;
+  const postMetadata = {
+    ...post,
+    body: undefined,
+    toc: undefined,
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <BlogDetail post={post} prevPost={prevPost} nextPost={nextPost}>
-        <MDXRemote
-          source={post.content}
-          options={options}
-          components={{
-            ...mdxComponents,
-            pre: MdxCodeBlock,
-          }}
-        />
+      <BlogDetail
+        post={postMetadata}
+        toc={post.toc}
+        prevPost={prevPost}
+        nextPost={nextPost}
+      >
+        <Content components={{ ...mdxComponents, pre: MdxCodeBlock }} />
       </BlogDetail>
       <Footer />
     </div>

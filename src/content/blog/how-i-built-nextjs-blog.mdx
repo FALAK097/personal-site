@@ -1,329 +1,228 @@
 ---
-title: "How I Built a Modern Portfolio Blog with Next.js 15 and MDX"
+title: "How I Built My Portfolio Blog with Next.js and Fumadocs"
 date: "2025-05-25"
-description: "A detailed walkthrough of how I created my portfolio's blog system using Next.js 15, MDX, and Framer Motion - complete with dark mode, code highlighting, and animations."
+updated: "2026-08-02"
+description: "How my portfolio blog evolved from a hand-rolled MDX pipeline to a typed, polished publishing system powered by Next.js 16 and Fumadocs."
+tags:
+  - Next.js
+  - Fumadocs
+  - MDX
+  - Web Development
 ---
 
-When building my portfolio, I wanted a blog that wasn't just functional but also showcased my technical abilities. Here's how I created a modern, fast, and feature-rich blog system that seamlessly integrates with my portfolio.
+When I first added writing to this portfolio, I deliberately kept the implementation small. Blog posts lived as local MDX files, a helper read them from disk, and a dynamic Next.js route compiled each article. It was a useful starting point and gave me complete control over the design.
 
-### Tech Stack Overview
+As the posts became longer and more visual, that small pipeline started accumulating responsibilities: frontmatter parsing, content discovery, syntax highlighting, table styling, reading time, metadata, RSS, navigation, and eventually support for diagrams and video.
 
-Here are the key dependencies I'm using (versions from my actual implementation):
+The blog still uses MDX, but it no longer uses the traditional hand-rolled `fs` + `gray-matter` + runtime MDX approach described in the first version of this article. **Today, Fumadocs MDX powers the content layer**, while the surrounding interface remains part of my custom portfolio design.
 
-```json
-{
-  "dependencies": {
-    "next": "15.3.2",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "gray-matter": "^4.0.3",
-    "next-mdx-remote-client": "^2.1.2",
-    "reading-time": "^1.5.0",
-    "rehype-pretty-code": "^0.14.1",
-    "framer-motion": "^12.9.4",
-    "next-themes": "^0.4.4",
-    "@tailwindcss/typography": "^0.5.16",
-    "lucide-react": "^0.474.0"
-  }
-}
+### What the Blog Uses Today
+
+The current stack is intentionally split into two layers:
+
+| Responsibility | Technology |
+| --- | --- |
+| Application and routes | Next.js 16 App Router |
+| Content compilation | Fumadocs MDX |
+| Content source and navigation data | Fumadocs Core |
+| Article format | Local MDX files |
+| Styling | Tailwind CSS Typography + custom components |
+| Code highlighting | Shiki through the Fumadocs MDX pipeline |
+| Page transitions | Framer Motion + View Transitions |
+| Theme support | `next-themes` |
+| Reading time | `reading-time` |
+
+Fumadocs is being used as a **headless content engine** here. I did not replace the portfolio with a documentation template. The navbar, footer, clay color palette, animations, article cards, share controls, and previous/next navigation are still custom.
+
+### Why I Moved Away from the Original Pipeline
+
+The first implementation looked roughly like this:
+
+```text
+MDX file
+    ↓
+Node.js fs reads the file
+    ↓
+gray-matter parses frontmatter
+    ↓
+next-mdx-remote-client compiles the body
+    ↓
+Custom React components render the article
 ```
 
-### Why These Choices?
+That architecture is perfectly reasonable for a small blog. The problem was not MDX itself; the problem was the amount of publishing infrastructure I was rebuilding around it.
 
-- **Next.js 15**: Latest version with improved performance and enhanced App Router
-- **MDX**: Write blog posts with JSX components inline
-- **Framer Motion**: Smooth animations for better UX
-- **next-themes**: Seamless dark mode integration
-- **TailwindCSS Typography**: Beautiful prose styling
+I wanted the next version to provide:
 
-### Project Structure
+- Schema-validated frontmatter
+- One content source for pages, RSS, sitemap, metadata, and Open Graph images
+- Generated table-of-contents data
+- Build-time MDX compilation
+- Reliable heading identifiers and anchor navigation
+- Reusable media components for diagrams, videos, and technical metrics
+- A safer foundation for much longer engineering articles
 
-```plaintext
-src/
-  ├── app/
-  │   └── blog/
-  │       └── [slug]/
-  │           └── page.jsx
-  ├── components/
-  │   └── blog-detail.jsx
-  ├── content/
-  │   └── blog/
-  │       └── *.mdx
-  └── lib/
-      └── mdx.js
-```
+Fumadocs provided those capabilities without forcing me to give up the portfolio's visual identity.
 
-### Setting Up MDX Processing
+### Defining a Typed Content Collection
 
-The **mdx.js** file handles reading and processing MDX files:
+Every post now belongs to a Fumadocs collection. Its frontmatter is checked against a schema during development and production builds:
 
 ```javascript
-// Key features:
-// 1. Reads MDX files from the content directory
-// 2. Parses frontmatter using gray-matter
-// 3. Calculates reading time
-// 4. Sorts posts by date
-
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
-import readingTime from "reading-time";
-
-const POSTS_PATH = path.join(process.cwd(), "src/content/blog");
-
-export async function getAllPosts() {
-  const files = fs.readdirSync(POSTS_PATH);
-
-  const posts = files
-    .filter((path) => /\.mdx?$/.test(path))
-    .map((fileName) => {
-      const source = fs.readFileSync(path.join(POSTS_PATH, fileName), "utf8");
-      const { data: frontMatter, content } = matter(source);
-      const slug = fileName.replace(/\.mdx?$/, "");
-
-      return {
-        ...frontMatter,
-        slug,
-        readingTime: Math.ceil(readingTime(content).minutes),
-      };
-    })
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-  return posts;
-}
-
-export async function getPostBySlug(slug) {
-  const source = fs.readFileSync(path.join(POSTS_PATH, `${slug}.mdx`), "utf8");
-  const { data: frontMatter, content } = matter(source);
-
-  return {
-    ...frontMatter,
-    slug,
-    content,
-    readingTime: Math.ceil(readingTime(content).minutes),
-  };
-}
+export const blog = defineDocs({
+  dir: "src/content/blog",
+  docs: {
+    schema: z.object({
+      title: z.string().min(1),
+      description: z.string().min(1),
+      date: z.string().date(),
+      updated: z.string().date().optional(),
+      tags: z.array(z.string()).default([]),
+      published: z.boolean().default(true),
+    }),
+  },
+});
 ```
 
-### Dynamic Routing
+This turns frontmatter from an informal convention into a contract. A missing description or invalid date is discovered during a build rather than after publishing.
 
-In **blog/\[slug\]/page.jsx**, we set up dynamic routing for blog posts:
+### One Source for Every Blog Feature
+
+The generated collection is passed into the Fumadocs source loader:
 
 ```javascript
-// Key features:
-// 1. Static path generation for all posts
-// 2. MDX rendering with syntax highlighting
-// 3. Previous/Next post navigation
-
-import { getPostBySlug, getAllPosts } from "@/lib/mdx";
-import { MDXRemote } from "next-mdx-remote-client/rsc";
-import rehypePrettyCode from "rehype-pretty-code";
-import { notFound } from "next/navigation";
-import { MdxCodeBlock } from "@/components/mdx-code-block";
-import BlogDetail from "@/components/blog-detail";
-
-export async function generateStaticParams() {
-  const posts = await getAllPosts();
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
-}
-
-export default async function BlogPost({ params: rawParams }) {
-  const params = await Promise.resolve(rawParams);
-  const slug = params.slug;
-  const post = await getPostBySlug(slug);
-
-  if (!post) return notFound();
-
-  const options = {
-    mdxOptions: {
-      rehypePlugins: [
-        [
-          rehypePrettyCode,
-          {
-            theme: "catppuccin-mocha",
-          },
-        ],
-      ],
-    },
-  };
-
-  const posts = await getAllPosts();
-  const currentIndex = posts.findIndex((p) => p.slug === slug);
-  const nextPost = posts[currentIndex + 1] || null;
-  const prevPost = posts[currentIndex - 1] || null;
-
-  return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <BlogDetail post={post} prevPost={prevPost} nextPost={nextPost}>
-        <MDXRemote
-          source={post.content}
-          options={options}
-          components={{
-            pre: MdxCodeBlock,
-          }}
-        />
-      </BlogDetail>
-    </div>
-  );
-}
+export const blogSource = loader({
+  baseUrl: "/blog",
+  source: blog.toFumadocsSource(),
+});
 ```
 
-### Blog Detail Component
+The same source now drives:
 
-The **components/blog-detail.jsx** component handles the presentation:
+1. The main blog index
+2. Recent posts on the homepage
+3. Static article routes
+4. Previous and next article navigation
+5. Page metadata
+6. Dynamic Open Graph images
+7. Individual sitemap entries
+8. The RSS feed
+
+Previously, the RSS file was written as a side effect while rendering the blog page. It now has a dedicated `/rss.xml` route that reads the same published-post collection as everything else.
+
+### Rendering Compiled MDX
+
+Fumadocs compiles the article and exposes it as a React component. The article route only needs to find the page and render its body:
 
 ```jsx
-// Key features:
-// 1. Smooth animations with Framer Motion
-// 2. Share functionality with Web Share API
-// 3. Responsive design
-// 4. Dark mode support
+const post = await getPostBySlug(slug);
 
-"use client";
+if (!post) notFound();
 
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { useState } from "react";
-import { ArrowLeftIcon, ArrowRightIcon, UploadIcon } from "lucide-react";
-import { Button } from "./ui/button";
+const Content = post.body;
 
-export default function BlogDetail({ post, children, prevPost, nextPost }) {
-  const [shared, setShared] = useState(false);
+return (
+  <BlogDetail post={post} toc={post.toc}>
+    <Content components={mdxComponents} />
+  </BlogDetail>
+);
+```
 
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: post.title,
-          text: post.description,
-          url: window.location.href,
-        });
-        setShared(true);
-        setTimeout(() => setShared(false), 2000);
-      } catch (err) {
-        console.error("Error sharing:", err);
-      }
-    }
-  };
+Compilation, heading extraction, syntax highlighting, and structured content data are handled before the article reaches the page component.
 
-  return (
-    <div className="flex-1 w-full max-w-4xl px-4 py-12 mx-auto prose dark:prose-invert">
-      <div className="mb-8">
-        <Link
-          href="/blog"
-          className="flex items-center gap-2 text-muted-foreground hover:text-clay-400 transition-colors"
-        >
-          <ArrowLeftIcon /> Back to Blog
-        </Link>
-      </div>
-      <motion.article
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <h1 className="mb-2 text-lg font-bold text-foreground">{post.title}</h1>
-        <div className="flex flex-wrap gap-2 mb-8 text-sm text-muted-foreground border-b pb-4">
-          <span>
-            {new Date(post.date).toLocaleDateString("en-US", {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            })}
-          </span>
-          <span>•</span>
-          <span>{post.readingTime} min read</span>
-        </div>
-        {children}
-      </motion.article>
+### Keeping the Design Custom
 
-      <div className="mt-8 flex items-center justify-end gap-4 pt-4 border-t">
-        <div className="flex items-center gap-1">
-          <p className="text-sm text-muted-foreground">
-            Enjoyed this article? Share it with your network!
-          </p>
-          <Button
-            onClick={handleShare}
-            variant="outline"
-            size="sm"
-            className="cursor-pointer bg-transparent border-none text-clay-400 hover:bg-transparent hover:text-clay-400"
-          >
-            <UploadIcon />
-          </Button>
-        </div>
-      </div>
-      <nav className="mt-8 pt-8 flex justify-between items-center">
-        {prevPost && (
-          <Link
-            href={`/blog/${prevPost.slug}`}
-            className="flex items-center gap-2 text-muted-foreground hover:text-clay-400 transition-colors no-underline"
-          >
-            <ArrowLeftIcon />
-            {prevPost.title}
-          </Link>
-        )}
-        {nextPost && (
-          <Link
-            href={`/blog/${nextPost.slug}`}
-            className="flex items-center gap-2 text-muted-foreground hover:text-clay-400 transition-colors ml-auto no-underline"
-          >
-            {nextPost.title}
-            <ArrowRightIcon />
-          </Link>
-        )}
-      </nav>
-    </div>
-  );
+The biggest migration requirement was visual continuity. I wanted the stronger content foundation, not a generic documentation layout.
+
+The custom MDX component map still controls:
+
+- Heading spacing and hierarchy
+- External links
+- Responsive tables
+- Blockquotes and callouts
+- Light and dark code-block themes
+- Copy buttons
+- Full-width images and diagrams
+- Video embeds with poster frames and captions
+- Technical metric cards
+
+That means an ordinary Markdown table can become horizontally scrollable on a phone, while a Graph RAG architecture diagram can be displayed as a captioned, full-width figure.
+
+### A Generated, Responsive Table of Contents
+
+Fumadocs extracts the heading tree from every post. The article shell uses that data to render:
+
+- A sticky "On this page" sidebar on desktop
+- A compact expandable section on mobile
+- Indentation for nested headings
+- Active-section highlighting while scrolling
+- Native anchor links that work without JavaScript
+
+This matters for long technical posts. Readers can understand the structure immediately and jump directly to the part they need.
+
+### Code Blocks in Light and Dark Themes
+
+Code highlighting uses separate Shiki themes:
+
+```javascript
+rehypeCodeOptions: {
+  themes: {
+    light: "github-light",
+    dark: "catppuccin-mocha",
+  },
 }
 ```
 
-### Writing Blog Posts
+The surrounding code-block component adds consistent spacing, horizontal scrolling, rounded borders, and a copy action. Theme-aware token variables keep the light theme genuinely light instead of placing every code example inside a dark rectangle.
 
-Create **.mdx** files in **src/content/blog/** with frontmatter:
+### Preparing for Visual Engineering Articles
+
+The migration also introduced small MDX primitives for content that plain Markdown does not express well:
 
 ```mdx
----
-title: "Your Blog Post Title"
-date: "2024-01-20"
-description: "A brief description of your post"
----
+<Video
+  src="/blog/example/demo.webm"
+  poster="/blog/example/poster.webp"
+  caption="A short walkthrough of the finished workflow."
+/>
 
-Your content here with **Markdown** support!
+<Figure
+  src="/blog/example/architecture.png"
+  alt="System architecture"
+  caption="How data moves through the production system."
+/>
+
+<Metric value="<3s" label="Typical response time" />
 ```
 
-### Features Implemented
+Videos use native browser controls, inline playback, lazy metadata loading, and optional poster images. Figures include meaningful alternative text and captions. These components let an article remain readable in MDX while producing a polished result in the browser.
 
-1. **MDX Support**: Write posts in Markdown with JSX components
-2. **Syntax Highlighting**: Using `rehype-pretty-code`
-3. **Reading Time**: Automatic calculation for each post
-4. **Share Functionality**: Native Web Share API with clipboard fallback
-5. **Animations**: Smooth transitions using Framer Motion
-6. **Previous/Next Navigation**: Easy post navigation
-7. **Responsive Design**: Mobile-friendly layout
+### Static Generation and SEO
 
-### Styling and Theming
+Each published article is generated as a static page. Fumadocs supplies the available slugs, and Next.js pre-renders them during the production build.
 
-- Refer to [Tailwind Typography Github](https://github.com/tailwindlabs/tailwindcss-typography)
-- I used TailwindCSS with the Typography plugin for beautiful prose styling. Here's how I set it up:
+Every article receives:
 
-```css
-// global.css
+- Title and description metadata
+- A dynamic Open Graph image
+- A canonical, crawlable URL
+- An entry in `sitemap.xml`
+- An entry in the RSS feed
 
-@plugin "@tailwindcss/typography";
-```
+Unknown slugs now return a proper not-found page instead of allowing a filesystem read to throw unexpectedly.
 
-```jsx
-// Example of how I handle dark mode and typography (blog-detail.jsx)
-<div className="flex-1 w-full max-w-4xl px-4 py-12 mx-auto prose dark:prose-invert">
-  // Blog content here
-</div>
-```
+### What I Learned from the Migration
+
+The original implementation was not a mistake. It was the right amount of infrastructure when the blog was small, and building it taught me how the MDX pipeline fits together.
+
+The useful lesson is knowing when a simple internal abstraction has started becoming a content platform of its own. At that point, adopting a focused tool creates more room to work on the actual reading experience.
+
+Fumadocs now owns content compilation, validation, and structured page data. Next.js owns routing, metadata, and static generation. The portfolio's components own presentation. Those boundaries are much easier to extend than the original all-in-one loader.
 
 ### Conclusion
 
-This blog system provides a solid foundation for technical writing with modern features like syntax highlighting, dark mode, and responsive design. Feel free to use this as inspiration for your own blog!
+The blog remains local, version-controlled, and MDX-based, but its publishing system is now powered by Fumadocs rather than a traditional runtime MDX pipeline.
 
-[View Source](https://github.com/Falak097/Personal-Site)
+That gives me a typed and scalable content foundation without losing the custom design that makes the blog feel like part of my portfolio. More importantly, it is ready for the kind of article I want to publish next: deep engineering write-ups with architecture diagrams, evaluation results, responsive videos, and enough structure to remain readable from beginning to end.
 
-PS: This very blog post is written using the same system! Feel free to reach out if you have any questions or need help setting up your own blog with Next.js and MDX.
+[View the source on GitHub](https://github.com/Falak097/Personal-Site)

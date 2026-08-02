@@ -4,7 +4,81 @@ const headingStyles = {
   h4: "mt-10 scroll-mt-24 text-xl font-semibold tracking-tight text-foreground",
 };
 
+function resolveImageSource(src) {
+  return typeof src === "string" ? src : src?.src;
+}
+
+export function Figure({ src, alt = "", caption, className = "" }) {
+  return (
+    <figure className={`my-10 ${className}`}>
+      {/* Local MDX media paths are trusted portfolio content. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={resolveImageSource(src)}
+        alt={alt}
+        className="m-0 h-auto w-full rounded-2xl border border-border bg-white shadow-sm"
+        loading="lazy"
+      />
+      {caption && (
+        <figcaption className="mt-3 text-center text-sm leading-relaxed text-muted-foreground">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
+export function Video({ src, poster, caption, autoPlay = false, loop = false }) {
+  return (
+    <figure className="my-10">
+      <div className="overflow-hidden rounded-2xl border border-border bg-black shadow-sm">
+        <video
+          className="m-0 block h-auto w-full"
+          src={src}
+          poster={poster}
+          controls
+          playsInline
+          muted={autoPlay}
+          autoPlay={autoPlay}
+          loop={loop}
+          preload="metadata"
+        >
+          Your browser does not support embedded video.
+        </video>
+      </div>
+      {caption && (
+        <figcaption className="mt-3 text-center text-sm leading-relaxed text-muted-foreground">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
+export function Callout({ title, children }) {
+  return (
+    <aside className="my-8 rounded-2xl border border-clay-200 bg-clay-50/70 px-5 py-4 text-clay-950 dark:border-clay-800 dark:bg-clay-950/25 dark:text-clay-50">
+      {title && <p className="mb-1 font-semibold text-current">{title}</p>}
+      <div className="[&>*:last-child]:mb-0 [&>*:first-child]:mt-0">{children}</div>
+    </aside>
+  );
+}
+
+export function Metric({ value, label }) {
+  return (
+    <span className="my-4 inline-flex min-w-40 flex-col rounded-2xl border border-border bg-muted/35 px-5 py-4 align-top">
+      <strong className="text-2xl font-bold tracking-tight text-foreground">{value}</strong>
+      <span className="mt-1 text-sm text-muted-foreground">{label}</span>
+    </span>
+  );
+}
+
 export const mdxComponents = {
+  Figure,
+  Diagram: Figure,
+  Video,
+  Callout,
+  Metric,
   h2: ({ children, ...props }) => (
     <h2 className={headingStyles.h2} {...props}>
       {children}
@@ -62,11 +136,12 @@ export const mdxComponents = {
       {children}
     </td>
   ),
-  img: ({ alt, ...props }) => (
+  img: ({ alt, src, ...props }) => (
     // The MDX source is maintained locally, so its image paths are trusted.
     // eslint-disable-next-line @next/next/no-img-element
     <img
       alt={alt ?? ""}
+      src={resolveImageSource(src)}
       className="my-10 h-auto w-full rounded-2xl border border-border bg-white shadow-sm"
       loading="lazy"
       {...props}

@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { getPostBySlug } from "@/lib/mdx";
+import { getPostBySlug } from "@/lib/blog-source";
 
 export const alt = "Falak Gala's Blog";
 export const size = {
@@ -11,7 +11,7 @@ export const contentType = "image/png";
 export default async function Image({ params }) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
-  const post = await getPostBySlug(slug).catch(() => null);
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     return new ImageResponse(

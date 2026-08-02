@@ -1,13 +1,9 @@
-export const dynamic = "force-dynamic";
-
 import { Navbar } from "@/components/navbar";
 import { Profile } from "@/components/profile";
 import { Footer } from "@/components/footer";
 import { GitHubCalendarChart } from "@/components/custom/github-calendar-chart";
 import { RecentPosts } from "@/components/blog/recent-posts";
 import { getAllPosts } from "@/lib/blog-source";
-// import { getNowPlaying } from "@/actions/spotify";
-// import { SpotifyNowPlaying } from "@/components/custom/spotify-now-playing";
 import { RecentProjects } from "@/components/recent-projects";
 import { projects } from "@/lib/project-data";
 // import { FootballGoalAnimation } from "@/components/custom/football-goal-animation";
@@ -22,15 +18,6 @@ export default async function Home() {
   const allPosts = await getAllPosts();
   const recentPosts = allPosts.slice(0, 3);
   const recentProjects = projects.slice(0, 5);
-  let spotifyData;
-
-  try {
-    spotifyData = await getNowPlaying();
-  } catch (error) {
-    console.error("Failed to fetch Spotify data:", error);
-    spotifyData = null;
-  }
-
   return (
     <div className="flex flex-col min-h-[calc(100vh-2rem)]">
       <Navbar />

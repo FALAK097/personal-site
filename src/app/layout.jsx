@@ -9,7 +9,6 @@ const outfit = Outfit({
   weight: ["300", "400", "500", "600", "700", "800", "900"]
 });
 import { ScrollProgress } from "@/components/custom/scroll-progress";
-import { CustomCursor } from "@/components/custom/custom-cursor";
 import { AskAIWidget } from "@/components/ai/ask-ai-widget";
 import "@/styles/globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -33,7 +32,6 @@ export default function RootLayout({ children }) {
             attribute="class"
             enableSystem={true}
           >
-            <CustomCursor />
             <div className="min-h-screen p-4 bg-background/50">
               <div className="rounded-lg border-2 border-border min-h-[calc(100vh-2rem)]">
                 {children}

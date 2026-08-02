@@ -9,7 +9,7 @@ export const blogSource = loader({
 });
 
 async function toPost(page) {
-  const source = await page.data.getText("raw");
+  const source = await page.data.getText("processed");
 
   return {
     title: page.data.title,

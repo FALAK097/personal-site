@@ -1,7 +1,7 @@
 ---
-title: "How I Built a Production Graph RAG System for 22,000 Multilingual PDFs"
+title: "Building a Production Graph RAG System for 22,000 Multilingual PDFs"
 date: "2026-08-02"
-description: "Inside the production Graph RAG system I built with Dots OCR, KaLM embeddings, Qdrant, Neo4j, LangGraph, Celery, self-hosted models, and a citation-first Next.js interface."
+description: "A generalized engineering case study about scaling multilingual document ingestion, hybrid retrieval, evaluation, guardrails, and a citation-first Next.js interface."
 tags:
   - Graph RAG
   - FastAPI
@@ -15,14 +15,18 @@ featured: true
 
 Building a RAG demo over a handful of clean documents is straightforward. Building one over **approximately 22,000 multilingual PDFs** is a different engineering problem.
 
+<Callout title="About this case study">
+  I led a five-person engineering team that built this system. This article intentionally omits the organization, source documents, private endpoints, credentials, internal source code, and recorded product interfaces. Counts and performance figures are rounded, and selected implementation details are generalized.
+</Callout>
+
 The corpus included Hindi, English, Marathi, and other Devanagari-script content. Many files were long, inconsistently formatted, or dependent on OCR. Some answers lived inside a single paragraph; others depended on relationships between legal and administrative documents. Most importantly, a convincing response was not enough. A user needed to see **which document supported it, which page contained the evidence, and where the exact passage appeared**.
 
-The finished system combines a responsive Next.js interface, a FastAPI API, LangGraph orchestration, Dots OCR, KaLM embeddings, Qdrant, Neo4j, Celery, Redis, PostgreSQL, self-hosted language models, NVIDIA NeMo Guardrails, Langfuse, and RAGAS. In typical production queries, it returned a response in **under three seconds**, while streaming made the interaction feel faster still.
+The finished system combines a responsive Next.js interface, a FastAPI API, LangGraph orchestration, Dots OCR, KaLM embeddings, Qdrant, Neo4j, Celery, Redis, PostgreSQL, self-hosted language models, NVIDIA NeMo Guardrails, Langfuse, and RAGAS. In representative production use, it returned a response in **under three seconds**, while streaming made the interaction feel faster still. This is an observed result, not a formal service-level guarantee.
 
 <MetricGrid>
   <Metric value="22K" label="multilingual PDFs" />
   <Metric value="&lt;3s" label="typical query response" />
-  <Metric value="4" label="specialized worker queues" />
+  <Metric value="Multiple" label="specialized worker queues" />
   <Metric value="2" label="retrieval systems" />
 </MetricGrid>
 
@@ -101,17 +105,17 @@ I moved ingestion into Celery and separated expensive work into specialized queu
   caption="The key scaling change: multiple documents can move through independent OCR, vector, graph, and enrichment queues at the same time."
 />
 
-The production configuration gives each workload an independent worker pool:
+The production configuration gives each workload an independently scalable worker pool. The exact capacities are intentionally omitted because they depend on available inference and database resources:
 
-| Responsibility | Queue | Default concurrency | Why it is separate |
-| --- | --- | ---: | --- |
-| Pipeline coordination | Orchestrator | 2 | Keeps scheduling work responsive |
-| PDF parsing | `parsing_ocr` | 3 | OCR is expensive and sensitive to model capacity |
-| Embeddings | `vector_embedding` | 6 | Requests can be batched and run with higher parallelism |
-| Relationship extraction | `graph_extraction` | 3 | LLM and Neo4j work needs controlled pressure |
-| Document titles | `document_titles` | 2 | Enrichment can finish outside the answer-critical path |
+| Responsibility | Scaling profile | Why it is separate |
+| --- | --- | --- |
+| Pipeline coordination | Small, responsive pool | Keeps scheduling work responsive |
+| PDF parsing | Capacity-limited pool | OCR is expensive and sensitive to model capacity |
+| Embeddings | Batch-oriented pool | Requests can be batched and run with higher parallelism |
+| Relationship extraction | Controlled pool | Model and graph-database work needs backpressure |
+| Document enrichment | Background pool | Non-critical metadata can finish outside the answer path |
 
-These values are not magical constants. They are starting points and, more importantly, **independent controls**. If the OCR service becomes the bottleneck, I can tune OCR without also multiplying graph requests. If embeddings have spare capacity, I can increase that queue without risking the rest of the pipeline.
+The important idea is not one universal concurrency number, but **independent controls**. If the OCR service becomes the bottleneck, I can tune OCR without also multiplying graph requests. If embeddings have spare capacity, I can increase that queue without risking the rest of the pipeline.
 
 This redesign changed the unit of progress from “one document completes everything” to “many documents advance through available stages.” It also made retries more precise: failed OCR does not require repeating a successful graph operation for another document.
 
@@ -119,7 +123,7 @@ This redesign changed the unit of progress from “one document completes everyt
 
 The vector side of the system uses KaLM embeddings exposed through an OpenAI-compatible self-hosted endpoint. Embeddings are generated in batches and stored in Qdrant alongside the text and source metadata required for citations.
 
-The configured embedding size is 3,840 dimensions. The more important design decision, however, was provider abstraction. The ingestion and query code depend on an embedding interface rather than one hard-coded vendor, making it possible to compare models or move providers without rewriting the entire RAG pipeline.
+The more important design decision was provider abstraction. The ingestion and query code depend on an embedding interface rather than one hard-coded vendor, making it possible to compare models or move providers without rewriting the entire RAG pipeline.
 
 Qdrant is responsible for semantic evidence: passages that are close to the meaning of a user’s question even when the wording differs. It is fast, filterable, and a natural fit for chunk-level metadata such as document identity and page number.
 
@@ -138,13 +142,6 @@ The two systems answer different retrieval needs:
 | “Explain the policy and include connected documents” | Vector retrieval followed by graph augmentation |
 
 The query router can select vector-only, graph-only, or vector-then-graph retrieval. Neo4j is therefore an augmentation, not a mandatory dependency on every request. If graph retrieval is unavailable, the vector path can still return grounded evidence.
-
-<Video
-  src="/blog/graph-rag/document-linkage.mp4"
-  poster="/blog/graph-rag/document-linkage-poster.png"
-  title="Neo4j document linkage demonstration"
-  caption="Graph relationships become a user-facing feature: related documents can be opened beside the answer and inspected in their original context."
-/>
 
 ## The Adaptive Query Pipeline
 
@@ -174,7 +171,7 @@ The final context contains retrieved passages, graph information when selected, 
 
 ## Getting Responses Under Three Seconds
 
-In typical production use, query responses arrived in under three seconds. That result came from several small architectural choices working together:
+In representative production use, query responses arrived in under three seconds. The figure is rounded and workload-dependent; it came from several small architectural choices working together:
 
 - Retrieval is routed instead of querying every store unconditionally.
 - Weak retrieval receives one deliberate rewrite rather than an open-ended retry loop.
@@ -191,11 +188,11 @@ For future iterations, I would publish a more formal benchmark including time to
 
 ## Self-hosting and Model Fallbacks
 
-The primary reasoning model is `gpt-oss-20b`, served through an OpenAI-compatible self-hosted API. The same model can generate human-friendly document titles after retrieval. The configured context window is 128K, although the system deliberately supplies a smaller, selected context instead of treating the full window as a retrieval strategy.
+The primary reasoning model is an open-weight model served through an OpenAI-compatible self-hosted API. The same service can generate human-friendly document titles after retrieval. Although the model supports a large context window, the system deliberately supplies a smaller, selected context instead of treating context capacity as a retrieval strategy.
 
 Self-hosting gave me control over the data boundary, model configuration, and operational behavior. It also meant accepting responsibility for model availability, throughput, timeouts, and capacity planning.
 
-The application therefore has a fallback provider through Gemini on OpenRouter. A provider abstraction keeps the rest of the query graph independent of one model endpoint. Fallbacks are not a substitute for monitoring, but they prevent one inference service from becoming the only route to an answer.
+The application therefore has a separately hosted fallback provider. A provider abstraction keeps the rest of the query graph independent of one model endpoint. Fallbacks are not a substitute for monitoring, but they prevent one inference service from becoming the only route to an answer.
 
 Dots OCR and KaLM embeddings are also called through model-service boundaries. This separation lets application containers stay focused on orchestration while inference capacity can be deployed and scaled independently.
 
@@ -234,13 +231,6 @@ Nightly RAGAS jobs score production traces for faithfulness, answer relevancy, c
 
 User feedback closes another part of the loop. A thumbs-up or thumbs-down is attached to the original Langfuse trace and stored with the message. That makes feedback diagnostic: I can inspect the retrieval context and model spans behind a poor rating instead of collecting an isolated number.
 
-<Video
-  src="/blog/graph-rag/evaluation-langfuse.mp4"
-  poster="/blog/graph-rag/evaluation-langfuse-poster.png"
-  title="Langfuse tracing and evaluation demonstration"
-  caption="Tracing connects a production answer to its orchestration spans; evaluation scores make prompt, model, and retrieval changes comparable."
-/>
-
 ## Citations as a First-Class Data Structure
 
 The backend does not append a loosely formatted “Sources” paragraph and hope the frontend can interpret it. Each citation is structured data containing the document identity, generated title, original filename, page number, supporting text, and a signed document URL.
@@ -265,13 +255,6 @@ Dots OCR handles primary ingestion. **RapidOCR serves a different role:** locati
 The highlighting service first attempts native PDF text matching. That is fast when a document contains a reliable text layer. When it does not, RapidOCR extracts page words and their coordinates. The service applies fuzzy and token-overlap matching, merges adjacent word boxes into readable regions, normalizes the coordinates against the page dimensions, and caches OCR results in Redis.
 
 The Next.js client renders the PDF with `react-pdf` and positions translucent highlight rectangles above the page canvas. Because the coordinates are normalized, the overlay remains aligned while the document is resized or zoomed.
-
-<Video
-  src="/blog/graph-rag/citations-highlight.mp4"
-  poster="/blog/graph-rag/citations-highlight-poster.png"
-  title="Citation and RapidOCR PDF highlighting demonstration"
-  caption="A citation opens its source, jumps to the relevant page, and highlights the supporting passage—even when OCR is required to locate it."
-/>
 
 This feature exposed a useful product lesson: retrieval quality is invisible to most users. Evidence navigation makes quality tangible.
 
@@ -341,7 +324,7 @@ These controls protect different boundaries. NeMo governs the model interaction,
 
 ## How the System Is Deployed
 
-The checked-in production topology uses Docker containers connected through one application network.
+The production topology uses Docker containers connected through a private application network.
 
 Docker Compose runs the stateful services and background workers:
 
@@ -352,7 +335,7 @@ Docker Compose runs the stateful services and background workers:
 - The Celery orchestrator
 - Dedicated OCR, vector, graph, and title workers
 
-The deployment script builds the FastAPI and Next.js images, starts the API, waits for its health check, runs Alembic migrations, and then starts the web container. The document corpus is mounted into the API and worker containers, while model inference is accessed through separate service endpoints.
+Deployment is health-gated: application services become available only after their dependencies are ready, and database migrations are handled as a controlled release step. The document corpus is available only to the services that need it, while model inference is accessed through separate private service endpoints.
 
 This is intentionally different from a registry-first deployment where CI builds every artifact away from the server. The current design prioritizes a reproducible container boundary and independently scalable data and worker services. A natural next operational step would be immutable CI-built images, controlled rollout, and automated rollback.
 
@@ -386,7 +369,7 @@ The next iteration would focus on measurable operations:
 
 ## Conclusion
 
-The visible result is a fast chat interface. The real product is the path from **22,000 multilingual PDFs to a verifiable answer**.
+The visible result is a fast chat interface. The real product is the path from **roughly 22,000 multilingual PDFs to a verifiable answer**.
 
 Dots OCR makes difficult source material readable. Celery turns a sequential ingestion bottleneck into concurrent work. KaLM and Qdrant retrieve semantically relevant evidence. Neo4j preserves relationships between documents. LangGraph applies the right retrieval and reranking work for each question. Self-hosted models keep the main reasoning path under our control. Langfuse and RAGAS make quality observable. Next.js, signed sources, and RapidOCR highlights let users inspect the evidence for themselves.
 

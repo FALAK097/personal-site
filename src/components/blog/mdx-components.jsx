@@ -93,7 +93,7 @@ export function FlowStep({ number, title, children }) {
 
 export function Callout({ title, children }) {
   return (
-    <aside className="my-8 rounded-2xl border border-clay-200 bg-clay-50/70 px-5 py-4 text-clay-950 dark:border-clay-800 dark:bg-clay-950/25 dark:text-clay-50">
+    <aside className="mt-4 mb-8 rounded-2xl border border-clay-200 bg-clay-50/70 px-5 py-4 text-clay-950 dark:border-clay-800 dark:bg-clay-950/25 dark:text-clay-50">
       {title && <p className="mb-1 font-semibold text-current">{title}</p>}
       <div className="[&>*:last-child]:mb-0 [&>*:first-child]:mt-0">{children}</div>
     </aside>

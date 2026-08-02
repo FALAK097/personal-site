@@ -15,10 +15,6 @@ featured: true
 
 Building a RAG demo over a handful of clean documents is straightforward. Building one over **approximately 22,000 multilingual PDFs** is a different engineering problem.
 
-<Callout title="About this case study">
-  I led a five-person engineering team that built this system. This article intentionally omits the organization, source documents, private endpoints, credentials, internal source code, and recorded product interfaces. Counts and performance figures are rounded, and selected implementation details are generalized.
-</Callout>
-
 The corpus included Hindi, English, Marathi, and other Devanagari-script content. Many files were long, inconsistently formatted, or dependent on OCR. Some answers lived inside a single paragraph; others depended on relationships between legal and administrative documents. Most importantly, a convincing response was not enough. A user needed to see **which document supported it, which page contained the evidence, and where the exact passage appeared**.
 
 The finished system combines a responsive Next.js interface, a FastAPI API, LangGraph orchestration, Dots OCR, KaLM embeddings, Qdrant, Neo4j, Celery, Redis, PostgreSQL, self-hosted language models, NVIDIA NeMo Guardrails, Langfuse, and RAGAS. In representative production use, it returned a response in **under three seconds**, while streaming made the interaction feel faster still. This is an observed result, not a formal service-level guarantee.

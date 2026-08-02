@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="940" viewBox="0 0 1600 940" role="img" aria-labelledby="title desc">
+  <title id="title">Production Graph RAG system architecture</title>
+  <desc id="desc">A hand-drawn architecture showing multilingual PDFs entering concurrent ingestion workers, being stored in Qdrant and Neo4j, and queried through FastAPI and LangGraph from a Next.js evidence interface.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#1f2937" flood-opacity=".10"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#253047" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <style>
+      .title{font:700 39px ui-rounded,"Comic Sans MS",sans-serif;fill:#111827}.sub{font:20px ui-rounded,"Comic Sans MS",sans-serif;fill:#4b5563}.label{font:700 21px ui-rounded,"Comic Sans MS",sans-serif}.body{font:18px ui-rounded,"Comic Sans MS",sans-serif;fill:#253047}.tiny{font:16px ui-rounded,"Comic Sans MS",sans-serif;fill:#4b5563}.box{stroke-width:3;filter:url(#shadow)}.arrow{fill:none;stroke:#253047;stroke-width:3;stroke-linecap:round;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="940" fill="#fffdf9"/>
+  <text x="800" y="70" text-anchor="middle" class="title">From 22,000 PDFs to verifiable answers</text>
+  <text x="800" y="108" text-anchor="middle" class="sub">A production Graph RAG architecture for multilingual public documents</text>
+
+  <rect x="54" y="162" width="1492" height="274" rx="30" fill="#faf7ff" stroke="#8b5cf6" stroke-dasharray="13 11" stroke-width="2.5"/>
+  <text x="82" y="202" class="label" fill="#6d28d9">OFFLINE · CONCURRENT INGESTION</text>
+  <rect class="box" x="92" y="244" width="220" height="126" rx="22" fill="#fff" stroke="#6d28d9"/>
+  <text x="202" y="286" text-anchor="middle" class="label" fill="#5b21b6">22K PDFs</text>
+  <text x="202" y="322" text-anchor="middle" class="body">Hindi · English</text>
+  <text x="202" y="350" text-anchor="middle" class="body">Marathi · Devanagari</text>
+  <path class="arrow" d="M314 307 C345 302 365 302 396 307"/>
+  <rect class="box" x="400" y="228" width="240" height="158" rx="22" fill="#fff7ed" stroke="#f97316"/>
+  <text x="520" y="271" text-anchor="middle" class="label" fill="#c2410c">Celery + Redis</text>
+  <text x="520" y="306" text-anchor="middle" class="body">dispatch and retry</text>
+  <text x="520" y="336" text-anchor="middle" class="tiny">resumable state</text>
+  <text x="520" y="363" text-anchor="middle" class="tiny">independent queues</text>
+  <path class="arrow" d="M643 276 C680 250 690 246 728 246"/>
+  <path class="arrow" d="M643 307 C682 307 692 307 728 307"/>
+  <path class="arrow" d="M643 340 C680 365 692 368 728 368"/>
+  <rect class="box" x="732" y="218" width="236" height="58" rx="16" fill="#eef7ff" stroke="#3b82f6"/><text x="850" y="254" text-anchor="middle" class="label" fill="#1d4ed8">Dots OCR workers</text>
+  <rect class="box" x="732" y="280" width="236" height="58" rx="16" fill="#ecfdf5" stroke="#22c55e"/><text x="850" y="316" text-anchor="middle" class="label" style="font-size:18px" fill="#15803d">KaLM vector workers</text>
+  <rect class="box" x="732" y="342" width="236" height="58" rx="16" fill="#fff7ed" stroke="#f59e0b"/><text x="850" y="378" text-anchor="middle" class="label" fill="#b45309">Graph workers</text>
+  <path class="arrow" d="M970 309 C1000 309 1015 285 1040 285"/>
+  <path class="arrow" d="M970 371 C1000 371 1015 345 1040 345"/>
+  <rect class="box" x="1044" y="235" width="210" height="104" rx="22" fill="#ecfeff" stroke="#06b6d4"/>
+  <text x="1149" y="279" text-anchor="middle" class="label" fill="#0e7490">Qdrant</text><text x="1149" y="311" text-anchor="middle" class="body">chunks + vectors</text>
+  <rect class="box" x="1286" y="287" width="210" height="104" rx="22" fill="#eef2ff" stroke="#6366f1"/>
+  <text x="1391" y="331" text-anchor="middle" class="label" fill="#4338ca">Neo4j</text><text x="1391" y="363" text-anchor="middle" class="body">entities + relations</text>
+  <path class="arrow" d="M970 371 C1110 415 1190 381 1280 348"/>
+
+  <rect x="54" y="480" width="1492" height="286" rx="30" fill="#f7fbff" stroke="#3b82f6" stroke-dasharray="13 11" stroke-width="2.5"/>
+  <text x="82" y="520" class="label" fill="#1d4ed8">ONLINE · UNDER-THREE-SECOND QUERY PATH</text>
+  <rect class="box" x="92" y="572" width="226" height="126" rx="22" fill="#fff" stroke="#8b5cf6"/>
+  <text x="205" y="614" text-anchor="middle" class="label" fill="#6d28d9">Next.js UI</text>
+  <text x="205" y="648" text-anchor="middle" class="body">streamed answers</text>
+  <text x="205" y="677" text-anchor="middle" class="body">citations + PDF</text>
+  <path class="arrow" d="M322 635 C360 635 380 635 412 635"/>
+  <rect class="box" x="416" y="572" width="226" height="126" rx="22" fill="#fff7ed" stroke="#f97316"/>
+  <text x="529" y="614" text-anchor="middle" class="label" fill="#c2410c">FastAPI</text>
+  <text x="529" y="648" text-anchor="middle" class="body">auth + streaming</text>
+  <text x="529" y="677" text-anchor="middle" class="body">signed document URLs</text>
+  <path class="arrow" d="M646 635 C681 635 700 635 732 635"/>
+  <rect class="box" x="736" y="556" width="250" height="158" rx="22" fill="#ecfdf5" stroke="#22c55e"/>
+  <text x="861" y="598" text-anchor="middle" class="label" fill="#15803d">LangGraph</text>
+  <text x="861" y="633" text-anchor="middle" class="body">analyze + route</text>
+  <text x="861" y="663" text-anchor="middle" class="body">retrieve + rerank</text>
+  <text x="861" y="691" text-anchor="middle" class="tiny">rewrite weak queries</text>
+  <path class="arrow" d="M990 604 C1030 584 1042 580 1076 580"/>
+  <path class="arrow" d="M990 666 C1030 686 1042 690 1076 690"/>
+  <rect class="box" x="1080" y="535" width="206" height="94" rx="22" fill="#ecfeff" stroke="#06b6d4"/><text x="1183" y="576" text-anchor="middle" class="label" fill="#0e7490">Qdrant</text><text x="1183" y="606" text-anchor="middle" class="body">semantic evidence</text>
+  <rect class="box" x="1080" y="645" width="206" height="94" rx="22" fill="#eef2ff" stroke="#6366f1"/><text x="1183" y="686" text-anchor="middle" class="label" fill="#4338ca">Neo4j</text><text x="1183" y="716" text-anchor="middle" class="body">linked knowledge</text>
+  <path class="arrow" d="M1290 635 C1320 635 1335 635 1364 635"/>
+  <rect class="box" x="1368" y="572" width="128" height="126" rx="22" fill="#fff" stroke="#ec4899"/>
+  <text x="1432" y="612" text-anchor="middle" class="label" style="font-size:16px" fill="#be185d">Self-hosted</text>
+  <text x="1432" y="644" text-anchor="middle" class="body">Open-weight LLM</text>
+  <text x="1432" y="674" text-anchor="middle" class="tiny">Gemini fallback</text>
+
+  <rect x="180" y="812" width="1240" height="78" rx="22" fill="#fff" stroke="#9ca3af" stroke-width="2"/>
+  <text x="800" y="847" text-anchor="middle" class="label" style="font-size:18px" fill="#374151">POSTGRES · REDIS · NVIDIA NEMO · LANGFUSE · RAGAS · SENTRY</text>
+  <text x="800" y="875" text-anchor="middle" class="tiny">durable state, checkpoints, traces, evaluation, feedback, and operational visibility</text>
+</svg>

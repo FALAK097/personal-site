@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">NVIDIA NeMo Guardrails around the Graph RAG query path</title>
+  <desc id="desc">A hand-drawn flow showing active multilingual input guardrails before LangGraph retrieval and generation, plus reusable output validation controls. Solid lines indicate the active conversation route and dashed lines indicate controls that must be wired consistently across generation routes.</desc>
+  <defs>
+    <filter id="shadow"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-opacity=".1"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#273449" stroke-width="2"/></marker>
+    <style>.title{font:700 39px ui-rounded,"Comic Sans MS",sans-serif;fill:#111827}.section{font:700 23px ui-rounded,"Comic Sans MS",sans-serif}.body{font:18px ui-rounded,"Comic Sans MS",sans-serif;fill:#344054}.small{font:16px ui-rounded,"Comic Sans MS",sans-serif;fill:#667085}.box{stroke-width:3;filter:url(#shadow)}.arrow{fill:none;stroke:#273449;stroke-width:3;marker-end:url(#arrow)}.dashed{fill:none;stroke:#8b5cf6;stroke-width:3;stroke-dasharray:11 9;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect width="1600" height="900" fill="#fffdf9"/>
+  <text x="800" y="68" text-anchor="middle" class="title">NVIDIA NeMo Guardrails wraps the model interaction</text>
+  <text x="800" y="104" text-anchor="middle" class="body">Fast deterministic checks first; contextual classification only when it adds value</text>
+
+  <rect class="box" x="70" y="182" width="210" height="112" rx="22" fill="#f5f3ff" stroke="#8b5cf6"/>
+  <text x="175" y="228" text-anchor="middle" class="section" fill="#6d28d9">User query</text>
+  <text x="175" y="261" text-anchor="middle" class="body">English · Hindi · Marathi</text>
+  <path class="arrow" d="M284 238 C316 238 332 238 360 238"/>
+
+  <rect x="364" y="148" width="390" height="390" rx="28" fill="#eef7ff" stroke="#3b82f6" stroke-width="3" stroke-dasharray="13 10"/>
+  <text x="559" y="193" text-anchor="middle" class="section" fill="#1d4ed8">ACTIVE INPUT RAILS</text>
+  <rect class="box" x="404" y="222" width="310" height="62" rx="16" fill="#fff" stroke="#3b82f6"/><text x="559" y="261" text-anchor="middle" class="body">language + script signals</text>
+  <rect class="box" x="404" y="300" width="310" height="62" rx="16" fill="#fff" stroke="#3b82f6"/><text x="559" y="339" text-anchor="middle" class="body">prompt injection + system probing</text>
+  <rect class="box" x="404" y="378" width="310" height="62" rx="16" fill="#fff" stroke="#3b82f6"/><text x="559" y="417" text-anchor="middle" class="body">gibberish + fast intent patterns</text>
+  <rect class="box" x="404" y="456" width="310" height="62" rx="16" fill="#fff" stroke="#3b82f6"/><text x="559" y="495" text-anchor="middle" class="body">optional LLM intent classifier</text>
+  <path class="arrow" d="M758 340 C790 340 808 340 836 340"/>
+
+  <rect class="box" x="840" y="250" width="292" height="178" rx="24" fill="#ecfdf5" stroke="#22c55e"/>
+  <text x="986" y="296" text-anchor="middle" class="section" fill="#15803d">LangGraph RAG</text>
+  <text x="986" y="334" text-anchor="middle" class="body">route · retrieve · rerank</text>
+  <text x="986" y="368" text-anchor="middle" class="body">build context · generate</text>
+  <text x="986" y="400" text-anchor="middle" class="small">Qdrant + Neo4j + self-hosted LLM</text>
+  <path class="dashed" d="M1136 340 C1168 340 1186 340 1214 340"/>
+
+  <rect x="1218" y="148" width="312" height="390" rx="28" fill="#fbf8ff" stroke="#8b5cf6" stroke-width="3" stroke-dasharray="13 10"/>
+  <text x="1374" y="193" text-anchor="middle" class="section" fill="#6d28d9">OUTPUT CONTROLS</text>
+  <rect class="box" x="1252" y="238" width="244" height="70" rx="16" fill="#fff" stroke="#8b5cf6"/><text x="1374" y="269" text-anchor="middle" class="body">empty / malformed</text><text x="1374" y="292" text-anchor="middle" class="small">response checks</text>
+  <rect class="box" x="1252" y="328" width="244" height="70" rx="16" fill="#fff" stroke="#8b5cf6"/><text x="1374" y="359" text-anchor="middle" class="body">unsupported model</text><text x="1374" y="382" text-anchor="middle" class="small">disclosure patterns</text>
+  <rect class="box" x="1252" y="418" width="244" height="70" rx="16" fill="#fff" stroke="#8b5cf6"/><text x="1374" y="449" text-anchor="middle" class="body">retrieval context</text><text x="1374" y="472" text-anchor="middle" class="small">grounding controls</text>
+
+  <path class="arrow" d="M559 542 C559 586 642 603 694 620"/>
+  <rect class="box" x="464" y="624" width="460" height="116" rx="22" fill="#fff7ed" stroke="#f97316"/>
+  <text x="694" y="667" text-anchor="middle" class="section" fill="#c2410c">Structured refusal or allow decision</text>
+  <text x="694" y="701" text-anchor="middle" class="body">multilingual response · reason · metadata</text>
+  <path class="arrow" d="M928 682 C968 682 984 682 1020 682"/>
+  <rect class="box" x="1024" y="624" width="352" height="116" rx="22" fill="#fff" stroke="#ec4899"/>
+  <text x="1200" y="667" text-anchor="middle" class="section" fill="#be185d">Langfuse guardrail span</text>
+  <text x="1200" y="701" text-anchor="middle" class="body">language · decision · reason</text>
+
+  <rect x="214" y="792" width="1172" height="72" rx="20" fill="#fff" stroke="#9ca3af" stroke-width="2"/>
+  <line x1="258" y1="828" x2="338" y2="828" stroke="#273449" stroke-width="3"/><text x="354" y="834" class="small">solid = active main conversation path</text>
+  <line x1="780" y1="828" x2="860" y2="828" stroke="#8b5cf6" stroke-width="3" stroke-dasharray="11 9"/><text x="876" y="834" class="small">dashed = reusable output controls; wire consistently per route</text>
+</svg>

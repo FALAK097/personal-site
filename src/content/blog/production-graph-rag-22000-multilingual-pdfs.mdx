@@ -1,0 +1,368 @@
+---
+title: "Building a Production Graph RAG System for 22,000 Multilingual PDFs"
+date: "2026-08-02"
+description: "A generalized engineering case study about scaling multilingual document ingestion, hybrid retrieval, evaluation, guardrails, and a citation-first Next.js interface."
+tags:
+  - Graph RAG
+  - FastAPI
+  - Next.js
+  - AI Engineering
+  - LangGraph
+  - NVIDIA NeMo Guardrails
+image: "/blog/graph-rag/system-architecture.svg"
+featured: true
+---
+
+Building a RAG demo over a handful of clean documents is straightforward. Building one over **approximately 22,000 multilingual PDFs** is a different engineering problem.
+
+The corpus included Hindi, English, Marathi, and other Devanagari-script content. Many files were long, inconsistently formatted, or dependent on OCR. Some answers lived inside a single paragraph; others depended on relationships between legal and administrative documents. Most importantly, a convincing response was not enough. A user needed to see **which document supported it, which page contained the evidence, and where the exact passage appeared**.
+
+The finished system combines a responsive Next.js interface, a FastAPI API, LangGraph orchestration, Dots OCR, KaLM embeddings, Qdrant, Neo4j, Celery, Redis, PostgreSQL, self-hosted language models, NVIDIA NeMo Guardrails, Langfuse, and RAGAS. In representative production use, it returned a response in **under three seconds**, while streaming made the interaction feel faster still. This is an observed result, not a formal service-level guarantee.
+
+<MetricGrid>
+  <Metric value="22K" label="multilingual PDFs" />
+  <Metric value="&lt;3s" label="typical query response" />
+  <Metric value="Multiple" label="specialized worker queues" />
+  <Metric value="2" label="retrieval systems" />
+</MetricGrid>
+
+This is the architecture story behind it: the bottlenecks, the model choices, the evaluation loop, and the product decisions that turned retrieval into a verifiable research experience.
+
+## What I Was Actually Building
+
+The interface looks like a chat application, but the system behind it behaves more like a document intelligence platform.
+
+It has two large paths:
+
+- An **offline ingestion path** turns PDFs into searchable chunks, vectors, graph entities, relationships, and document metadata.
+- An **online query path** interprets a question, selects a retrieval strategy, checks evidence quality, generates a grounded answer, and returns citations that can open the original document.
+
+Around those paths are the less visible systems that make the product dependable: durable application state in PostgreSQL, task transport and caches in Redis, persistent LangGraph checkpoints, feedback, traces, evaluation datasets, security controls, and error monitoring.
+
+<Diagram
+  src="/blog/graph-rag/system-architecture.svg"
+  alt="Hand-drawn production Graph RAG architecture showing the ingestion and query paths"
+  caption="The complete system. Expensive ingestion happens asynchronously; the online query path stays focused on delivering relevant evidence quickly."
+/>
+
+The important design principle was separation. Parsing a scanned PDF, generating an embedding, extracting graph relationships, reranking retrieved passages, and streaming an answer have very different latency and resource profiles. Treating them as one undifferentiated pipeline made both scaling and diagnosis harder.
+
+## Ingesting a Multilingual PDF Corpus
+
+Every useful answer begins with ingestion quality. If a scanned Marathi document is parsed incorrectly, no retrieval algorithm can recover the missing text later.
+
+For each file, the ingestion workflow performs a sequence of operations:
+
+<Flow>
+  <FlowStep number="1" title="Identify the document">
+    Generate a deterministic identity from file information so unchanged documents can be skipped and modified files can be replaced safely.
+  </FlowStep>
+  <FlowStep number="2" title="Extract page content">
+    Parse PDF pages with Dots OCR, using bounded page concurrency and retries for transport or low-quality output.
+  </FlowStep>
+  <FlowStep number="3" title="Create semantic chunks">
+    Split the extracted content into overlapping passages that preserve enough local context for retrieval.
+  </FlowStep>
+  <FlowStep number="4" title="Build the vector index">
+    Generate KaLM embeddings in batches and store the vectors, text, page information, and document metadata in Qdrant.
+  </FlowStep>
+  <FlowStep number="5" title="Build the knowledge graph">
+    Extract entities and relationships from the chunks and persist them in Neo4j for relationship-oriented retrieval and document linkage.
+  </FlowStep>
+</Flow>
+
+Deterministic document identities mattered more than I expected. Re-running a corpus ingestion should not duplicate 22,000 documents or rebuild every vector because a few files changed. The workflow can recognize unchanged inputs, replace modified material, and preserve progress across interrupted runs.
+
+The graph also records enough state to resume work and retry failed stages. Long-running AI pipelines should assume that individual model requests, PDFs, or infrastructure components will eventually fail. Recovery is part of the architecture, not an exceptional path added afterward.
+
+## The Bottleneck: One Document at a Time
+
+My first ingestion implementation was functionally correct and operationally unusable at corpus scale.
+
+It processed one document through the complete pipeline before beginning the next:
+
+```text
+PDF 1 → OCR → chunk → embed → graph → finish
+PDF 2 → OCR → chunk → embed → graph → finish
+PDF 3 → OCR → chunk → embed → graph → finish
+```
+
+For a small test set, that is easy to understand and debug. For 22,000 PDFs, it meant every file waited behind the slowest stage of every earlier file. An OCR-heavy document could leave embedding capacity idle. A slow graph extraction could prevent the next PDF from even starting.
+
+The problem was not just “make the loop parallel.” Each stage had a different ideal concurrency level, failure mode, and dependency profile.
+
+## Re-architecting Ingestion with Celery
+
+I moved ingestion into Celery and separated expensive work into specialized queues. Redis acts as the broker and result backend, while an orchestrator coordinates the overall job.
+
+<Diagram
+  src="/blog/graph-rag/ingestion-before-after.svg"
+  alt="Before-and-after diagram comparing sequential PDF ingestion with concurrent Celery workers"
+  caption="The key scaling change: multiple documents can move through independent OCR, vector, graph, and enrichment queues at the same time."
+/>
+
+The production configuration gives each workload an independently scalable worker pool. The exact capacities are intentionally omitted because they depend on available inference and database resources:
+
+| Responsibility | Scaling profile | Why it is separate |
+| --- | --- | --- |
+| Pipeline coordination | Small, responsive pool | Keeps scheduling work responsive |
+| PDF parsing | Capacity-limited pool | OCR is expensive and sensitive to model capacity |
+| Embeddings | Batch-oriented pool | Requests can be batched and run with higher parallelism |
+| Relationship extraction | Controlled pool | Model and graph-database work needs backpressure |
+| Document enrichment | Background pool | Non-critical metadata can finish outside the answer path |
+
+The important idea is not one universal concurrency number, but **independent controls**. If the OCR service becomes the bottleneck, I can tune OCR without also multiplying graph requests. If embeddings have spare capacity, I can increase that queue without risking the rest of the pipeline.
+
+This redesign changed the unit of progress from “one document completes everything” to “many documents advance through available stages.” It also made retries more precise: failed OCR does not require repeating a successful graph operation for another document.
+
+## Why KaLM and Qdrant
+
+The vector side of the system uses KaLM embeddings exposed through an OpenAI-compatible self-hosted endpoint. Embeddings are generated in batches and stored in Qdrant alongside the text and source metadata required for citations.
+
+The more important design decision was provider abstraction. The ingestion and query code depend on an embedding interface rather than one hard-coded vendor, making it possible to compare models or move providers without rewriting the entire RAG pipeline.
+
+Qdrant is responsible for semantic evidence: passages that are close to the meaning of a user’s question even when the wording differs. It is fast, filterable, and a natural fit for chunk-level metadata such as document identity and page number.
+
+But semantic similarity alone does not fully represent a collection of laws, amendments, circulars, agencies, and references between documents.
+
+## Why Neo4j Sits Beside Qdrant
+
+Neo4j represents entities and explicit relationships extracted during ingestion. It is not a second copy of Qdrant and it is not used for every question.
+
+The two systems answer different retrieval needs:
+
+| Question type | Stronger starting point |
+| --- | --- |
+| “What does this document say about municipal funding?” | Qdrant semantic retrieval |
+| “Which document amends or references this order?” | Neo4j relationship retrieval |
+| “Explain the policy and include connected documents” | Vector retrieval followed by graph augmentation |
+
+The query router can select vector-only, graph-only, or vector-then-graph retrieval. Neo4j is therefore an augmentation, not a mandatory dependency on every request. If graph retrieval is unavailable, the vector path can still return grounded evidence.
+
+## The Adaptive Query Pipeline
+
+Low latency did not come from skipping quality checks. It came from avoiding expensive work when the current evidence was already strong.
+
+When a question arrives, the LangGraph workflow first summarizes relevant conversation history and analyzes the request. An unclear question can produce a clarification response. A multi-part question can be decomposed into parallel retrieval agents and aggregated later.
+
+For a normal query, the router chooses a retrieval path. Vector results then pass through a sufficiency check. If the evidence is weak, the system broadens the query and retries once. It does not enter an unbounded retrieval loop.
+
+Next, retrieval quality determines the reranking strategy:
+
+```text
+high-quality retrieval   → skip reranking
+medium-quality retrieval → reduced reranking
+low-quality retrieval    → full reranking
+```
+
+This is an important performance tradeoff. Reranking every result can improve ordering, but it also introduces model latency and cost even when the first results are already excellent.
+
+<Diagram
+  src="/blog/graph-rag/query-flow.svg"
+  alt="Adaptive query flow showing routing, sufficiency checks, query rewriting, and adaptive reranking"
+  caption="The online path spends additional compute only when routing or evidence quality says it is necessary."
+/>
+
+The final context contains retrieved passages, graph information when selected, and a bounded view of conversation history. The primary reasoning model generates the answer, and FastAPI streams it to the browser together with trace and citation metadata.
+
+## Getting Responses Under Three Seconds
+
+In representative production use, query responses arrived in under three seconds. The figure is rounded and workload-dependent; it came from several small architectural choices working together:
+
+- Retrieval is routed instead of querying every store unconditionally.
+- Weak retrieval receives one deliberate rewrite rather than an open-ended retry loop.
+- Reranking is adaptive.
+- Embeddings and expensive enrichment results are cached where appropriate.
+- Conversation history is bounded and summarized instead of growing forever.
+- Document-title enrichment can run in a background worker.
+- The primary language model and embedding model are served through controlled, self-hosted endpoints.
+- FastAPI streams the response so the first useful text reaches the interface before the complete answer is assembled.
+
+The distinction between measured and perceived performance matters. “Under three seconds” describes the typical query response observed for this system. Streaming improves the experience further because users do not stare at an inert loading state while the response is being produced.
+
+For future iterations, I would publish a more formal benchmark including time to first token, median completion time, p95 latency, retrieval-route distribution, and vector-only versus graph-augmented queries.
+
+## Self-hosting and Model Fallbacks
+
+The primary reasoning model is an open-weight model served through an OpenAI-compatible self-hosted API. The same service can generate human-friendly document titles after retrieval. Although the model supports a large context window, the system deliberately supplies a smaller, selected context instead of treating context capacity as a retrieval strategy.
+
+Self-hosting gave me control over the data boundary, model configuration, and operational behavior. It also meant accepting responsibility for model availability, throughput, timeouts, and capacity planning.
+
+The application therefore has a separately hosted fallback provider. A provider abstraction keeps the rest of the query graph independent of one model endpoint. Fallbacks are not a substitute for monitoring, but they prevent one inference service from becoming the only route to an answer.
+
+Dots OCR and KaLM embeddings are also called through model-service boundaries. This separation lets application containers stay focused on orchestration while inference capacity can be deployed and scaled independently.
+
+## Evaluation Is Part of the Product
+
+A response can sound fluent while relying on irrelevant context. That is why I evaluate retrieval and generation separately.
+
+Every production query can create a Langfuse trace spanning analysis, retrieval, reranking, context construction, and generation. This makes it possible to inspect not only the final output but also the evidence and decisions that produced it.
+
+The evaluation system operates at multiple levels:
+
+### Retrieval quality
+
+- **Context precision:** how much retrieved material was actually useful?
+- **Context recall:** did retrieval find the evidence needed for the reference answer?
+- **Retrieval sufficiency:** is the available context strong enough to answer at all?
+- **Reranking quality:** did the more relevant passages move upward?
+
+### Answer quality
+
+- **Faithfulness:** are claims supported by retrieved evidence?
+- **Answer relevancy:** does the response address the question directly?
+- **Correctness:** how does it compare with a golden answer?
+- **Helpfulness and coherence:** is it useful and understandable?
+- **Hallucination checks:** does it introduce unsupported information?
+
+### Continuous evaluation
+
+Nightly RAGAS jobs score production traces for faithfulness, answer relevancy, context precision, and context recall. Golden datasets support experiments on pull requests, where model or prompt changes can be evaluated with judge models before they reach production. Scores are written back to Langfuse so traces, outputs, and evaluation results remain connected.
+
+<Diagram
+  src="/blog/graph-rag/trust-and-evaluation.svg"
+  alt="Diagram showing both the answer-to-evidence experience and the Langfuse evaluation feedback loop"
+  caption="Trust has two loops: users can verify evidence in the interface, while engineers measure retrieval and answer quality from traces and datasets."
+/>
+
+User feedback closes another part of the loop. A thumbs-up or thumbs-down is attached to the original Langfuse trace and stored with the message. That makes feedback diagnostic: I can inspect the retrieval context and model spans behind a poor rating instead of collecting an isolated number.
+
+## Citations as a First-Class Data Structure
+
+The backend does not append a loosely formatted “Sources” paragraph and hope the frontend can interpret it. Each citation is structured data containing the document identity, generated title, original filename, page number, supporting text, and a signed document URL.
+
+That structure enables the interface to:
+
+- Replace markers such as `[1]` with accessible citation controls
+- Group multiple passages from the same document
+- Display a readable document title without hiding the original filename
+- Open the PDF directly on the cited page
+- Keep the answer visible beside the document
+- Navigate from a source to related documents
+
+The document URL is time-limited and signed. Users can inspect an authorized source without exposing a permanent public file path.
+
+## Highlighting Evidence with RapidOCR
+
+Opening the right page is useful. Highlighting the exact supporting passage is what makes the citation feel trustworthy.
+
+Dots OCR handles primary ingestion. **RapidOCR serves a different role:** locating citation text on the rendered document page.
+
+The highlighting service first attempts native PDF text matching. That is fast when a document contains a reliable text layer. When it does not, RapidOCR extracts page words and their coordinates. The service applies fuzzy and token-overlap matching, merges adjacent word boxes into readable regions, normalizes the coordinates against the page dimensions, and caches OCR results in Redis.
+
+The Next.js client renders the PDF with `react-pdf` and positions translucent highlight rectangles above the page canvas. Because the coordinates are normalized, the overlay remains aligned while the document is resized or zoomed.
+
+This feature exposed a useful product lesson: retrieval quality is invisible to most users. Evidence navigation makes quality tangible.
+
+## The Next.js Reading Experience
+
+The frontend was built as a research interface rather than a generic chat window.
+
+Responses support streamed Markdown, headings, lists, tables, and other structured content. Citation markers remain interactive inside the rendered answer. On desktop, the PDF panel can sit beside the conversation; on smaller screens, the same actions adapt to the available space.
+
+The surrounding product includes:
+
+- Responsive desktop and mobile layouts
+- Light and dark themes
+- Searchable conversation history
+- Generated conversation titles
+- Rename, pin, archive, delete, and share actions
+- Lazy loading for older conversations
+- Copy and feedback controls
+- Loading, retry, empty, and failure states
+- Document-title enrichment and grouped sources
+- PDF page and zoom controls
+- Related-document previews
+
+These details are not separate from the AI system. A technically correct answer can still feel unreliable if citations are hard to open, the response formatting breaks, or mobile controls hide the source.
+
+## NVIDIA NeMo Guardrails as a Safety Layer
+
+Retrieval quality answers one question: _did the system find useful evidence?_ It does not answer whether the incoming request is malicious, whether it is trying to reveal system instructions, or whether the generated response should be returned unchanged.
+
+I integrated **NVIDIA NeMo Guardrails** as a separate safety boundary around the RAG workflow. It uses Colang 1.0 configuration together with custom asynchronous Python actions, allowing deterministic checks and contextual model-assisted decisions to coexist.
+
+<Diagram
+  src="/blog/graph-rag/nemo-guardrails-flow.svg"
+  alt="NVIDIA NeMo Guardrails flow around the multilingual Graph RAG query path"
+  caption="Solid lines show the active conversation route. Dashed lines show reusable output controls that must be connected consistently across generation routes."
+/>
+
+The fast checks run before invoking the more expensive query workflow. Common injection phrases, attempts to reveal prompts or internal configuration, greetings, identity questions, and keyboard-mash inputs can be handled without spending retrieval or generation capacity. An optional LLM classifier handles cases where static keywords would be too blunt.
+
+That distinction matters for legal and governance material. A naive keyword block could reject a query about “cricket match-fixing law” simply because it contains the word “cricket.” The production path can classify the intent in context instead of treating topic keywords as policy.
+
+The rails also preserve the multilingual experience. Language and script detection let the system return an appropriate English, Hindi, or Marathi response when a request is blocked, instead of falling back to an unrelated English error message.
+
+Input-guardrail decisions are attached to Langfuse spans with metadata such as the detected language, decision, and reason. This makes a refusal auditable and helps distinguish a retrieval failure from a safety decision when investigating feedback.
+
+The distinction between implemented controls and active request wiring matters. The main conversation route currently applies the input layer before retrieval. Output checks and Colang grounding flows exist in the reusable wrapper and configuration, but they should be wired consistently into every generation route before describing all streamed output as fully guarded.
+
+### The availability tradeoff
+
+The production wrapper is deliberately **fail-open** if the guardrail subsystem itself throws an unexpected error. That favors availability and prevents a safety-service outage from blocking every legitimate document query. Individual checks and strictness are configurable, so a higher-risk deployment could choose a stricter policy.
+
+Fail-open does not mean “unguarded.” It means the failure behavior is explicit. NeMo Guardrails remains one part of defense in depth alongside authentication, authorization, rate limiting, signed document access, retrieval grounding, monitoring, and evaluation.
+
+It is also important not to oversell the layer. Pattern detection and overlap checks are heuristics; an LLM classifier can be wrong; and a configured safety flag is not proof that every possible attack is solved. The value is a composable and observable control point where these policies can be improved without burying them inside the answer prompt.
+
+## State, Security, and Operational Controls
+
+PostgreSQL stores durable application data such as users, conversations, messages, feedback, and document records. Redis supports several shorter-lived concerns: Celery transport, caches, and LangGraph checkpoints. Conversation history can be reconstructed from durable records when a cache is unavailable.
+
+The application also includes refresh-token handling, rate limiting, ownership checks, controlled conversation sharing, and signed document access. Sentry provides application error and performance visibility.
+
+These controls protect different boundaries. NeMo governs the model interaction, authorization governs data access, signed URLs limit document exposure, and Sentry makes operational failures visible. None should be expected to replace the others.
+
+## How the System Is Deployed
+
+The production topology uses Docker containers connected through a private application network.
+
+Docker Compose runs the stateful services and background workers:
+
+- PostgreSQL
+- Redis
+- Qdrant
+- Neo4j with APOC support
+- The Celery orchestrator
+- Dedicated OCR, vector, graph, and title workers
+
+Deployment is health-gated: application services become available only after their dependencies are ready, and database migrations are handled as a controlled release step. The document corpus is available only to the services that need it, while model inference is accessed through separate private service endpoints.
+
+This is intentionally different from a registry-first deployment where CI builds every artifact away from the server. The current design prioritizes a reproducible container boundary and independently scalable data and worker services. A natural next operational step would be immutable CI-built images, controlled rollout, and automated rollback.
+
+## What Changed My Mental Model
+
+The biggest lesson was that production RAG is not primarily a prompt-engineering problem.
+
+It is a systems problem with several independent quality boundaries:
+
+1. **Parsing quality** determines whether the source information exists.
+2. **Chunking and embeddings** determine whether relevant passages can be found.
+3. **Graph extraction** determines whether cross-document relationships survive ingestion.
+4. **Routing and reranking** determine how much work a question needs.
+5. **Generation** determines whether evidence becomes a useful answer.
+6. **Citations and highlighting** determine whether a user can trust it.
+7. **Tracing and evaluation** determine whether the system can improve safely.
+
+The original one-document-at-a-time pipeline taught me the same lesson from another direction: correctness at small scale is not enough. A design becomes real when it can process the corpus, recover from failures, remain observable, and still give users a fast interaction.
+
+## What I Would Improve Next
+
+The next iteration would focus on measurable operations:
+
+- Publish median, p95, and time-to-first-token latency by retrieval route
+- Track ingestion throughput by file type, language, and page count
+- Autoscale worker pools against queue depth and model capacity
+- Add stronger dead-letter and replay tooling for failed documents
+- Compare graph-augmented and vector-only answers on a dedicated evaluation set
+- Move application images to an immutable registry-first deployment flow
+- Add restore drills and explicit recovery objectives for every stateful store
+
+## Conclusion
+
+The visible result is a fast chat interface. The real product is the path from **roughly 22,000 multilingual PDFs to a verifiable answer**.
+
+Dots OCR makes difficult source material readable. Celery turns a sequential ingestion bottleneck into concurrent work. KaLM and Qdrant retrieve semantically relevant evidence. Neo4j preserves relationships between documents. LangGraph applies the right retrieval and reranking work for each question. Self-hosted models keep the main reasoning path under our control. Langfuse and RAGAS make quality observable. Next.js, signed sources, and RapidOCR highlights let users inspect the evidence for themselves.
+
+That final step matters most. A good knowledge system should not ask users to trust its answer blindly. It should make verification part of the answer.

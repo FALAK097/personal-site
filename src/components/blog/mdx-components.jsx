@@ -28,7 +28,14 @@ export function Figure({ src, alt = "", caption, className = "" }) {
   );
 }
 
-export function Video({ src, poster, caption, autoPlay = false, loop = false }) {
+export function Video({
+  src,
+  poster,
+  caption,
+  autoPlay = false,
+  loop = false,
+  title = "Article video",
+}) {
   return (
     <figure className="my-10">
       <div className="overflow-hidden rounded-2xl border border-border bg-black shadow-sm">
@@ -42,6 +49,7 @@ export function Video({ src, poster, caption, autoPlay = false, loop = false }) 
           autoPlay={autoPlay}
           loop={loop}
           preload="metadata"
+          aria-label={title}
         >
           Your browser does not support embedded video.
         </video>
@@ -55,12 +63,31 @@ export function Video({ src, poster, caption, autoPlay = false, loop = false }) 
   );
 }
 
-export function Callout({ title, children }) {
+export function MetricGrid({ children }) {
   return (
-    <aside className="my-8 rounded-2xl border border-clay-200 bg-clay-50/70 px-5 py-4 text-clay-950 dark:border-clay-800 dark:bg-clay-950/25 dark:text-clay-50">
-      {title && <p className="mb-1 font-semibold text-current">{title}</p>}
-      <div className="[&>*:last-child]:mb-0 [&>*:first-child]:mt-0">{children}</div>
-    </aside>
+    <div className="not-prose my-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{children}</div>
+  );
+}
+
+export function Flow({ children }) {
+  return (
+    <div className="not-prose my-8 grid gap-3 rounded-2xl border border-border bg-muted/25 p-4 sm:p-5">
+      {children}
+    </div>
+  );
+}
+
+export function FlowStep({ number, title, children }) {
+  return (
+    <div className="grid grid-cols-[2rem_minmax(0,1fr)] gap-3 rounded-xl border border-border/70 bg-background p-4 shadow-sm">
+      <span className="flex size-8 items-center justify-center rounded-full bg-clay-100 text-sm font-bold text-clay-800 dark:bg-clay-900 dark:text-clay-200">
+        {number}
+      </span>
+      <div>
+        <p className="m-0 font-semibold text-foreground">{title}</p>
+        <div className="mt-1 text-sm leading-6 text-muted-foreground [&>*]:m-0">{children}</div>
+      </div>
+    </div>
   );
 }
 
@@ -77,8 +104,10 @@ export const mdxComponents = {
   Figure,
   Diagram: Figure,
   Video,
-  Callout,
   Metric,
+  MetricGrid,
+  Flow,
+  FlowStep,
   h2: ({ children, ...props }) => (
     <h2 className={headingStyles.h2} {...props}>
       {children}

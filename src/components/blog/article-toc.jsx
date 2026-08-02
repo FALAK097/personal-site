@@ -76,13 +76,14 @@ export function ArticleToc({ items = [], variant = "desktop" }) {
   }
 
   return (
-    <aside className="hidden lg:block" aria-label="Table of contents">
-        <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-foreground">
-            On this page
-          </p>
-          {navigation}
-        </div>
+    <aside
+      className="hidden max-h-[calc(100vh-8rem)] self-start overflow-y-auto pr-2 lg:sticky lg:top-24 lg:block"
+      aria-label="Table of contents"
+    >
+      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-foreground">
+        On this page
+      </p>
+      {navigation}
     </aside>
   );
 }

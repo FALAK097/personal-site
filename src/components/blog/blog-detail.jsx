@@ -62,6 +62,7 @@ export default function BlogDetail({ post, children, toc, prevPost, nextPost }) 
                 month: "long",
                 day: "numeric",
                 year: "numeric",
+                timeZone: "UTC",
               })}
             </span>
             <span>•</span>
@@ -69,7 +70,7 @@ export default function BlogDetail({ post, children, toc, prevPost, nextPost }) 
             {post.updated && (
               <>
                 <span>•</span>
-                <span>Updated {new Date(post.updated).toLocaleDateString("en-US", { month: "short", year: "numeric" })}</span>
+                <span>Updated {new Date(post.updated).toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" })}</span>
               </>
             )}
           </div>

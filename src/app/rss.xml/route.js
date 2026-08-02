@@ -16,9 +16,9 @@ export async function GET() {
     .map(
       (post) => `
     <item>
-      <guid isPermaLink="true">${siteUrl}${post.url}</guid>
+      <guid isPermaLink="true">${escapeXml(`${siteUrl}${post.url}`)}</guid>
       <title>${escapeXml(post.title)}</title>
-      <link>${siteUrl}${post.url}</link>
+      <link>${escapeXml(`${siteUrl}${post.url}`)}</link>
       <description>${escapeXml(post.description)}</description>
       <pubDate>${new Date(post.date).toUTCString()}</pubDate>
     </item>`,
@@ -30,10 +30,10 @@ export async function GET() {
   <channel>
     <title>Falak Gala&apos;s Blog</title>
     <description>Software engineering notes and practical build stories by Falak Gala.</description>
-    <link>${siteUrl}/blog</link>
+    <link>${escapeXml(`${siteUrl}/blog`)}</link>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <language>en-us</language>
-    <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml"/>${items}
+    <atom:link href="${escapeXml(`${siteUrl}/rss.xml`)}" rel="self" type="application/rss+xml"/>${items}
   </channel>
 </rss>`;
 

@@ -11,7 +11,7 @@ export const contentType = "image/png";
 export default async function Image({ params }) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
-  const post = await getPostBySlug(slug);
+  const post = await getPostBySlug(slug).catch(() => null);
 
   if (!post) {
     return new ImageResponse(

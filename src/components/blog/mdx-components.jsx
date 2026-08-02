@@ -34,8 +34,8 @@ export function Video({ src, poster, caption, autoPlay = false, loop = false }) 
       <div className="overflow-hidden rounded-2xl border border-border bg-black shadow-sm">
         <video
           className="m-0 block h-auto w-full"
-          src={src}
-          poster={poster}
+          src={resolveImageSource(src)}
+          poster={resolveImageSource(poster)}
           controls
           playsInline
           muted={autoPlay}

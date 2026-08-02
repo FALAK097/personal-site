@@ -44,6 +44,7 @@ export function ArticleToc({ items = [], variant = "desktop" }) {
             <li key={item.url} style={{ paddingLeft: `${Math.max(0, item.depth - 2) * 12}px` }}>
               <a
                 href={item.url}
+                aria-current={activeId === id ? "location" : undefined}
                 className={cn(
                   "block border-l-2 py-1 pl-3 leading-snug no-underline transition-colors",
                   activeId === id

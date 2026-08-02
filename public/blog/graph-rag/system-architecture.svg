@@ -66,6 +66,6 @@
   <text x="1432" y="674" text-anchor="middle" class="tiny">Gemini fallback</text>
 
   <rect x="180" y="812" width="1240" height="78" rx="22" fill="#fff" stroke="#9ca3af" stroke-width="2"/>
-  <text x="800" y="847" text-anchor="middle" class="label" style="font-size:18px" fill="#374151">POSTGRES · REDIS · LANGFUSE · RAGAS · SENTRY · GUARDRAILS</text>
+  <text x="800" y="847" text-anchor="middle" class="label" style="font-size:18px" fill="#374151">POSTGRES · REDIS · NVIDIA NEMO · LANGFUSE · RAGAS · SENTRY</text>
   <text x="800" y="875" text-anchor="middle" class="tiny">durable state, checkpoints, traces, evaluation, feedback, and operational visibility</text>
 </svg>

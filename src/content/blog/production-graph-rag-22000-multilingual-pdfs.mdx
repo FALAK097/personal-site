@@ -8,6 +8,7 @@ tags:
   - Next.js
   - AI Engineering
   - LangGraph
+  - NVIDIA NeMo Guardrails
 image: "/blog/graph-rag/system-architecture.svg"
 featured: true
 ---
@@ -16,7 +17,7 @@ Building a RAG demo over a handful of clean documents is straightforward. Buildi
 
 The corpus included Hindi, English, Marathi, and other Devanagari-script content. Many files were long, inconsistently formatted, or dependent on OCR. Some answers lived inside a single paragraph; others depended on relationships between legal and administrative documents. Most importantly, a convincing response was not enough. A user needed to see **which document supported it, which page contained the evidence, and where the exact passage appeared**.
 
-The finished system combines a responsive Next.js interface, a FastAPI API, LangGraph orchestration, Dots OCR, KaLM embeddings, Qdrant, Neo4j, Celery, Redis, PostgreSQL, self-hosted language models, Langfuse, and RAGAS. In typical production queries, it returned a response in **under three seconds**, while streaming made the interaction feel faster still.
+The finished system combines a responsive Next.js interface, a FastAPI API, LangGraph orchestration, Dots OCR, KaLM embeddings, Qdrant, Neo4j, Celery, Redis, PostgreSQL, self-hosted language models, NVIDIA NeMo Guardrails, Langfuse, and RAGAS. In typical production queries, it returned a response in **under three seconds**, while streaming made the interaction feel faster still.
 
 <MetricGrid>
   <Metric value="22K" label="multilingual PDFs" />
@@ -26,13 +27,6 @@ The finished system combines a responsive Next.js interface, a FastAPI API, Lang
 </MetricGrid>
 
 This is the architecture story behind it: the bottlenecks, the model choices, the evaluation loop, and the product decisions that turned retrieval into a verifiable research experience.
-
-<Video
-  src="/blog/graph-rag/streaming-chat.mp4"
-  poster="/blog/graph-rag/streaming-chat-poster.png"
-  title="BharatGen streamed chat demonstration"
-  caption="The product experience: a conversational answer streams into the interface, preserves history, and exposes its supporting sources."
-/>
 
 ## What I Was Actually Building
 
@@ -303,13 +297,47 @@ The surrounding product includes:
 
 These details are not separate from the AI system. A technically correct answer can still feel unreliable if citations are hard to open, the response formatting breaks, or mobile controls hide the source.
 
-## State, Security, and Guardrails
+## NVIDIA NeMo Guardrails as a Safety Layer
+
+Retrieval quality answers one question: _did the system find useful evidence?_ It does not answer whether the incoming request is malicious, whether it is trying to reveal system instructions, or whether the generated response should be returned unchanged.
+
+I integrated **NVIDIA NeMo Guardrails** as a separate safety boundary around the RAG workflow. It uses Colang 1.0 configuration together with custom asynchronous Python actions, allowing deterministic checks and contextual model-assisted decisions to coexist.
+
+<Callout title="Guardrails are an architectural layer, not a prompt suffix">
+  The production conversation endpoint runs input rails before retrieval, returns structured reasons and multilingual fallback responses, and records the decision in the same Langfuse trace as the rest of the query. The reusable guardrail wrapper also defines output-validation controls for guarded generation paths.
+</Callout>
+
+<Diagram
+  src="/blog/graph-rag/nemo-guardrails-flow.svg"
+  alt="NVIDIA NeMo Guardrails flow around the multilingual Graph RAG query path"
+  caption="Solid lines show the active conversation route. Dashed lines show reusable output controls that must be connected consistently across generation routes."
+/>
+
+The fast checks run before invoking the more expensive query workflow. Common injection phrases, attempts to reveal prompts or internal configuration, greetings, identity questions, and keyboard-mash inputs can be handled without spending retrieval or generation capacity. An optional LLM classifier handles cases where static keywords would be too blunt.
+
+That distinction matters for legal and governance material. A naive keyword block could reject a query about “cricket match-fixing law” simply because it contains the word “cricket.” The production path can classify the intent in context instead of treating topic keywords as policy.
+
+The rails also preserve the multilingual experience. Language and script detection let the system return an appropriate English, Hindi, or Marathi response when a request is blocked, instead of falling back to an unrelated English error message.
+
+Input-guardrail decisions are attached to Langfuse spans with metadata such as the detected language, decision, and reason. This makes a refusal auditable and helps distinguish a retrieval failure from a safety decision when investigating feedback.
+
+The distinction between implemented controls and active request wiring matters. The main conversation route currently applies the input layer before retrieval. Output checks and Colang grounding flows exist in the reusable wrapper and configuration, but they should be wired consistently into every generation route before describing all streamed output as fully guarded.
+
+### The availability tradeoff
+
+The production wrapper is deliberately **fail-open** if the guardrail subsystem itself throws an unexpected error. That favors availability and prevents a safety-service outage from blocking every legitimate document query. Individual checks and strictness are configurable, so a higher-risk deployment could choose a stricter policy.
+
+Fail-open does not mean “unguarded.” It means the failure behavior is explicit. NeMo Guardrails remains one part of defense in depth alongside authentication, authorization, rate limiting, signed document access, retrieval grounding, monitoring, and evaluation.
+
+It is also important not to oversell the layer. Pattern detection and overlap checks are heuristics; an LLM classifier can be wrong; and a configured safety flag is not proof that every possible attack is solved. The value is a composable and observable control point where these policies can be improved without burying them inside the answer prompt.
+
+## State, Security, and Operational Controls
 
 PostgreSQL stores durable application data such as users, conversations, messages, feedback, and document records. Redis supports several shorter-lived concerns: Celery transport, caches, and LangGraph checkpoints. Conversation history can be reconstructed from durable records when a cache is unavailable.
 
-The application also includes refresh-token handling, rate limiting, ownership checks, controlled conversation sharing, and signed document access. NeMo Guardrails can check prompt injection, jailbreak attempts, toxicity, sensitive information, off-topic requests, hallucination risk, and PII masking. Sentry provides application error and performance visibility.
+The application also includes refresh-token handling, rate limiting, ownership checks, controlled conversation sharing, and signed document access. Sentry provides application error and performance visibility.
 
-Not every protection should be described as absolute. Guardrails are defense-in-depth controls, and several checks are configuration-dependent. They complement authentication, authorization, observability, and careful data handling rather than replacing them.
+These controls protect different boundaries. NeMo governs the model interaction, authorization governs data access, signed URLs limit document exposure, and Sentry makes operational failures visible. None should be expected to replace the others.
 
 ## How the System Is Deployed
 

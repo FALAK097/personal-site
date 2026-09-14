@@ -3,6 +3,7 @@
 import React from "react";
 import * as m from "motion/react-m";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import {
   Tooltip,
@@ -111,13 +112,16 @@ const skillLogos = {
 
 export const SkillsLogo = ({ skill, index }) => {
   const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const skillData = skillLogos[skill];
+
+  useEffect(() => setMounted(true), []);
 
   if (!skillData) return null;
 
   const logoSrc =
     typeof skillData.logo === "object" && !React.isValidElement(skillData.logo)
-      ? theme === "dark"
+      ? mounted && theme === "dark"
         ? skillData.logo.dark
         : skillData.logo.light
       : typeof skillData.logo === "string"

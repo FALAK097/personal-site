@@ -1,5 +1,6 @@
 import { ArrowUpRight, CalendarDays, FileText, Mail } from "lucide-react";
 import { ContactForm } from "@/components/contact-form";
+import { PageHeader } from "@/components/custom/page-header";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 
@@ -8,35 +9,22 @@ export const metadata = {
   description: "Work with Falak Gala across product engineering, AI systems, infrastructure, and full-stack software.",
 };
 
-const capabilities = [
-  "Frontend and backend systems, from polished interfaces to scalable APIs",
-  "AI agents, model integrations, evaluation, and self-hosted AI infrastructure",
-  "Cloud infrastructure, deployment pipelines, observability, and performance",
-  "System design, technical documentation, and clear collaboration with clients and developers",
-];
-
 export default function ContactPage() {
   return (
     <div className="page-shell">
       <Navbar />
       <main className="page-main">
         <div className="space-y-16">
-          <header className="space-y-6">
-            <div>
-              <h1 className="page-heading">Contact</h1>
-              <p className="page-intro">I help teams turn complex product ideas into clear, scalable, production ready systems across product, AI, and infrastructure.</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
+          <PageHeader
+            title="Contact"
+            intro="I help teams turn complex product ideas into clear, scalable, production ready systems across product, AI, and infrastructure."
+          >
+            <div className="flex flex-wrap gap-2 pt-3">
               <ContactLink href="mailto:hi@falakgala.dev" icon={Mail}>Email me</ContactLink>
               <ContactLink href="https://cal.com/falak" icon={CalendarDays} external>Book a call</ContactLink>
               <ContactLink href="/resume.pdf" icon={FileText} external>View resume</ContactLink>
             </div>
-          </header>
-
-          <section className="space-y-5">
-            <div><h2 className="section-heading">What I can help with</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">I can own a focused interface, build an end-to-end system, or work across product and engineering boundaries to get complex software shipped.</p></div>
-            <ul className="divide-y divide-border/70">{capabilities.map((capability) => <li key={capability} className="flex gap-3 py-3 text-sm leading-6 text-muted-foreground"><span className="text-clay-500">•</span>{capability}</li>)}</ul>
-          </section>
+          </PageHeader>
 
           <section className="space-y-6">
             <div><h2 className="section-heading">Tell me about the work</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Share the problem, timeline, and what success looks like. I usually reply within two working days.</p></div>

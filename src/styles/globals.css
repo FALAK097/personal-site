@@ -59,7 +59,7 @@
 
 /* Rotating role treatment adapted from Transitions.dev Thinking states. */
 .t-think {
-  --think-swap: 150ms;
+  --think-swap: 200ms;
   --think-distance: 8px;
   --think-blur: 2px;
   --think-shimmer: 2000ms;
@@ -222,9 +222,9 @@
   .site-container { @apply mx-auto w-full max-w-2xl px-5 sm:px-6; }
   .page-shell { @apply flex min-h-screen flex-col; }
   .page-main { @apply mx-auto w-full max-w-2xl flex-1 px-5 py-12 sm:px-6 sm:py-16; }
-  .page-heading { @apply text-2xl font-semibold tracking-tight sm:text-3xl; }
+  .page-heading { @apply text-lg font-medium tracking-[-0.02em] sm:text-xl; }
   .page-intro { @apply mt-3 max-w-[62ch] text-base leading-7 text-muted-foreground; }
-  .section-heading { @apply text-lg font-semibold tracking-tight; }
+  .section-heading { @apply text-base font-medium tracking-[-0.02em] sm:text-lg; }
   .flat-row { @apply border-b border-border/70 py-5 first:pt-0 last:border-0; }
 }
 

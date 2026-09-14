@@ -1,11 +1,15 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { MoonIcon, SunIcon } from "@/components/icons";
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const handleToggle = () => {
     const nextTheme = resolvedTheme === "dark" ? "light" : "dark";
@@ -15,7 +19,7 @@ export function ThemeToggle() {
 
   return (
     <Button
-      data-theme-sound={resolvedTheme === "dark" ? "/sounds/switch-on.mp3" : "/sounds/switch-off.mp3"}
+      data-theme-sound={mounted && resolvedTheme === "dark" ? "/sounds/switch-on.mp3" : "/sounds/switch-off.mp3"}
       size="icon"
       variant="ghost"
       onClick={handleToggle}

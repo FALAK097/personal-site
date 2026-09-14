@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { PageHeader } from "@/components/custom/page-header";
 import { AboutContent } from "@/components/about/about-content";
 
 export const metadata = {
@@ -14,7 +15,10 @@ export default function AboutPage() {
       <Navbar />
       <main className="page-main">
         <div className="space-y-10">
-          <div><h1 className="page-heading">About</h1><p className="page-intro">How I became a developer, what I care about, and the experience I bring to a product team.</p></div>
+          <PageHeader
+            title="About"
+            intro="How I became a developer, what I care about, and the experience I bring to a product team."
+          />
           <AboutContent />
         </div>
       </main>

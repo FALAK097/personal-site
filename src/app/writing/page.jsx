@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { PageHeader } from "@/components/custom/page-header";
 import { BlogList } from "@/components/blog/blog-list";
 import { getAllPosts } from "@/lib/blog-source";
 
@@ -17,12 +18,10 @@ export default async function WritingPage() {
       <Navbar />
       <main className="page-main">
         <div className="space-y-10">
-          <div>
-            <h1 className="page-heading">Writing</h1>
-            <p className="page-intro">
-              Notes from building frontend systems, AI products, and production infrastructure.
-            </p>
-          </div>
+          <PageHeader
+            title="Writing"
+            intro="Notes from building frontend systems, AI products, and production infrastructure."
+          />
           <BlogList posts={posts} />
         </div>
       </main>

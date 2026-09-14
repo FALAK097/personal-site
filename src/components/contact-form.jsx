@@ -79,12 +79,12 @@ export function ContactForm() {
         </div>
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium" htmlFor="subject">What are you building?</label>
+        <label className="text-sm font-medium" htmlFor="subject">Subject</label>
         <Input
           id="subject"
           {...register("subject")}
           disabled={loading}
-          placeholder="A short project summary"
+          placeholder="One line about the work"
           className="shadow-none"
         />
         {errors.subject && (
@@ -92,12 +92,12 @@ export function ContactForm() {
         )}
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium" htmlFor="message">Details</label>
+        <label className="text-sm font-medium" htmlFor="message">Message</label>
         <Textarea
           id="message"
           {...register("message")}
           disabled={loading}
-          placeholder="The problem, timeline, and how I can help"
+          placeholder="The problem, timeline, and what success looks like"
           className="min-h-36 resize-y shadow-none"
         />
         {errors.message && (
@@ -108,7 +108,7 @@ export function ContactForm() {
         type="submit"
         variant="outline"
         disabled={loading}
-        className="border-clay-500/60 bg-clay-500/10 text-foreground shadow-none hover:bg-clay-500/15"
+        className="shadow-none hover:border-clay-400 hover:bg-transparent"
       >
         {loading ? "Sending…" : "Send message"}
       </Button>

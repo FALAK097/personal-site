@@ -1,5 +1,6 @@
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
+import { PageHeader } from "@/components/custom/page-header";
 import { ProjectList } from "@/components/project-list";
 import { projects } from "@/lib/project-data";
 
@@ -15,12 +16,10 @@ export default function ProjectsPage() {
       <Navbar />
       <main className="page-main">
         <div className="space-y-10">
-          <div>
-            <h1 className="page-heading">Projects</h1>
-            <p className="page-intro">
-              Production products, independent tools, and experiments I&apos;ve designed and shipped.
-            </p>
-          </div>
+          <PageHeader
+            title="Projects"
+            intro="Production products, independent tools, and experiments I&apos;ve designed and shipped."
+          />
           <ProjectList projects={projects} />
         </div>
       </main>

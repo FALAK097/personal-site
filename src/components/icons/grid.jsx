@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -73,7 +74,7 @@ const GridIcon = forwardRef(
           strokeLinejoin="round"
         >
           {squares.map((_, i) => (
-            <motion.rect
+            <m.rect
               key={i}
               x={2 + (i % 3) * 6}
               y={2 + Math.floor(i / 3) * 6}

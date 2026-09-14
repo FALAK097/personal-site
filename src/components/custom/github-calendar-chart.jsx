@@ -1,6 +1,6 @@
 "use client";
 
-import GitHubCalendar from "react-github-calendar";
+import { GitHubCalendar } from "react-github-calendar";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import {
@@ -32,8 +32,8 @@ export const GitHubCalendarChart = () => {
           showWeekdayLabels={false}
           colorScheme={resolvedTheme === "dark" ? "dark" : "light"}
           theme={{
-            light: ["#f4ece8", "#d6bba8", "#a15d3a", "#8c4c2d", "#5e3321"],
-            dark: ["#2a160e", "#5e3321", "#8c4c2d", "#a15d3a", "#c49981"],
+            light: ["#eff9ff", "#c9eaff", "#5cbeff", "#168fdc", "#075c96"],
+            dark: ["#082d48", "#075c96", "#168fdc", "#5cbeff", "#9edcff"],
           }}
         renderBlock={(block, activity) => {
           const date = new Date(activity.date).toLocaleDateString("en-US", {

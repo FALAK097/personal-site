@@ -1,14 +1,8 @@
-"use client";
-
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { useTransitionRouter } from "next-view-transitions";
-import { slideInOut } from "@/lib/animation";
+import Link from "next/link";
 import { SkillsLogo } from "./custom/skills-logo";
 
 export function RecentProjects({ projects }) {
-  const router = useTransitionRouter();
-
   const getLink = (project) =>
     project.deployedUrl || project.githubUrl || "/projects";
 
@@ -24,54 +18,27 @@ export function RecentProjects({ projects }) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="flex items-center justify-between"
-      >
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="font-light"
-        >
+      <div className="flex items-center justify-between">
+        <h2 className="font-light">
           I love building products
-        </motion.h2>
-        <motion.a
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          onClick={(e) => {
-            e.preventDefault();
-            router.push("/projects", {
-              onTransitionReady: slideInOut,
-            });
-          }}
+        </h2>
+        <Link
           href="/projects"
           className="text-sm text-muted-foreground hover:text-clay-400 transition-colors"
         >
           View All
-        </motion.a>
-      </motion.div>
+        </Link>
+      </div>
 
       {/* Bento Grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="grid grid-cols-1 md:grid-cols-12 gap-4"
-      >
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
         {projects.slice(0, 4).map((project, index) => {
           const href = getLink(project);
           const config = bentoConfig[index] || bentoConfig[3];
 
           return (
-            <motion.article
+            <article
               key={project.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
               className={`group relative overflow-hidden rounded-2xl border border-border/50 bg-card hover:border-border hover:shadow-xl transition-all duration-500 ${config.colSpan}`}
             >
               <a
@@ -113,7 +80,6 @@ export function RecentProjects({ projects }) {
                       <div
                         key={tag}
                         className="pointer-events-auto"
-                        onClick={(e) => e.stopPropagation()}
                       >
                         <SkillsLogo skill={tag} index={tagIndex} />
                       </div>
@@ -121,10 +87,10 @@ export function RecentProjects({ projects }) {
                   </div>
                 </div>
               </div>
-            </motion.article>
+            </article>
           );
         })}
-      </motion.div>
+      </div>
     </div>
   );
 }

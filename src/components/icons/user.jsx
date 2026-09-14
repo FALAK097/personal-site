@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -79,7 +80,7 @@ const UserIcon = forwardRef(
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <motion.circle
+          <m.circle
             cx="12"
             cy="8"
             r="5"
@@ -87,7 +88,7 @@ const UserIcon = forwardRef(
             variants={circleVariant}
           />
 
-          <motion.path
+          <m.path
             d="M20 21a8 8 0 0 0-16 0"
             variants={pathVariant}
             transition={{

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -139,13 +140,13 @@ const LinkedinIcon = forwardRef(
           strokeLinejoin="round"
           viewBox="0 0 24 24"
         >
-          <motion.path
+          <m.path
             variants={pathVariants}
             initial="normal"
             animate={pathControls}
             d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
           />
-          <motion.rect
+          <m.rect
             variants={rectVariants}
             initial="normal"
             animate={rectControls}
@@ -154,7 +155,7 @@ const LinkedinIcon = forwardRef(
             width="4"
             height="12"
           />
-          <motion.circle
+          <m.circle
             variants={circleVariants}
             initial="normal"
             animate={circleControls}

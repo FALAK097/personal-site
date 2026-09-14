@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import * as m from "motion/react-m";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import {
@@ -42,7 +42,7 @@ const skillLogos = {
     },
     name: "Shadcn",
   },
-  Motion: { logo: "/skills/motion.svg", name: "Motion" },
+  Motion: { logo: "/skills/m.svg", name: "Motion" },
   Tailwind: { logo: "/skills/tailwindcss.svg", name: "Tailwind" },
   Sass: { logo: "/skills/sass.svg", name: "Sass" },
   Bootstrap: { logo: "/skills/bootstrap.svg", name: "Bootstrap" },
@@ -127,7 +127,7 @@ export const SkillsLogo = ({ skill, index }) => {
     <TooltipProvider>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{
@@ -155,7 +155,7 @@ export const SkillsLogo = ({ skill, index }) => {
                 />
               )}
             </div>
-          </motion.div>
+          </m.div>
         </TooltipTrigger>
         <TooltipContent>
           <span>{skillData.name}</span>

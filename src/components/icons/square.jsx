@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -78,7 +79,7 @@ const SquareIcon = forwardRef(
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <motion.rect
+          <m.rect
             x="3"
             y="3"
             width="18"

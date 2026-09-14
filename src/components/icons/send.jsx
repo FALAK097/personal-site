@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -99,12 +100,12 @@ const SendIcon = forwardRef(
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <motion.path
+          <m.path
             d="M22 2L11 13M22 2L15 22L11 13L2 9L22 2"
             variants={sendVariants}
             animate={sendControls}
           />
-          <motion.path
+          <m.path
             d="M22 2L2 9"
             variants={trailVariants}
             animate={trailControls}

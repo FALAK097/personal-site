@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ArrowLeftIcon, ArrowRightIcon, UploadIcon } from "@/components/icons";
 import { Button } from "../ui/button";
-import { useTransitionRouter } from "next-view-transitions";
-import { slideInOut } from "@/lib/animation";
 import { ArticleToc } from "@/components/blog/article-toc";
 
 export default function BlogDetail({ post, children, toc, prevPost, nextPost }) {
-  const router = useTransitionRouter();
   const [shared, setShared] = useState(false);
 
   const handleShare = async () => {
@@ -36,18 +34,12 @@ export default function BlogDetail({ post, children, toc, prevPost, nextPost }) 
   return (
     <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-12 sm:px-6">
       <div className="mb-8">
-        <a
-          onClick={(e) => {
-            e.preventDefault();
-            router.push("/blog", {
-              onTransitionReady: slideInOut,
-            });
-          }}
+        <Link
           href="/blog"
           className="flex items-center gap-2 text-muted-foreground hover:text-clay-400 transition-colors"
         >
           <ArrowLeftIcon /> Back to Blog
-        </a>
+        </Link>
       </div>
       <div className="grid items-start gap-14 lg:grid-cols-[minmax(0,1fr)_220px]">
         <article
@@ -98,34 +90,22 @@ export default function BlogDetail({ post, children, toc, prevPost, nextPost }) 
       </div>
       <nav className="mt-8 pt-8 flex justify-between items-center">
         {prevPost && (
-          <a
-            onClick={(e) => {
-              e.preventDefault();
-              router.push(`/blog/${prevPost.slug}`, {
-                onTransitionReady: slideInOut,
-              });
-            }}
+          <Link
             href={`/blog/${prevPost.slug}`}
             className="flex items-center gap-2 text-muted-foreground hover:text-clay-400 transition-colors no-underline"
           >
             <ArrowLeftIcon />
             {prevPost.title}
-          </a>
+          </Link>
         )}
         {nextPost && (
-          <a
-            onClick={(e) => {
-              e.preventDefault();
-              router.push(`/blog/${nextPost.slug}`, {
-                onTransitionReady: slideInOut,
-              });
-            }}
+          <Link
             href={`/blog/${nextPost.slug}`}
             className="flex items-center gap-2 text-muted-foreground hover:text-clay-400 transition-colors ml-auto no-underline"
           >
             {nextPost.title}
             <ArrowRightIcon />
-          </a>
+          </Link>
         )}
       </nav>
     </div>

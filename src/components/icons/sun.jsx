@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -76,7 +77,7 @@ const SunIcon = forwardRef(
             "M2 12h2",
             "m4.93 4.93 1.41 1.41",
           ].map((d, index) => (
-            <motion.path
+            <m.path
               key={d}
               d={d}
               animate={controls}

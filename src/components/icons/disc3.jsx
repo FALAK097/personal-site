@@ -1,5 +1,6 @@
 "use client";
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +57,7 @@ const Disc3Icon = forwardRef(
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <motion.g
+          <m.g
             variants={{
               normal: { rotate: 0 },
               animate: {
@@ -71,7 +72,7 @@ const Disc3Icon = forwardRef(
             <path d="M6 12c0-1.7.7-3.2 1.8-4.2" />
             <circle cx="12" cy="12" r="2" />
             <path d="M18 12c0 1.7-.7 3.2-1.8 4.2" />
-          </motion.g>
+          </m.g>
         </svg>
       </div>
     );

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -64,7 +65,7 @@ const CopyIcon = forwardRef(
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <motion.rect
+          <m.rect
             width="14"
             height="14"
             x="8"
@@ -78,7 +79,7 @@ const CopyIcon = forwardRef(
             animate={controls}
             transition={defaultTransition}
           />
-          <motion.path
+          <m.path
             d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
             variants={{
               normal: { x: 0, y: 0 },

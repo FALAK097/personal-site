@@ -1,35 +1,17 @@
-"use client";
-
 import { format } from "date-fns";
-import { motion, AnimatePresence } from "framer-motion";
-import { useTransitionRouter } from "next-view-transitions";
-import { slideInOut } from "@/lib/animation";
+import Link from "next/link";
 
 export function BlogList({ posts }) {
-  const router = useTransitionRouter();
-
   return (
     <div>
-      <AnimatePresence mode="wait">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.4 }}
-        >
+      <div>
           <div className="space-y-8">
             {posts.map((post) => {
               return (
                 <article key={post.slug} className="group relative">
-                  <a
-                    onClick={(e) => {
-                      e.preventDefault();
-                      router.push(`/blog/${post.slug}`, {
-                        onTransitionReady: slideInOut,
-                      });
-                    }}
+                  <Link
                     href={`/blog/${post.slug}`}
-                    className="block p-5 -mx-5 rounded-2xl transition-all duration-300 hover:bg-muted/50 border border-transparent hover:border-border hover:shadow-sm"
+                    className="block p-5 -mx-5 rounded-2xl transition-[background-color,border-color,box-shadow] duration-100 hover:bg-muted/50 border border-transparent hover:border-border hover:shadow-sm"
                   >
                     <div className="flex flex-col space-y-3">
                       <div className="flex items-center justify-between">
@@ -48,13 +30,12 @@ export function BlogList({ posts }) {
                         <span>{post.readingTime} min read</span>
                       </div>
                     </div>
-                  </a>
+                  </Link>
                 </article>
               );
             })}
           </div>
-        </motion.div>
-      </AnimatePresence>
+      </div>
     </div>
   );
 }

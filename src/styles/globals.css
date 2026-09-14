@@ -6,17 +6,17 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-clay-50: #f4ece8;
-  --color-clay-100: #e8d7d0;
-  --color-clay-200: #d6bba8;
-  --color-clay-300: #c49981;
-  --color-clay-400: #b57a5c;
-  --color-clay-500: #a15d3a;
-  --color-clay-600: #8c4c2d;
-  --color-clay-700: #743e26;
-  --color-clay-800: #5e3321;
-  --color-clay-900: #4a2a1c;
-  --color-clay-950: #2a160e;
+  --color-clay-50: oklch(0.97 0.02 240.517);
+  --color-clay-100: oklch(0.94 0.04 240.517);
+  --color-clay-200: oklch(0.89 0.07 240.517);
+  --color-clay-300: oklch(0.84 0.1 240.517);
+  --color-clay-400: oklch(0.8 0.12 240.517);
+  --color-clay-500: #5cbeff;
+  --color-clay-600: oklch(0.62 0.145 240.517);
+  --color-clay-700: oklch(0.5 0.125 240.517);
+  --color-clay-800: oklch(0.4 0.1 240.517);
+  --color-clay-900: oklch(0.31 0.075 240.517);
+  --color-clay-950: oklch(0.23 0.05 240.517);
 
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -180,10 +180,12 @@
 }
 
 ::selection {
-  color: #a15d3a;
+  color: var(--color-clay-700);
+  background: var(--color-clay-100);
 }
 ::-moz-selection {
-  color: #a15d3a;
+  color: var(--color-clay-700);
+  background: var(--color-clay-100);
 }
 
 /* Scrollbar styling */
@@ -196,18 +198,18 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #a15d3a;
+  background: var(--color-clay-500);
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #8c4c2d;
+  background: var(--color-clay-600);
 }
 
 /* Firefox scrollbar styling */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #a15d3a transparent;
+  scrollbar-color: var(--color-clay-500) transparent;
 }
 
 /* Show default touch for mobile */

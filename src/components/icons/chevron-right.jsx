@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -62,7 +63,7 @@ const ChevronRightIcon = forwardRef(
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <motion.path
+          <m.path
             variants={{
               normal: { x: 0 },
               animate: { x: [0, 2, 0] },

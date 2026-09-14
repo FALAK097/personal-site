@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -75,7 +76,7 @@ const MenuIcon = forwardRef(
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <motion.line
+          <m.line
             x1="4"
             y1="6"
             x2="20"
@@ -84,7 +85,7 @@ const MenuIcon = forwardRef(
             animate={controls}
             custom={1}
           />
-          <motion.line
+          <m.line
             x1="4"
             y1="12"
             x2="20"
@@ -93,7 +94,7 @@ const MenuIcon = forwardRef(
             animate={controls}
             custom={2}
           />
-          <motion.line
+          <m.line
             x1="4"
             y1="18"
             x2="20"

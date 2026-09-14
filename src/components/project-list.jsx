@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import * as m from "motion/react-m";
 
 import { Button } from "@/components/ui/button";
 import { GithubIcon, LinkIcon } from "@/components/icons";
@@ -13,7 +13,7 @@ export const ProjectList = ({ projects }) => {
       {projects.map((project, projectIndex) => {
         const isEven = projectIndex % 2 === 0;
         return (
-          <motion.div
+          <m.div
             key={project.id}
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -28,7 +28,7 @@ export const ProjectList = ({ projects }) => {
                 !isEven ? "lg:flex-row-reverse" : ""
               } gap-10 items-center`}
             >
-              <motion.div
+              <m.div
                 className="flex-1 space-y-6"
                 initial={{ opacity: 0, x: isEven ? -30 : 30 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -44,7 +44,7 @@ export const ProjectList = ({ projects }) => {
                   >
                     {project.title}
                   </h2>
-                  <motion.p
+                  <m.p
                     className="text-base text-muted-foreground leading-relaxed"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -54,11 +54,11 @@ export const ProjectList = ({ projects }) => {
                     }}
                   >
                     {project.description}
-                  </motion.p>
+                  </m.p>
                 </div>
 
                 <div className="space-y-3">
-                  <motion.h3
+                  <m.h3
                     className="text-sm font-light text-muted-foreground tracking-wider"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -68,8 +68,8 @@ export const ProjectList = ({ projects }) => {
                     }}
                   >
                     Tech Stack
-                  </motion.h3>
-                  <motion.div
+                  </m.h3>
+                  <m.div
                     className="flex flex-wrap gap-3"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -81,10 +81,10 @@ export const ProjectList = ({ projects }) => {
                     {project.tags.map((tag, index) => (
                       <SkillsLogo key={tag} skill={tag} index={index} />
                     ))}
-                  </motion.div>
+                  </m.div>
                 </div>
 
-                <motion.div
+                <m.div
                   className="flex flex-row gap-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -94,7 +94,7 @@ export const ProjectList = ({ projects }) => {
                   }}
                 >
                   {project.githubUrl && (
-                    <motion.div
+                    <m.div
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -113,10 +113,10 @@ export const ProjectList = ({ projects }) => {
                           GitHub
                         </a>
                       </Button>
-                    </motion.div>
+                    </m.div>
                   )}
                   {project.deployedUrl && (
-                    <motion.div
+                    <m.div
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -135,12 +135,12 @@ export const ProjectList = ({ projects }) => {
                           Live Demo
                         </a>
                       </Button>
-                    </motion.div>
+                    </m.div>
                   )}
-                </motion.div>
-              </motion.div>
+                </m.div>
+              </m.div>
 
-              <motion.div
+              <m.div
                 className="flex-shrink-0 w-full lg:w-96"
                 initial={{ opacity: 0, x: isEven ? 30 : -30 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -160,11 +160,11 @@ export const ProjectList = ({ projects }) => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
-              </motion.div>
+              </m.div>
             </div>
 
             {projectIndex < projects.length - 1 && (
-              <motion.div
+              <m.div
                 className="mt-16 h-px bg-gradient-to-r from-transparent via-muted-foreground/30 to-transparent"
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
@@ -174,7 +174,7 @@ export const ProjectList = ({ projects }) => {
                 }}
               />
             )}
-          </motion.div>
+          </m.div>
         );
       })}
     </div>

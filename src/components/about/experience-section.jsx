@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { motion } from "framer-motion";
+import * as m from "motion/react-m";
 import { Badge } from "@/components/ui/badge";
 import { SkillsLogo } from "@/components/custom/skills-logo";
 import { FormattedText } from "@/components/custom/formatted-text";
@@ -7,7 +7,7 @@ import { experiences } from "@/lib/about-data";
 
 export const ExperienceSection = forwardRef((props, ref) => {
   return (
-    <motion.section
+    <m.section
       ref={ref}
       id="experience"
       initial={{ opacity: 0 }}
@@ -20,7 +20,7 @@ export const ExperienceSection = forwardRef((props, ref) => {
 
       <div className="space-y-12 border-l border-border/50 pl-6 relative ml-2">
         {experiences.map((job, index) => (
-          <motion.div
+          <m.div
             key={index}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -62,9 +62,9 @@ export const ExperienceSection = forwardRef((props, ref) => {
                 </ul>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         ))}
       </div>
-    </motion.section>
+    </m.section>
   );
 });

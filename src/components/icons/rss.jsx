@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -80,19 +81,19 @@ const RssIcon = forwardRef(
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <motion.path
+          <m.path
             d="M4 11a9 9 0 0 1 9 9"
             variants={rssVariants}
             initial="normal"
             animate={controls}
           />
-          <motion.path
+          <m.path
             d="M4 4a16 16 0 0 1 16 16"
             variants={rssVariants}
             initial="normal"
             animate={controls}
           />
-          <motion.circle
+          <m.circle
             cx="5"
             cy="19"
             r="1"

@@ -1,11 +1,11 @@
 import { forwardRef } from "react";
-import { motion } from "framer-motion";
+import * as m from "motion/react-m";
 import { Badge } from "@/components/ui/badge";
 import { education } from "@/lib/about-data";
 
 export const EducationSection = forwardRef((props, ref) => {
   return (
-    <motion.section
+    <m.section
       ref={ref}
       id="education"
       initial={{ opacity: 0, y: 20 }}
@@ -18,7 +18,7 @@ export const EducationSection = forwardRef((props, ref) => {
 
       <div className="space-y-8 border-l border-border/50 pl-6 relative ml-2">
         {education.map((ed, index) => (
-          <motion.div
+          <m.div
             key={`${ed.institution}-${ed.degree}`}
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -44,9 +44,9 @@ export const EducationSection = forwardRef((props, ref) => {
                 <span className="text-sm font-light">{ed.grade}</span>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         ))}
       </div>
-    </motion.section>
+    </m.section>
   );
 });

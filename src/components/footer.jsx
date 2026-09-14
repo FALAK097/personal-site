@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { uniqueVisitors } from "@/actions/unique-visitors";
 import { SocialLinks } from "@/components/social-links";
 import { HeartIcon } from "@/components/icons";
-import { AnimatePresence, motion } from "framer-motion";
 
 const timeFormatter = new Intl.DateTimeFormat("en-IN", {
   hour: "2-digit",
@@ -83,26 +82,11 @@ export function Footer() {
             <div className="flex flex-col items-center gap-3 order-1 md:order-2 md:flex-row md:gap-6">
               <div className="text-sm text-foreground/60 flex items-center">
                 Mumbai ·{" "}
-                <span className="flex overflow-hidden ml-1">
+                <span className="ml-1 tabular-nums">
                   {mumbaiTime.time ? (
-                    mumbaiTime.time.split("").map((char, index) => (
-                      <span key={index} className="inline-grid">
-                        <AnimatePresence mode="popLayout">
-                          <motion.span
-                            key={`${index}-${char}`}
-                            initial={{ y: 20, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: -20, opacity: 0 }}
-                            transition={{ duration: 0.4, type: "spring", bounce: 0 }}
-                            className="col-start-1 row-start-1"
-                          >
-                            {char === " " ? "\u00A0" : char}
-                          </motion.span>
-                        </AnimatePresence>
-                      </span>
-                    ))
+                    mumbaiTime.time
                   ) : (
-                    <span>Loading...</span>
+                    <span aria-hidden="true">--:--</span>
                   )}
                 </span>
               </div>

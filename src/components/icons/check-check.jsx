@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -80,14 +81,14 @@ const CheckCheckIcon = forwardRef(
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <motion.path
+          <m.path
             variants={pathVariants}
             initial="normal"
             animate={controls}
             d="M2 12 7 17L18 6"
             custom={0}
           />
-          <motion.path
+          <m.path
             variants={pathVariants}
             initial="normal"
             animate={controls}

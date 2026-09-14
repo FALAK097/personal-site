@@ -1,5 +1,6 @@
 "use client";
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +57,7 @@ const MusicIcon = forwardRef(
                     strokeLinecap="round"
                     strokeLinejoin="round"
                 >
-                    <motion.path
+                    <m.path
                         d="M9 18V5l12-2v13"
                         variants={{
                             normal: { pathLength: 1 },
@@ -67,7 +68,7 @@ const MusicIcon = forwardRef(
                         }}
                         animate={controls}
                     />
-                    <motion.circle
+                    <m.circle
                         cx="6"
                         cy="18"
                         r="3"
@@ -80,7 +81,7 @@ const MusicIcon = forwardRef(
                         }}
                         animate={controls}
                     />
-                    <motion.circle
+                    <m.circle
                         cx="18"
                         cy="16"
                         r="3"

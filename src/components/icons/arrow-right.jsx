@@ -1,5 +1,6 @@
 "use client";
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -78,12 +79,12 @@ const ArrowRightIcon = forwardRef(
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <motion.path
+          <m.path
             d="M5 12h14"
             variants={pathVariants}
             animate={controls}
           />
-          <motion.path
+          <m.path
             d="m12 5 7 7-7 7"
             variants={secondaryPathVariants}
             animate={controls}

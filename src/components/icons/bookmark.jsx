@@ -1,5 +1,6 @@
 "use client";
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +57,7 @@ const BookmarkIcon = forwardRef(
                     strokeLinecap="round"
                     strokeLinejoin="round"
                 >
-                    <motion.path
+                    <m.path
                         d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"
                         variants={{
                             normal: { y: 0, scale: 1 },

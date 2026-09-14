@@ -1,19 +1,16 @@
 "use client";
 
-import { useTransitionRouter } from "next-view-transitions";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { XIcon, MenuIcon } from "./icons";
-import { slideInOut } from "@/lib/animation";
 
 export function Navbar() {
-  const router = useTransitionRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   const links = [
     { href: "/about", label: "About" },
@@ -23,52 +20,35 @@ export function Navbar() {
     { href: "/bookmarks", label: "Bookmarks" },
   ];
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
       <div className="container mx-auto px-4">
         <nav className="max-w-4xl flex items-center justify-between h-16 mx-auto">
-          <a
-            onClick={(e) => {
-              e.preventDefault();
-              router.push("/", {
-                onTransitionReady: slideInOut,
-              });
-            }}
+          <Link
             href="/"
             className={cn(
               "text-2xl font-bold tracking-tighter text-primary hover:opacity-80 transition-opacity"
             )}
           >
             Falak<span className="text-clay-500">.</span>
-          </a>
+          </Link>
           <div className="flex items-center gap-4">
             <div className="items-center hidden gap-6 md:flex">
-              {links.map(({ href, label }, index) => (
-                <a
-                  onClick={(e) => {
-                    e.preventDefault();
-                    router.push(href, {
-                      onTransitionReady: slideInOut,
-                    });
-                  }}
+              {links.map(({ href, label }) => (
+                <Link
                   key={href}
                   href={href}
                   className={cn(
                     "relative text-sm text-foreground/60 hover:text-foreground transition-colors",
                     "after:absolute after:left-0 after:right-0 after:-bottom-1",
-                    "after:h-[2px] after:bg-[#a15d3a]",
+                    "after:h-[2px] after:bg-clay-500",
                     "after:scale-x-0 hover:after:scale-x-100",
                     "after:transition-transform after:duration-300",
-                    pathname === href && "text-foreground after:scale-x-100",
-                    mounted && `animate-fade-in animate-delay-${index * 100}`
+                    pathname === href && "text-foreground after:scale-x-100"
                   )}
                 >
                   {label}
-                </a>
+                </Link>
               ))}
             </div>
             <ThemeToggle />
@@ -89,14 +69,8 @@ export function Navbar() {
       {isOpen && (
         <div className="flex flex-col gap-3 px-4 pb-4 md:hidden animate-slide-down">
           {links.map(({ href, label }) => (
-            <a
-              onClick={(e) => {
-                e.preventDefault();
-                setIsOpen(false);
-                router.push(href, {
-                  onTransitionReady: slideInOut,
-                });
-              }}
+            <Link
+              onClick={() => setIsOpen(false)}
               key={href}
               href={href}
               className={cn(
@@ -105,7 +79,7 @@ export function Navbar() {
               )}
             >
               {label}
-            </a>
+            </Link>
           ))}
         </div>
       )}

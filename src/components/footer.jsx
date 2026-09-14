@@ -44,7 +44,7 @@ export function Footer() {
   }, []);
 
   return (
-    <footer className="mt-16 border-t border-border/70">
+    <footer className="border-t border-border/70">
       <div className="site-container flex flex-col items-center gap-4 py-6 text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:justify-between">
         <div className="order-3 flex items-center gap-1 sm:order-1">
           Made with <HeartIcon className="size-4 text-clay-500" /> by Falak Gala

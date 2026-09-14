@@ -1,5 +1,6 @@
 "use client";
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -45,7 +46,7 @@ const HashIcon = forwardRef(
         onMouseLeave={handleMouseLeave}
         {...props}
       >
-        <motion.svg
+        <m.svg
           xmlns="http://www.w3.org/2000/svg"
           width={size}
           height={size}
@@ -68,7 +69,7 @@ const HashIcon = forwardRef(
           <line x1="4" x2="20" y1="15" y2="15" />
           <line x1="10" x2="8" y1="3" y2="21" />
           <line x1="16" x2="14" y1="3" y2="21" />
-        </motion.svg>
+        </m.svg>
       </div>
     );
   }

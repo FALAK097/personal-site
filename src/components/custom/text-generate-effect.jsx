@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import * as m from "motion/react-m";
 import { useEffect, useState } from "react";
 
 export const TextGenerateEffect = ({ words, className, delay = 0 }) => {
@@ -17,10 +17,10 @@ export const TextGenerateEffect = ({ words, className, delay = 0 }) => {
 
   const renderWords = () => {
     return (
-      <motion.div className={className}>
+      <m.div className={className}>
         {wordsArray.map((word, idx) => {
           return (
-            <motion.span
+            <m.span
               key={word + idx}
               initial={{ opacity: 0, filter: "blur(10px)" }}
               animate={isVisible ? { opacity: 1, filter: "blur(0px)" } : {}}
@@ -32,10 +32,10 @@ export const TextGenerateEffect = ({ words, className, delay = 0 }) => {
               className="inline-block mr-1"
             >
               {word}
-            </motion.span>
+            </m.span>
           );
         })}
-      </motion.div>
+      </m.div>
     );
   };
 

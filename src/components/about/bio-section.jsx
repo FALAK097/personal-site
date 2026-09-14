@@ -1,10 +1,10 @@
 import { forwardRef } from "react";
-import { motion } from "framer-motion";
+import * as m from "motion/react-m";
 import { FormattedText } from "@/components/custom/formatted-text";
 
 export const BioSection = forwardRef((props, ref) => {
   return (
-    <motion.section
+    <m.section
       ref={ref}
       id="bio"
       initial={{ opacity: 0, y: 20 }}
@@ -43,6 +43,6 @@ export const BioSection = forwardRef((props, ref) => {
           />
         </p>
       </div>
-    </motion.section>
+    </m.section>
   );
 });

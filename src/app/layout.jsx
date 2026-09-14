@@ -1,15 +1,12 @@
-import { Outfit } from "next/font/google";
-import { ViewTransitions } from "next-view-transitions";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "@/components/theme-provider";
+import { MotionProvider } from "@/components/motion-provider";
 
-const outfit = Outfit({ 
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"]
-});
 import { ScrollProgress } from "@/components/custom/scroll-progress";
-import { AskAIWidget } from "@/components/ai/ask-ai-widget";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import "@/styles/globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -24,27 +21,23 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ViewTransitions>
-      <html suppressHydrationWarning lang="en" className={outfit.className}>
-        <body suppressHydrationWarning>
-          <ThemeProvider
-            disableTransitionOnChange
-            attribute="class"
-            enableSystem={true}
-          >
-            <div className="min-h-screen p-4 bg-background/50">
-              <div className="rounded-lg border-2 border-border min-h-[calc(100vh-2rem)]">
-                {children}
-              </div>
-            </div>
+    <html suppressHydrationWarning lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+      <body suppressHydrationWarning>
+        <ThemeProvider
+          disableTransitionOnChange
+          attribute="class"
+          enableSystem={true}
+        >
+          <MotionProvider>
+            {children}
             <ScrollProgress />
+            <ScrollToTop />
             <Toaster />
-            {/* <AskAIWidget /> */}
-          </ThemeProvider>
-          <Analytics />
-          <SpeedInsights />
-        </body>
-      </html>
-    </ViewTransitions>
+          </MotionProvider>
+        </ThemeProvider>
+        <Analytics />
+        <SpeedInsights />
+      </body>
+    </html>
   );
 }

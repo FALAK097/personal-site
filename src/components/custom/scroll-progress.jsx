@@ -1,28 +1,37 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
 export function ScrollProgress() {
-  const [progress, setProgress] = useState(0);
+  const progressRef = useRef(null);
 
   useEffect(() => {
+    let frame = 0;
     const updateProgress = () => {
-      const scrollHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
-      const scrollTop = window.scrollY;
-      const progress = (scrollTop / scrollHeight) * 100;
-      setProgress(progress);
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        const scrollHeight =
+          document.documentElement.scrollHeight - window.innerHeight;
+        const progress = scrollHeight > 0 ? window.scrollY / scrollHeight : 0;
+        progressRef.current?.style.setProperty("--scroll-progress", `${progress}`);
+        frame = 0;
+      });
     };
 
-    window.addEventListener("scroll", updateProgress);
-    return () => window.removeEventListener("scroll", updateProgress);
+    updateProgress();
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", updateProgress);
+      cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (
     <div className="fixed top-0 left-0 right-0 h-1 z-50">
       <div
-        className="h-full bg-clay-500 transition-all duration-150"
-        style={{ width: `${progress}%` }}
+        ref={progressRef}
+        className="h-full origin-left scale-x-[var(--scroll-progress)] bg-clay-500"
+        style={{ "--scroll-progress": 0 }}
       />
     </div>
   );

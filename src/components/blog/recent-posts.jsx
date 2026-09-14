@@ -1,70 +1,30 @@
-"use client";
-
 import { format } from "date-fns";
-import { useTransitionRouter } from "next-view-transitions";
-import { motion, AnimatePresence } from "framer-motion";
-import { slideInOut } from "@/lib/animation";
+import Link from "next/link";
 
 export function RecentPosts({ posts }) {
-  const router = useTransitionRouter();
-
   return (
     <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="flex items-center justify-between"
-      >
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="font-light"
-        >
+      <div className="flex items-center justify-between">
+        <h2 className="font-light">
           I love writing things down
-        </motion.h2>
-        <motion.a
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          onClick={(e) => {
-            e.preventDefault();
-            router.push("/blog", {
-              onTransitionReady: slideInOut,
-            });
-          }}
-          href="/blog"
+        </h2>
+        <Link
+          href="/writing"
           className="text-sm text-muted-foreground hover:text-clay-400 transition-colors"
         >
           View All
-        </motion.a>
-      </motion.div>
-      <AnimatePresence mode="wait">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.4 }}
-        >
+        </Link>
+      </div>
+      <div>
           <div className="space-y-6">
-            {posts.map((post, index) => (
-              <motion.article
+            {posts.map((post) => (
+              <article
                 key={post.slug}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
                 className="group"
               >
-                <a
-                  onClick={(e) => {
-                    e.preventDefault();
-                    router.push(`/blog/${post.slug}`, {
-                      onTransitionReady: slideInOut,
-                    });
-                  }}
+                <Link
                   className="space-y-3 hover:no-underline"
-                  href={`/blog/${post.slug}`}
+                  href={`/writing/${post.slug}`}
                 >
                   <div className="flex items-center gap-2">
                     <h3 className="text-lg font-medium transition-colors hover:text-clay-500">
@@ -81,12 +41,11 @@ export function RecentPosts({ posts }) {
                   <p className="text-muted-foreground text-sm line-clamp-2">
                     {post.description}
                   </p>
-                </a>
-              </motion.article>
+                </Link>
+              </article>
             ))}
           </div>
-        </motion.div>
-      </AnimatePresence>
+      </div>
     </div>
   );
 }

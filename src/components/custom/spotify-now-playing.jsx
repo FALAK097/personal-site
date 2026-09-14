@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 import { Disc3Icon, MusicIcon, TrendingUpIcon } from "../icons";
 import {
   Tooltip,
@@ -100,7 +101,7 @@ export const SpotifyNowPlaying = ({ songData }) => {
               className="bg-background/95 backdrop-blur-md border border-border shadow-2xl p-4 rounded-xl z-50 overflow-hidden pointer-events-auto"
               asChild
             >
-              <motion.a
+              <m.a
                 href={songData?.songUrl || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -144,7 +145,7 @@ export const SpotifyNowPlaying = ({ songData }) => {
                     </span>
                   )}
                 </div>
-              </motion.a>
+              </m.a>
             </TooltipContent>
           )}
         </AnimatePresence>

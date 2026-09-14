@@ -1,55 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { MoonIcon, SunIcon } from "@/components/icons";
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const handleToggle = () => {
-    if (isTransitioning) return;
+    const nextTheme = resolvedTheme === "dark" ? "light" : "dark";
 
-    setIsTransitioning(true);
-
-    // Play sound effect
-    const soundFile = theme === "light" ? "/sounds/switch-off.mp3" : "/sounds/switch-on.mp3";
-    const audio = new Audio(soundFile);
-    audio.play().catch(err => console.error("Failed to play theme sound:", err));
-
-    const overlay = document.createElement("div");
-    overlay.className =
-      "fixed inset-0 z-50 transition-opacity duration-500 ease-in-out opacity-0 pointer-events-none bg-background";
-    document.body.appendChild(overlay);
-
-    requestAnimationFrame(() => {
-      overlay.classList.add("opacity-100");
-    });
-
-    setTimeout(() => {
-      setTheme(theme === "light" ? "dark" : "light");
-    }, 250);
-
-    setTimeout(() => {
-      overlay.classList.remove("opacity-100");
-      overlay.classList.add("opacity-0");
-    }, 500);
-
-    setTimeout(() => {
-      document.body.removeChild(overlay);
-      setIsTransitioning(false);
-    }, 800);
+    setTheme(nextTheme);
   };
 
   return (
     <Button
+      data-theme-sound={mounted && resolvedTheme !== "dark" ? "/sounds/switch-on.mp3" : "/sounds/switch-off.mp3"}
       size="icon"
       variant="ghost"
       onClick={handleToggle}
-      disabled={isTransitioning}
-      className="cursor-pointer hover:bg-transparent mt-1 text-muted-foreground"
+      className="cursor-pointer text-muted-foreground hover:bg-muted"
       aria-label="Toggle theme"
     >
       <SunIcon className="w-5 h-5 transition-all scale-100 rotate-0 dark:-rotate-90 dark:scale-0" />

@@ -14,7 +14,7 @@ export async function generateMetadata(context) {
   if (!post) {
     return {
       title: "Post Not Found",
-      description: "The requested blog post could not be found.",
+      description: "The requested article could not be found.",
     };
   }
 
@@ -22,13 +22,13 @@ export async function generateMetadata(context) {
     title: post.title,
     description: post.description,
     alternates: {
-      canonical: `/blog/${slug}`,
+      canonical: `/writing/${slug}`,
     },
     openGraph: {
       type: "article",
       title: post.title,
       description: post.description,
-      url: `/blog/${slug}`,
+      url: `/writing/${slug}`,
       publishedTime: new Date(post.date).toISOString(),
       modifiedTime: new Date(post.updated || post.date).toISOString(),
       tags: post.tags,

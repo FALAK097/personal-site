@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 import Image from "next/image";
 
 const Confetti = () => {
@@ -9,7 +10,7 @@ const Confetti = () => {
   return (
     <div className="absolute right-14 top-2.5 z-20">
       {pieces.map((_, i) => (
-        <motion.div
+        <m.div
           key={i}
           initial={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
           animate={{
@@ -103,7 +104,7 @@ export const FootballGoalAnimation = () => {
   const showGoalPost = ["shooting", "goal", "returning"].includes(step);
 
   return (
-    <motion.div
+    <m.div
       ref={containerRef}
       className="relative w-screen max-w-full min-h-0 h-[100px] mb-0 mt-2 overflow-visible flex items-center"
       initial={{ opacity: 0, y: 32 }}
@@ -115,7 +116,7 @@ export const FootballGoalAnimation = () => {
         src="/football/soccer-ball-kick.mp3"
         preload="auto"
       />
-      <motion.div
+      <m.div
         className={[
           "absolute left-4 top-1/2 z-10",
           step === "ready" ? "cursor-pointer group" : "cursor-default",
@@ -143,11 +144,11 @@ export const FootballGoalAnimation = () => {
           width={40}
           height={40}
         />
-      </motion.div>
+      </m.div>
       <AnimatePresence>{step === "goal" && <Confetti />}</AnimatePresence>
       <AnimatePresence>
         {step === "goal" && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
@@ -155,7 +156,7 @@ export const FootballGoalAnimation = () => {
             className="absolute right-[100px] top-[70%] -translate-y-1/2 text-[22px] font-semibold text-clay-600 z-30"
           >
             Hala Madrid 🤍💜
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
       {showGoalPost && (
@@ -168,6 +169,6 @@ export const FootballGoalAnimation = () => {
           />
         </div>
       )}
-    </motion.div>
+    </m.div>
   );
 };

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { uniqueVisitors } from "@/actions/unique-visitors";
 import { SocialLinks } from "@/components/social-links";
 import { HeartIcon } from "@/components/icons";
-import { AnimatePresence, motion } from "framer-motion";
 
 const timeFormatter = new Intl.DateTimeFormat("en-IN", {
   hour: "2-digit",
@@ -13,110 +12,50 @@ const timeFormatter = new Intl.DateTimeFormat("en-IN", {
   timeZone: "Asia/Kolkata",
 });
 
-function generateVisitorId() {
-  if (typeof window === "undefined") return null;
-  const localStorageKey = "visitorId";
-  let id = localStorage.getItem(localStorageKey);
+function getVisitorId() {
+  const key = "visitorId";
+  let id = localStorage.getItem(key);
   if (!id) {
     id = crypto.randomUUID();
-    localStorage.setItem(localStorageKey, id);
+    localStorage.setItem(key, id);
   }
   return id;
 }
 
 export function Footer() {
-  const [uniqueVisitorsCount, setUniqueVisitorsCount] = useState(null);
-  const [mumbaiTime, setMumbaiTime] = useState({ time: "" });
+  const [visitorCount, setVisitorCount] = useState(null);
+  const [mumbaiTime, setMumbaiTime] = useState("--:--");
 
   useEffect(() => {
-    const visitorId = generateVisitorId();
-    if (!visitorId) return;
-
-    const fetchUniqueVisitors = async () => {
-      try {
-        const result = await uniqueVisitors(visitorId);
-        if (result?.uniqueVisitors) {
-          setUniqueVisitorsCount(result.uniqueVisitors);
-        } else if (result?.error) {
-          console.error("Server action error:", result.error);
+    uniqueVisitors(getVisitorId())
+      .then((result) => {
+        if (typeof result?.uniqueVisitors === "number") {
+          setVisitorCount(result.uniqueVisitors);
         }
-      } catch (error) {
-        console.error("Failed to fetch unique visitors", error);
-      }
-    };
-
-    fetchUniqueVisitors();
+      })
+      .catch(() => undefined);
   }, []);
 
   useEffect(() => {
-    const update = () => {
-      const now = new Date();
-      setMumbaiTime({
-        time: timeFormatter.format(now),
-      });
-    };
-    update();
-    const interval = setInterval(update, 30_000);
-    return () => clearInterval(interval);
+    const updateTime = () => setMumbaiTime(timeFormatter.format(new Date()));
+    updateTime();
+    const timer = window.setInterval(updateTime, 30_000);
+    return () => window.clearInterval(timer);
   }, []);
 
   return (
-    <footer className="border-t border-border">
-      <div className="container mx-auto px-4 py-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex flex-col items-center gap-4 md:flex-row md:justify-between">
-            {/* Made with love */}
-            <div className="text-sm text-foreground/60 flex items-center gap-1 order-3 md:order-1">
-              Made with <HeartIcon className="inline-flex w-4 h-4 text-red-500" />{" "}
-              by{" "}
-              <a
-                href="https://github.com/Falak097"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-foreground"
-              >
-                Falak Gala
-              </a>
-            </div>
-
-            {/* Center section - Time & Social Links */}
-            <div className="flex flex-col items-center gap-3 order-1 md:order-2 md:flex-row md:gap-6">
-              <div className="text-sm text-foreground/60 flex items-center">
-                Mumbai ·{" "}
-                <span className="flex overflow-hidden ml-1">
-                  {mumbaiTime.time ? (
-                    mumbaiTime.time.split("").map((char, index) => (
-                      <span key={index} className="inline-grid">
-                        <AnimatePresence mode="popLayout">
-                          <motion.span
-                            key={`${index}-${char}`}
-                            initial={{ y: 20, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: -20, opacity: 0 }}
-                            transition={{ duration: 0.4, type: "spring", bounce: 0 }}
-                            className="col-start-1 row-start-1"
-                          >
-                            {char === " " ? "\u00A0" : char}
-                          </motion.span>
-                        </AnimatePresence>
-                      </span>
-                    ))
-                  ) : (
-                    <span>Loading...</span>
-                  )}
-                </span>
-              </div>
-              <SocialLinks />
-            </div>
-
-            {/* Visitors count */}
-            <div className="text-sm text-foreground/60 order-2 md:order-3">
-              {uniqueVisitorsCount !== null
-                ? `${uniqueVisitorsCount.toLocaleString()} Visitors`
-                : "Loading visitors..."}
-            </div>
-          </div>
+    <footer className="border-t border-border/70">
+      <div className="site-container flex flex-col items-center gap-4 py-6 text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:justify-between">
+        <div className="order-3 flex items-center gap-1 sm:order-1">
+          Made with <HeartIcon className="size-4 text-clay-500" /> by Falak Gala
         </div>
+        <div className="order-1 flex flex-col items-center gap-3 sm:order-2 sm:ml-auto sm:flex-row sm:gap-5">
+          <p>Mumbai · <span className="tabular-nums">{mumbaiTime}</span></p>
+          <p className="min-w-24 text-center tabular-nums sm:text-right">
+            {visitorCount === null ? "Visitors —" : `${visitorCount.toLocaleString()} visitors`}
+          </p>
+        </div>
+        <div className="order-2 sm:order-3"><SocialLinks /></div>
       </div>
     </footer>
   );

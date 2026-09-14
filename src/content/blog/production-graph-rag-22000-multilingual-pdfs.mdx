@@ -9,7 +9,7 @@ tags:
   - AI Engineering
   - LangGraph
   - NVIDIA NeMo Guardrails
-image: "/blog/graph-rag/system-architecture.svg"
+image: "/writing/graph-rag/system-architecture.svg"
 featured: true
 ---
 
@@ -40,7 +40,7 @@ It has two large paths:
 Around those paths are the less visible systems that make the product dependable: durable application state in PostgreSQL, task transport and caches in Redis, persistent LangGraph checkpoints, feedback, traces, evaluation datasets, security controls, and error monitoring.
 
 <Diagram
-  src="/blog/graph-rag/system-architecture.svg"
+  src="/writing/graph-rag/system-architecture.svg"
   alt="Hand-drawn production Graph RAG architecture showing the ingestion and query paths"
   caption="The complete system. Expensive ingestion happens asynchronously; the online query path stays focused on delivering relevant evidence quickly."
 />
@@ -96,7 +96,7 @@ The problem was not just “make the loop parallel.” Each stage had a differen
 I moved ingestion into Celery and separated expensive work into specialized queues. Redis acts as the broker and result backend, while an orchestrator coordinates the overall job.
 
 <Diagram
-  src="/blog/graph-rag/ingestion-before-after.svg"
+  src="/writing/graph-rag/ingestion-before-after.svg"
   alt="Before-and-after diagram comparing sequential PDF ingestion with concurrent Celery workers"
   caption="The key scaling change: multiple documents can move through independent OCR, vector, graph, and enrichment queues at the same time."
 />
@@ -158,7 +158,7 @@ low-quality retrieval    → full reranking
 This is an important performance tradeoff. Reranking every result can improve ordering, but it also introduces model latency and cost even when the first results are already excellent.
 
 <Diagram
-  src="/blog/graph-rag/query-flow.svg"
+  src="/writing/graph-rag/query-flow.svg"
   alt="Adaptive query flow showing routing, sufficiency checks, query rewriting, and adaptive reranking"
   caption="The online path spends additional compute only when routing or evidence quality says it is necessary."
 />
@@ -220,7 +220,7 @@ The evaluation system operates at multiple levels:
 Nightly RAGAS jobs score production traces for faithfulness, answer relevancy, context precision, and context recall. Golden datasets support experiments on pull requests, where model or prompt changes can be evaluated with judge models before they reach production. Scores are written back to Langfuse so traces, outputs, and evaluation results remain connected.
 
 <Diagram
-  src="/blog/graph-rag/trust-and-evaluation.svg"
+  src="/writing/graph-rag/trust-and-evaluation.svg"
   alt="Diagram showing both the answer-to-evidence experience and the Langfuse evaluation feedback loop"
   caption="Trust has two loops: users can verify evidence in the interface, while engineers measure retrieval and answer quality from traces and datasets."
 />
@@ -283,7 +283,7 @@ Retrieval quality answers one question: _did the system find useful evidence?_ I
 I integrated **NVIDIA NeMo Guardrails** as a separate safety boundary around the RAG workflow. It uses Colang 1.0 configuration together with custom asynchronous Python actions, allowing deterministic checks and contextual model-assisted decisions to coexist.
 
 <Diagram
-  src="/blog/graph-rag/nemo-guardrails-flow.svg"
+  src="/writing/graph-rag/nemo-guardrails-flow.svg"
   alt="NVIDIA NeMo Guardrails flow around the multilingual Graph RAG query path"
   caption="Solid lines show the active conversation route. Dashed lines show reusable output controls that must be connected consistently across generation routes."
 />

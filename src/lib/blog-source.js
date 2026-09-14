@@ -4,7 +4,7 @@ import { blog } from "@source/server";
 import readingTime from "reading-time";
 
 export const blogSource = loader({
-  baseUrl: "/blog",
+  baseUrl: "/writing",
   source: blog.toFumadocsSource(),
 });
 

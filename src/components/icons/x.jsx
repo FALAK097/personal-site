@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -68,12 +69,12 @@ const XIcon = forwardRef(
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <motion.path
+          <m.path
             variants={pathVariants}
             animate={controls}
             d="M18 6 6 18"
           />
-          <motion.path
+          <m.path
             transition={{ delay: 0.2 }}
             variants={pathVariants}
             animate={controls}

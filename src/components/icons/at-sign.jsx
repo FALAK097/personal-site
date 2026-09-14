@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -100,14 +101,14 @@ const AtSignIcon = forwardRef(
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <motion.circle
+          <m.circle
             variants={circleVariants}
             animate={controls}
             cx="12"
             cy="12"
             r="4"
           />
-          <motion.path
+          <m.path
             variants={pathVariants}
             animate={controls}
             d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"

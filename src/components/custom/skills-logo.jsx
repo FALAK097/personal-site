@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import * as m from "motion/react-m";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import {
   Tooltip,
@@ -60,6 +61,14 @@ const skillLogos = {
   Drizzle: { logo: "/skills/drizzle.svg", name: "Drizzle" },
   Stripe: { logo: "/skills/stripe.jpeg", name: "Stripe" },
   Gemini: { logo: "/skills/gemini.svg", name: "Gemini" },
+  Resend: {
+    logo: {
+      light: "/skills/resend.svg",
+      dark: "/skills/resend-dark.svg",
+    },
+    name: "Resend",
+  },
+  Cloudflare: { logo: "/skills/cloudflare.svg", name: "Cloudflare" },
   OpenAI: {
     logo: {
       light: "/skills/openai.svg",
@@ -86,14 +95,13 @@ const skillLogos = {
     },
     name: "Vercel",
   },
-  "GitHub API": {
+  GitHub: {
     logo: {
       light: "/skills/github-light.svg",
       dark: "/skills/github.svg",
     },
-    name: "GitHub API",
+    name: "GitHub",
   },
-  Git: { logo: "/skills/git.svg", name: "Git" },
   Warp: { logo: "/skills/warp.svg", name: "Warp" },
   VsCode: { logo: "/skills/vscode.svg", name: "Vs Code" },
   Pnpm: {
@@ -105,18 +113,22 @@ const skillLogos = {
   },
   Postman: { logo: "/skills/postman.svg", name: "Postman" },
   Posthog: { logo: "/skills/posthog.svg", name: "Posthog" },
+  "Tailwind CSS": { logo: "/skills/tailwindcss.svg", name: "Tailwind CSS" },
   Ghostty: { logo: "/skills/ghostty.svg", name: "Ghostty" },
 };
 
 export const SkillsLogo = ({ skill, index }) => {
   const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const skillData = skillLogos[skill];
+
+  useEffect(() => setMounted(true), []);
 
   if (!skillData) return null;
 
   const logoSrc =
     typeof skillData.logo === "object" && !React.isValidElement(skillData.logo)
-      ? theme === "dark"
+      ? mounted && theme === "dark"
         ? skillData.logo.dark
         : skillData.logo.light
       : typeof skillData.logo === "string"
@@ -127,35 +139,27 @@ export const SkillsLogo = ({ skill, index }) => {
     <TooltipProvider>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              duration: 0.3,
-              delay: index * 0.1,
-              ease: "easeOut",
-            }}
+            transition={{ duration: 0.12, delay: Math.min(index, 4) * 0.02 }}
             whileHover={{
-              scale: 1.2,
-              y: -5,
-              transition: { duration: 0.2 },
+              scale: 1.06,
+              y: -1,
+              transition: { duration: 0.1 },
             }}
             className="relative"
           >
-            <div className="w-10 h-10 rounded-lg shadow-md flex items-center justify-center border transition-all duration-200 hover:shadow-lg">
+            <div className="flex size-8 items-center justify-center rounded-md border border-border/70 bg-background transition-colors duration-100 hover:border-clay-500/60">
               {React.isValidElement(skillData.logo) ? (
                 <div className="w-6 h-6">{skillData.logo}</div>
               ) : (
-                <Image
-                  src={logoSrc}
-                  alt={skillData.name}
-                  width={24}
-                  height={24}
-                  className="object-contain"
-                />
+                <span className="relative block size-[18px]">
+                  <Image src={logoSrc} alt={skillData.name} fill sizes="18px" className="object-contain" />
+                </span>
               )}
             </div>
-          </motion.div>
+          </m.div>
         </TooltipTrigger>
         <TooltipContent>
           <span>{skillData.name}</span>

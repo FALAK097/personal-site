@@ -1,6 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion, useAnimation } from "motion/react";
+import { AnimatePresence, useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { useCallback, useImperativeHandle, useRef } from "react";
 import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
@@ -90,7 +91,7 @@ const CalendarDaysIcon = forwardRef(
           <path d="M3 10h18" />
           <AnimatePresence>
             {DOTS.map((dot, index) => (
-              <motion.circle
+              <m.circle
                 key={`${dot.cx}-${dot.cy}`}
                 cx={dot.cx}
                 cy={dot.cy}

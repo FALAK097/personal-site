@@ -2,24 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { getBookmarks } from "@/actions/bookmarks";
-import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from "./ui/tooltip";
 import { cn } from "@/lib/utils";
-import { GridIcon, ListIcon, TrendingUpIcon, BookmarkIcon } from "./icons";
+import { TrendingUpIcon, BookmarkIcon } from "./icons";
+import { ViewToggle, useViewPreference } from "@/components/view-toggle";
 
 export const BookmarksList = () => {
   const [bookmarks, setBookmarks] = useState([]);
-  const [viewMode, setViewMode] = useState("moodboard");
+  const [status, setStatus] = useState("loading");
+  const [viewMode, setViewMode, viewReady] = useViewPreference();
   const [activeTag, setActiveTag] = useState("all");
 
   useEffect(() => {
-    getBookmarks().then(setBookmarks).catch(console.error);
+    getBookmarks()
+      .then((items) => { setBookmarks(items); setStatus("ready"); })
+      .catch(() => setStatus("error"));
   }, []);
 
   const allTags = [
@@ -34,14 +31,10 @@ export const BookmarksList = () => {
 
   return (
     <div className="space-y-6">
-      <div className="overflow-x-auto pb-2">
-        <div className="flex items-center gap-2 w-full">
-          <Tabs
-            value={activeTag}
-            onValueChange={setActiveTag}
-            className="flex-1 min-w-0"
-          >
-            <TabsList className="bg-background h-auto p-1 flex flex-wrap">
+      <div className="flex items-center gap-2">
+        <div className="min-w-0 flex-1 overflow-x-auto pb-2">
+          <Tabs value={activeTag} onValueChange={setActiveTag}>
+            <TabsList className="flex h-auto w-max flex-nowrap bg-background p-1 sm:w-full sm:flex-wrap">
               {allTags.map((tag) => (
                 <TabsTrigger
                   key={tag}
@@ -62,71 +55,39 @@ export const BookmarksList = () => {
               ))}
             </TabsList>
           </Tabs>
-          <div className="flex items-center gap-1 ml-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={() => setViewMode("moodboard")}
-                    className={cn(
-                      "p-2 rounded-md",
-                      viewMode === "moodboard"
-                        ? "bg-clay-800 text-clay-200"
-                        : "text-gray-500"
-                    )}
-                    aria-label="Moodboard"
-                  >
-                    <GridIcon size={20} />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent>Moodboard</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={() => setViewMode("list")}
-                    className={cn(
-                      "p-2 rounded-md",
-                      viewMode === "list"
-                        ? "bg-clay-800 text-clay-200"
-                        : "text-gray-500"
-                    )}
-                    aria-label="List"
-                  >
-                    <ListIcon size={20} />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent>List</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
         </div>
+        <ViewToggle value={viewMode} onChange={setViewMode} />
       </div>
 
-      {viewMode === "moodboard" ? (
+      {status === "loading" ? <p className="py-10 text-sm text-muted-foreground">Loading bookmarks…</p> : null}
+      {status === "error" ? <p className="py-10 text-sm text-muted-foreground">Bookmarks are temporarily unavailable. Please try again shortly.</p> : null}
+
+      <div className={cn("transition-opacity duration-100", !viewReady && "opacity-0")}>
+      {status === "ready" && viewMode === "grid" ? (
         <div className="masonry-grid">
           {filteredBookmarks.map((bookmark) => (
             <MoodboardCard key={bookmark.id} bookmark={bookmark} />
           ))}
         </div>
-      ) : (
+      ) : status === "ready" ? (
         <div>
           {filteredBookmarks.map((bookmark) => (
             <ListCard key={bookmark.id} bookmark={bookmark} />
           ))}
         </div>
-      )}
+      ) : null}
+      </div>
     </div>
   );
 };
 
 const MoodboardCard = ({ bookmark }) => {
-  const isLarge = bookmark.featured || Math.random() > 0.7;
+  const isLarge = bookmark.featured;
 
   return (
-    <Card
+    <article
       className={cn(
-        "masonry-item group overflow-hidden rounded-lg border-0 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02]",
+        "masonry-item group overflow-hidden rounded-lg bg-muted/30 transition-opacity duration-100",
         isLarge ? "masonry-item-large" : ""
       )}
     >
@@ -137,20 +98,7 @@ const MoodboardCard = ({ bookmark }) => {
         className="block h-full"
       >
         <div className="relative aspect-video w-full overflow-hidden bg-clay-100 dark:bg-clay-900">
-          {bookmark.cover ? (
-            <img
-              src={bookmark.cover || "/placeholder.svg"}
-              alt={bookmark.title}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center bg-gradient-to-br from-clay-300 to-clay-100 dark:from-clay-800 dark:to-clay-950">
-              <BookmarkIcon
-                size={48}
-                className="text-clay-500 dark:text-clay-300 opacity-50"
-              />
-            </div>
-          )}
+          <BookmarkImage bookmark={bookmark} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.015]" iconSize={32} />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
           <div className="absolute bottom-0 left-0 right-0 p-3 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
             <div className="flex items-center gap-1">
@@ -178,28 +126,15 @@ const MoodboardCard = ({ bookmark }) => {
           </div>
         </div>
       </a>
-    </Card>
+    </article>
   );
 };
 
 const ListCard = ({ bookmark }) => {
   return (
-    <div className="group flex items-start gap-3 p-3 rounded-lg hover:bg-clay-50 dark:hover:bg-clay-900/20 transition-colors duration-200 border-b border-clay-100 dark:border-clay-800/50 last:border-b-0">
+    <div className="group flex items-start gap-3 border-b border-border/70 py-4 last:border-b-0">
       <div className="flex-shrink-0">
-        {bookmark.cover ? (
-          <img
-            src={bookmark.cover || "/placeholder.svg"}
-            alt={bookmark.title}
-            className="w-12 h-12 object-cover rounded-md shadow-sm border border-clay-200 dark:border-clay-700"
-          />
-        ) : (
-          <div className="w-12 h-12 bg-gradient-to-br from-clay-300 to-clay-100 dark:from-clay-800 dark:to-clay-950 rounded-md flex items-center justify-center">
-            <BookmarkIcon
-              size={20}
-              className="text-clay-500 dark:text-clay-300 opacity-70"
-            />
-          </div>
-        )}
+        <BookmarkImage bookmark={bookmark} className="size-12 rounded-md border border-border object-cover" iconSize={18} />
       </div>
 
       <div className="flex-1 min-w-0">
@@ -241,4 +176,12 @@ const ListCard = ({ bookmark }) => {
       </div>
     </div>
   );
+};
+
+const BookmarkImage = ({ bookmark, className, iconSize }) => {
+  const [failed, setFailed] = useState(false);
+  if (!bookmark.cover || failed) {
+    return <div className={cn(className, "flex items-center justify-center bg-muted text-clay-500")} role="img" aria-label={`${bookmark.title} preview unavailable`}><BookmarkIcon size={iconSize} /></div>;
+  }
+  return <img src={bookmark.cover} alt={`${bookmark.title} preview`} loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setFailed(true)} className={className} />;
 };

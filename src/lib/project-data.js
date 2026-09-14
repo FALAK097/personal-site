@@ -140,7 +140,7 @@ export const projects = [
       "Express.js",
       "MongoDB",
       "Tailwind",
-      "GitHub API",
+      "GitHub",
     ],
     githubUrl: "https://github.com/FALAK097/github-scout",
     imageUrl: "/projects/mern-github.png",

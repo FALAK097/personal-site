@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getPostBySlug } from "@/lib/blog-source";
 
-export const alt = "Falak Gala's Blog";
+export const alt = "Falak Gala's Writing";
 export const size = {
   width: 1200,
   height: 630,
@@ -23,8 +23,8 @@ export default async function Image({ params }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#2a160e",
-            color: "#e8d7d0",
+            backgroundColor: "#082d48",
+            color: "#c9eaff",
             fontSize: 48,
           }}
         >
@@ -44,8 +44,8 @@ export default async function Image({ params }) {
           flexDirection: "column",
           alignItems: "flex-start",
           justifyContent: "center",
-          backgroundColor: "#f4ece8", // clay-50
-          backgroundImage: "radial-gradient(circle at 25px 25px, #d6bba8 2%, transparent 0%), radial-gradient(circle at 75px 75px, #d6bba8 2%, transparent 0%)",
+          backgroundColor: "#eff9ff",
+          backgroundImage: "radial-gradient(circle at 25px 25px, #9edcff 2%, transparent 0%), radial-gradient(circle at 75px 75px, #9edcff 2%, transparent 0%)",
           backgroundSize: "100px 100px",
           padding: "60px",
           fontFamily: "sans-serif",
@@ -60,8 +60,8 @@ export default async function Image({ params }) {
             backgroundColor: "#ffffff",
             borderRadius: "24px",
             padding: "50px",
-            boxShadow: "0 20px 40px rgba(161, 93, 58, 0.15)", // clay shadow
-            border: "2px solid #e8d7d0", // clay-100
+            boxShadow: "0 20px 40px rgba(92, 190, 255, 0.18)",
+            border: "2px solid #c9eaff",
           }}
         >
           {/* Top Bar: Logo & Date */}
@@ -86,19 +86,19 @@ export default async function Image({ params }) {
                   width: "48px",
                   height: "48px",
                   borderRadius: "50%",
-                  background: "linear-gradient(to bottom right, #c49981, #a15d3a, #743e26)",
-                  boxShadow: "0 0 12px rgba(161, 93, 58, 0.5)",
+                  background: "linear-gradient(to bottom right, #9edcff, #5cbeff, #075c96)",
+                  boxShadow: "0 0 12px rgba(92, 190, 255, 0.5)",
                 }}
               />
               <span
                 style={{
                   fontSize: 32,
                   fontWeight: 800,
-                  color: "#4a2a1c",
+                  color: "#082d48",
                   letterSpacing: "-0.05em",
                 }}
               >
-                Falak<span style={{ color: "#a15d3a" }}>.</span>
+                Falak<span style={{ color: "#168fdc" }}>.</span>
               </span>
             </div>
 
@@ -107,7 +107,7 @@ export default async function Image({ params }) {
               <span
                 style={{
                   fontSize: 24,
-                  color: "#8c4c2d",
+                  color: "#075c96",
                   fontWeight: 500,
                 }}
               >
@@ -126,7 +126,7 @@ export default async function Image({ params }) {
               style={{
                 fontSize: 60,
                 fontWeight: 900,
-                color: "#2a160e", // clay-950
+                color: "#082d48",
                 lineHeight: 1.1,
                 letterSpacing: "-0.02em",
                 margin: 0,
@@ -139,7 +139,7 @@ export default async function Image({ params }) {
             <p
               style={{
                 fontSize: 28,
-                color: "#743e26", // clay-700
+                color: "#075c96",
                 lineHeight: 1.4,
                 fontWeight: 500,
                 margin: 0,
@@ -166,8 +166,8 @@ export default async function Image({ params }) {
                   key={tag}
                   style={{
                     fontSize: 24,
-                    color: "#a15d3a", // clay-500
-                    backgroundColor: "#f4ece8", // clay-50
+                    color: "#075c96",
+                    backgroundColor: "#eff9ff",
                     padding: "8px 24px",
                     borderRadius: "999px",
                     fontWeight: 600,

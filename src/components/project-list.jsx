@@ -1,182 +1,60 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
+import { GithubIcon } from "@/components/icons";
+import { SkillsLogo } from "@/components/custom/skills-logo";
+import { cn } from "@/lib/utils";
+import { ViewToggle, useViewPreference } from "@/components/view-toggle";
 
-import { Button } from "@/components/ui/button";
-import { GithubIcon, LinkIcon } from "@/components/icons";
-import { SkillsLogo } from "./custom/skills-logo";
+export function ProjectList({ projects, compact = false }) {
+  const [view, setView, viewReady] = useViewPreference();
+  const shown = compact ? projects.slice(0, 4) : projects;
 
-export const ProjectList = ({ projects }) => {
   return (
-    <div className="space-y-16">
-      {projects.map((project, projectIndex) => {
-        const isEven = projectIndex % 2 === 0;
-        return (
-          <motion.div
-            key={project.id}
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.6,
-              delay: projectIndex * 0.2,
-              ease: "easeOut",
-            }}
-          >
-            <div
-              className={`flex flex-col-reverse lg:flex-row ${
-                !isEven ? "lg:flex-row-reverse" : ""
-              } gap-10 items-center`}
-            >
-              <motion.div
-                className="flex-1 space-y-6"
-                initial={{ opacity: 0, x: isEven ? -30 : 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{
-                  duration: 0.6,
-                  delay: projectIndex * 0.2 + 0.1,
-                }}
-              >
-                <div>
-                  <h2
-                    id={`project-title-${project.id}`}
-                    className="text-lg font-medium text-foreground group-hover:text-primary transition-colors duration-300"
-                  >
-                    {project.title}
-                  </h2>
-                  <motion.p
-                    className="text-base text-muted-foreground leading-relaxed"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{
-                      duration: 0.6,
-                      delay: projectIndex * 0.2 + 0.2,
-                    }}
-                  >
-                    {project.description}
-                  </motion.p>
-                </div>
+    <section className="space-y-5">
+      <div className="flex items-center justify-between gap-4">
+        {compact ? <h2 className="font-light">I love building things</h2> : <span />}
+        <ViewToggle value={view} onChange={setView} />
+      </div>
+      <div className={cn("transition-opacity duration-100", !viewReady && "opacity-0", view === "grid" && "grid gap-x-5 gap-y-8 sm:grid-cols-2")}>
+        {shown.map((project, index) => (
+          <article key={project.id} className={cn("group", view === "list" && "flat-row")}>
+            {view === "grid" ? (
+              <div className="space-y-3">
+                <a href={project.deployedUrl || project.githubUrl} target="_blank" rel="noreferrer" className="relative block aspect-[16/10] overflow-hidden rounded-lg bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay-500">
+                  <Image src={project.imageUrl} alt={`${project.title} product preview`} fill priority={index < 2} sizes="(max-width: 640px) 100vw, 320px" className="object-cover object-top transition-transform duration-200 group-hover:scale-[1.015]" />
+                </a>
+                <ProjectCopy project={project} />
+              </div>
+            ) : <div className="relative"><ProjectCopy project={project} /><div className="pointer-events-none absolute top-1/2 left-[calc(100%+2rem)] hidden w-64 -translate-y-1/2 overflow-hidden rounded-lg border border-border bg-background opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100 xl:block"><div className="relative aspect-[16/10]"><Image src={project.imageUrl} alt="" fill sizes="256px" className="object-cover object-top" /></div></div></div>}
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
 
-                <div className="space-y-3">
-                  <motion.h3
-                    className="text-sm font-light text-muted-foreground tracking-wider"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{
-                      duration: 0.6,
-                      delay: projectIndex * 0.2 + 0.3,
-                    }}
-                  >
-                    Tech Stack
-                  </motion.h3>
-                  <motion.div
-                    className="flex flex-wrap gap-3"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.6,
-                      delay: projectIndex * 0.2 + 0.4,
-                    }}
-                  >
-                    {project.tags.map((tag, index) => (
-                      <SkillsLogo key={tag} skill={tag} index={index} />
-                    ))}
-                  </motion.div>
-                </div>
-
-                <motion.div
-                  className="flex flex-row gap-4"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.6,
-                    delay: projectIndex * 0.2 + 0.5,
-                  }}
-                >
-                  {project.githubUrl && (
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Button
-                        asChild
-                        variant="outline"
-                        className="hover:border-primary hover:text-primary transition-all duration-300"
-                      >
-                        <a
-                          href={project.githubUrl}
-                          rel="noopener noreferrer"
-                          target="_blank"
-                          aria-label={`View ${project.title} on GitHub`}
-                        >
-                          <GithubIcon className="h-4 w-4 mr-2" />
-                          GitHub
-                        </a>
-                      </Button>
-                    </motion.div>
-                  )}
-                  {project.deployedUrl && (
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Button
-                        asChild
-                        variant="outline"
-                        className="hover:bg-transparent hover:border-clay-500 transition-all duration-300"
-                      >
-                        <a
-                          href={project.deployedUrl}
-                          rel="noopener noreferrer"
-                          target="_blank"
-                          aria-label={`View live demo of ${project.title}`}
-                        >
-                          <LinkIcon className="h-4 w-4 mr-2" />
-                          Live Demo
-                        </a>
-                      </Button>
-                    </motion.div>
-                  )}
-                </motion.div>
-              </motion.div>
-
-              <motion.div
-                className="flex-shrink-0 w-full lg:w-96"
-                initial={{ opacity: 0, x: isEven ? 30 : -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{
-                  duration: 0.6,
-                  delay: projectIndex * 0.2 + 0.3,
-                }}
-              >
-                <div className="group relative aspect-video overflow-hidden rounded-xl shadow-2xl border border-muted-foreground/20 hover:shadow-3xl transition-all duration-500">
-                  <Image
-                    fill
-                    alt={project.title}
-                    className="object-cover"
-                    src={project.imageUrl}
-                    sizes="(max-width: 1024px) 100vw, 384px"
-                    priority={projectIndex === 0}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
-              </motion.div>
-            </div>
-
-            {projectIndex < projects.length - 1 && (
-              <motion.div
-                className="mt-16 h-px bg-gradient-to-r from-transparent via-muted-foreground/30 to-transparent"
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{
-                  duration: 0.8,
-                  delay: projectIndex * 0.2 + 0.6,
-                }}
-              />
-            )}
-          </motion.div>
-        );
-      })}
+function ProjectCopy({ project }) {
+  return (
+    <div className="space-y-2">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-base font-medium tracking-tight">{project.title}</h2>
+          <p className="mt-1 max-w-[58ch] text-sm leading-6 text-muted-foreground">{project.description}</p>
+        </div>
+        <div className="flex shrink-0 items-center gap-1">
+          {project.githubUrl ? <ProjectLink href={project.githubUrl} label={`${project.title} on GitHub`}><GithubIcon /></ProjectLink> : null}
+          {project.deployedUrl ? <ProjectLink href={project.deployedUrl} label={`Open ${project.title}`}><ArrowUpRight /></ProjectLink> : null}
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-2 pt-1" aria-label={`${project.title} technology stack`}>
+        {project.tags.slice(0, 7).map((tag, index) => <SkillsLogo key={tag} skill={tag} index={index} />)}
+      </div>
     </div>
   );
-};
+}
+
+function ProjectLink({ href, label, children }) {
+  return <a href={href} target="_blank" rel="noreferrer" aria-label={label} className="grid size-8 place-items-center rounded-md text-muted-foreground transition-colors duration-100 hover:bg-muted hover:text-foreground [&_svg]:size-3.5 [&_svg]:stroke-[1.75]">{children}</a>;
+}

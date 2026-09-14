@@ -1,5 +1,6 @@
 "use client";
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -45,7 +46,7 @@ const ArrowUpRightIcon = forwardRef(
         onMouseLeave={handleMouseLeave}
         {...props}
       >
-        <motion.svg
+        <m.svg
           xmlns="http://www.w3.org/2000/svg"
           width={size}
           height={size}
@@ -67,7 +68,7 @@ const ArrowUpRightIcon = forwardRef(
         >
           <path d="M7 7h10v10" />
           <path d="M7 17 17 7" />
-        </motion.svg>
+        </m.svg>
       </div>
     );
   }

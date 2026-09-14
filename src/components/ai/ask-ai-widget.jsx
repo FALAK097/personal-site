@@ -38,8 +38,8 @@ const slashCommands = [
       "Explore Falak's portfolio and projects, only project names and links will be provided, go to https://falakgala.dev/projects to see the project details",
   },
   {
-    command: "/blog",
-    question: "What are Falak's latest blog posts?",
+    command: "/writing",
+    question: "What are Falak's latest articles?",
     description: "Discover Falak's latest articles and insights",
   },
   {

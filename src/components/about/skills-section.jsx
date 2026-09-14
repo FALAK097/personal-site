@@ -1,12 +1,12 @@
 import { forwardRef } from "react";
-import { motion } from "framer-motion";
+import * as m from "motion/react-m";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SkillsLogo } from "../custom/skills-logo";
 import { skillCategories } from "@/lib/about-data";
 
 export const SkillsSection = forwardRef((props, ref) => {
   return (
-    <motion.section
+    <m.section
       ref={ref}
       id="skills"
       initial={{ opacity: 0 }}
@@ -32,7 +32,7 @@ export const SkillsSection = forwardRef((props, ref) => {
 
         {Object.entries(skillCategories).map(([category, skills]) => (
           <TabsContent key={category} value={category} className="mt-6">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -49,10 +49,10 @@ export const SkillsSection = forwardRef((props, ref) => {
                   </span>
                 </div>
               ))}
-            </motion.div>
+            </m.div>
           </TabsContent>
         ))}
       </Tabs>
-    </motion.section>
+    </m.section>
   );
 });

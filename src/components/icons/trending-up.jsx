@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -101,7 +102,7 @@ const TrendingUpIcon = forwardRef(
         onMouseLeave={handleMouseLeave}
         {...props}
       >
-        <motion.svg
+        <m.svg
           xmlns="http://www.w3.org/2000/svg"
           width={size}
           height={size}
@@ -115,19 +116,19 @@ const TrendingUpIcon = forwardRef(
           initial="normal"
           animate={controls}
         >
-          <motion.polyline
+          <m.polyline
             points="22 7 13.5 15.5 8.5 10.5 2 17"
             variants={pathVariants}
             initial="normal"
             animate={controls}
           />
-          <motion.polyline
+          <m.polyline
             points="16 7 22 7 22 13"
             variants={arrowVariants}
             initial="normal"
             animate={controls}
           />
-        </motion.svg>
+        </m.svg>
       </div>
     );
   }

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useAnimation } from "motion/react";
+import { useAnimation } from "motion/react";
+import * as m from "motion/react-m";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -71,7 +72,7 @@ const ListIcon = forwardRef(
           strokeLinejoin="round"
         >
           {[0, 1, 2].map((i) => (
-            <motion.line
+            <m.line
               key={i}
               x1="4"
               y1={6 + i * 5}

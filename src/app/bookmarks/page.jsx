@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { PageHeader } from "@/components/custom/page-header";
 import { BookmarksList } from "@/components/bookmarks-list";
 
 export const metadata = {
@@ -10,18 +11,14 @@ export const metadata = {
 
 export default function BookmarksPage() {
   return (
-    <div className="flex flex-col min-h-[calc(100vh-2rem)]">
+    <div className="page-shell">
       <Navbar />
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <div>
-            <h1 className="text-xl font-semibold mb-4">Bookmarks</h1>
-            <p className="text-md text-muted-foreground">
-              A curated collection of my favorite tools, articles, and
-              engineering resources that inspire and support my work as a
-              developer.
-            </p>
-          </div>
+      <main className="page-main">
+        <div className="space-y-10">
+          <PageHeader
+            title="Bookmarks"
+            intro="A curated collection of my favorite tools, articles, and engineering resources that inspire and support my work as a developer."
+          />
           <BookmarksList />
         </div>
       </main>

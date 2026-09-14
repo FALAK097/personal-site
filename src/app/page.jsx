@@ -19,10 +19,10 @@ export default async function Home() {
   const recentPosts = allPosts.slice(0, 3);
   const recentProjects = projects.slice(0, 5);
   return (
-    <div className="flex flex-col min-h-[calc(100vh-2rem)]">
+    <div className="page-shell">
       <Navbar />
-      <main className="container flex-1 px-4 py-8 mx-auto">
-        <div className="max-w-4xl mx-auto space-y-16">
+      <main className="page-main">
+        <div className="space-y-20 sm:space-y-24">
           {/* <Profile spotifyData={spotifyData} /> */}
           <Profile />
           <RecentProjects projects={recentProjects} />

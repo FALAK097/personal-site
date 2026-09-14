@@ -57,6 +57,82 @@
   --radius-sm: calc(var(--radius) - 4px);
 }
 
+/* Rotating role treatment adapted from Transitions.dev Thinking states. */
+.t-think {
+  --think-swap: 150ms;
+  --think-distance: 8px;
+  --think-blur: 2px;
+  --think-shimmer: 2000ms;
+  --think-base: var(--color-clay-500);
+  --think-highlight: var(--foreground);
+  position: relative;
+  display: block;
+  width: fit-content;
+  text-align: left;
+}
+
+.t-think-sizer {
+  display: block;
+  visibility: hidden;
+  white-space: nowrap;
+}
+
+.t-think-text {
+  position: absolute;
+  inset: 0;
+  display: block;
+  color: var(--think-base);
+  white-space: nowrap;
+  transform: translateY(0);
+  filter: blur(0);
+  opacity: 1;
+  transition: transform var(--think-swap) ease-in-out, filter var(--think-swap) ease-in-out, opacity var(--think-swap) ease-in-out;
+  will-change: transform, filter, opacity;
+}
+
+.t-think-text::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(90deg, transparent 0%, transparent 40%, var(--think-highlight) 50%, transparent 60%, transparent 100%);
+  background-size: 400% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: t-think-shimmer var(--think-shimmer) linear infinite;
+}
+
+@keyframes t-think-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: 0% 0; }
+}
+
+.t-think-text.is-exit {
+  transform: translateY(calc(var(--think-distance) * -1));
+  filter: blur(var(--think-blur));
+  opacity: 0;
+}
+
+.t-think-text.is-enter-start {
+  transition: none;
+  transform: translateY(var(--think-distance));
+  filter: blur(var(--think-blur));
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-think-text {
+    transition: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .t-think-text::before { display: none !important; }
+}
+
 @layer base {
   *,
   ::after,

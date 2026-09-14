@@ -9,19 +9,11 @@ import { AtSignIcon } from "./icons/at-sign";
 import { SquigglyUnderline } from "./custom/squiggly-underline";
 
 export function Profile() {
-  const roles = ["AI Engineer", "Frontend Engineer", "Software Engineer"];
-  const [roleIndex, setRoleIndex] = useState(0);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setRoleIndex((index) => (index + 1) % roles.length), 2600);
-    return () => window.clearInterval(timer);
-  }, [roles.length]);
-
   return (
     <section className="space-y-6 pt-5 sm:space-y-7 sm:pt-8">
       <div className="space-y-2">
         <h1 className="text-2xl font-medium tracking-[-0.035em] sm:text-3xl">Hey I&apos;m Falak</h1>
-        <p key={roles[roleIndex]} className="h-7 animate-in fade-in slide-in-from-bottom-1 text-lg font-semibold text-clay-500 duration-150 sm:text-xl">{roles[roleIndex]}</p>
+        <RotatingRole />
       </div>
       <div className="max-w-[62ch] space-y-3 text-base leading-7 text-muted-foreground">
         <p>Whipping up clever solutions and wrestling with tricky challenges because who doesn&apos;t love a good tech puzzle?</p>
@@ -62,5 +54,45 @@ export function Profile() {
               </div>
       </div>
     </section>
+  );
+}
+
+const roles = ["AI Engineer", "Frontend Engineer", "Software Engineer"];
+
+function RotatingRole() {
+  const [roleIndex, setRoleIndex] = useState(0);
+  const [phase, setPhase] = useState("visible");
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let swapTimer;
+    let enterTimer;
+    const holdTimer = window.setTimeout(() => {
+      setPhase("exit");
+      swapTimer = window.setTimeout(() => {
+        setRoleIndex((index) => (index + 1) % roles.length);
+        setPhase("enter");
+        enterTimer = window.setTimeout(() => setPhase("visible"), 20);
+      }, 200);
+    }, 2000);
+
+    return () => {
+      window.clearTimeout(holdTimer);
+      window.clearTimeout(swapTimer);
+      window.clearTimeout(enterTimer);
+    };
+  }, [roleIndex]);
+
+  const role = roles[roleIndex];
+
+  return (
+    <>
+      <span className="sr-only">AI Engineer, Frontend Engineer, and Software Engineer</span>
+      <span className="t-think text-lg font-semibold sm:text-xl" aria-hidden="true">
+        <span className="t-think-sizer">Software Engineer</span>
+        <span className={`t-think-text${phase === "exit" ? " is-exit" : ""}${phase === "enter" ? " is-enter-start" : ""}`} data-text={role}>{role}</span>
+      </span>
+    </>
   );
 }

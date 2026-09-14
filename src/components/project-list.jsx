@@ -14,7 +14,7 @@ export function ProjectList({ projects, compact = false }) {
   return (
     <section className="space-y-5">
       <div className="flex items-center justify-between gap-4">
-        {compact ? <h2 className="section-heading">Things I&apos;ve built</h2> : <span />}
+        {compact ? <h2 className="font-light">I love building things</h2> : <span />}
         <ViewToggle value={view} onChange={setView} />
       </div>
       <div className={cn("transition-opacity duration-100", !viewReady && "opacity-0", view === "grid" && "grid gap-x-5 gap-y-8 sm:grid-cols-2")}>

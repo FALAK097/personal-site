@@ -19,7 +19,7 @@ export function Profile() {
       <div className="max-w-[62ch] space-y-3 text-base leading-7 text-muted-foreground">
         <p>Whipping up clever solutions and wrestling with tricky challenges because who doesn&apos;t love a good tech puzzle?</p>
         <p>This is my quirky web nook for spilling my <SquigglyUnderline href="/writing" className="font-medium text-clay-500">learnings</SquigglyUnderline> and <SquigglyUnderline href="/projects" className="font-medium text-clay-500">projects</SquigglyUnderline>.</p>
-        <p>Outside work, I&apos;m usually watching <InterestPreview label="football" kind="madrid" />, playing <InterestPreview label="Valorant" kind="raze" />, or at the <InterestPreview label="gym" kind="gym" />.</p>
+        <p>Outside work, I&apos;m usually watching <InterestPreview label="football" kind="madrid" />, playing <InterestPreview label="valorant" kind="raze" />, or at the <InterestPreview label="gym" kind="gym" />.</p>
       </div>
       <div className="flex flex-wrap items-center gap-3 pt-1">
               <Button

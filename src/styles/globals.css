@@ -129,8 +129,27 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    font-kerning: normal;
+    text-rendering: optimizeLegibility;
   }
+  code, pre, kbd { font-family: var(--font-geist-mono), monospace; }
+  h1, h2, h3 { text-wrap: balance; letter-spacing: -0.025em; }
+  p { text-wrap: pretty; }
+  html { scroll-behavior: smooth; }
+}
+
+@layer components {
+  .site-container { @apply mx-auto w-full max-w-2xl px-5 sm:px-6; }
+  .page-shell { @apply flex min-h-screen flex-col; }
+  .page-main { @apply mx-auto w-full max-w-2xl flex-1 px-5 py-12 sm:px-6 sm:py-16; }
+  .page-heading { @apply text-2xl font-semibold tracking-tight sm:text-3xl; }
+  .page-intro { @apply mt-3 max-w-[62ch] text-base leading-7 text-muted-foreground; }
+  .section-heading { @apply text-lg font-semibold tracking-tight; }
+  .flat-row { @apply border-b border-border/70 py-5 first:pt-0 last:border-0; }
 }
 
 @keyframes fade-in {
@@ -176,7 +195,16 @@
   }
 }
 .animate-wave {
-  animation: wave 1.5s ease-in-out infinite;
+  animation: wave 1.5s ease-in-out 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 ::selection {

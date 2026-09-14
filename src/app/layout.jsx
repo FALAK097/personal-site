@@ -1,11 +1,12 @@
-import { Outfit } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "@/components/theme-provider";
 import { MotionProvider } from "@/components/motion-provider";
 
-const outfit = Outfit({ subsets: ["latin"], display: "swap" });
 import { ScrollProgress } from "@/components/custom/scroll-progress";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import "@/styles/globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -20,7 +21,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html suppressHydrationWarning lang="en" className={outfit.className}>
+    <html suppressHydrationWarning lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body suppressHydrationWarning>
         <ThemeProvider
           disableTransitionOnChange
@@ -28,12 +29,9 @@ export default function RootLayout({ children }) {
           enableSystem={true}
         >
           <MotionProvider>
-            <div className="min-h-screen p-4 bg-background/50">
-              <div className="rounded-lg border-2 border-border min-h-[calc(100vh-2rem)]">
-                {children}
-              </div>
-            </div>
+            {children}
             <ScrollProgress />
+            <ScrollToTop />
             <Toaster />
           </MotionProvider>
         </ThemeProvider>

@@ -38,6 +38,12 @@ export default async function sitemap() {
       priority: 0.6,
     },
     {
+      url: `${baseUrl}/uses`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
       url: `${baseUrl}/hire-me`,
       lastModified: new Date(),
       changeFrequency: "monthly",

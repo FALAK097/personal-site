@@ -2,20 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { getBookmarks } from "@/actions/bookmarks";
-import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from "./ui/tooltip";
 import { cn } from "@/lib/utils";
-import { GridIcon, ListIcon, TrendingUpIcon, BookmarkIcon } from "./icons";
+import { TrendingUpIcon, BookmarkIcon } from "./icons";
+import { ViewToggle, useViewPreference } from "@/components/view-toggle";
 
 export const BookmarksList = () => {
   const [bookmarks, setBookmarks] = useState([]);
-  const [viewMode, setViewMode] = useState("moodboard");
+  const [viewMode, setViewMode] = useViewPreference();
   const [activeTag, setActiveTag] = useState("all");
 
   useEffect(() => {
@@ -62,48 +56,11 @@ export const BookmarksList = () => {
               ))}
             </TabsList>
           </Tabs>
-          <div className="flex items-center gap-1 ml-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={() => setViewMode("moodboard")}
-                    className={cn(
-                      "p-2 rounded-md",
-                      viewMode === "moodboard"
-                        ? "bg-clay-800 text-clay-200"
-                        : "text-gray-500"
-                    )}
-                    aria-label="Moodboard"
-                  >
-                    <GridIcon size={20} />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent>Moodboard</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={() => setViewMode("list")}
-                    className={cn(
-                      "p-2 rounded-md",
-                      viewMode === "list"
-                        ? "bg-clay-800 text-clay-200"
-                        : "text-gray-500"
-                    )}
-                    aria-label="List"
-                  >
-                    <ListIcon size={20} />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent>List</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+          <ViewToggle value={viewMode} onChange={setViewMode} />
         </div>
       </div>
 
-      {viewMode === "moodboard" ? (
+      {viewMode === "grid" ? (
         <div className="masonry-grid">
           {filteredBookmarks.map((bookmark) => (
             <MoodboardCard key={bookmark.id} bookmark={bookmark} />
@@ -121,12 +78,12 @@ export const BookmarksList = () => {
 };
 
 const MoodboardCard = ({ bookmark }) => {
-  const isLarge = bookmark.featured || Math.random() > 0.7;
+  const isLarge = bookmark.featured;
 
   return (
-    <Card
+    <article
       className={cn(
-        "masonry-item group overflow-hidden rounded-lg border-0 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02]",
+        "masonry-item group overflow-hidden rounded-lg bg-muted/30 transition-opacity duration-100",
         isLarge ? "masonry-item-large" : ""
       )}
     >
@@ -178,13 +135,13 @@ const MoodboardCard = ({ bookmark }) => {
           </div>
         </div>
       </a>
-    </Card>
+    </article>
   );
 };
 
 const ListCard = ({ bookmark }) => {
   return (
-    <div className="group flex items-start gap-3 p-3 rounded-lg hover:bg-clay-50 dark:hover:bg-clay-900/20 transition-colors duration-200 border-b border-clay-100 dark:border-clay-800/50 last:border-b-0">
+    <div className="group flex items-start gap-3 border-b border-border/70 py-4 last:border-b-0">
       <div className="flex-shrink-0">
         {bookmark.cover ? (
           <img

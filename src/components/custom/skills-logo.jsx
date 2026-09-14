@@ -42,7 +42,7 @@ const skillLogos = {
     },
     name: "Shadcn",
   },
-  Motion: { logo: "/skills/m.svg", name: "Motion" },
+  Motion: { logo: "/skills/motion.svg", name: "Motion" },
   Tailwind: { logo: "/skills/tailwindcss.svg", name: "Tailwind" },
   Sass: { logo: "/skills/sass.svg", name: "Sass" },
   Bootstrap: { logo: "/skills/bootstrap.svg", name: "Bootstrap" },
@@ -130,29 +130,21 @@ export const SkillsLogo = ({ skill, index }) => {
           <m.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              duration: 0.3,
-              delay: index * 0.1,
-              ease: "easeOut",
-            }}
+            transition={{ duration: 0.12, delay: Math.min(index, 4) * 0.02 }}
             whileHover={{
-              scale: 1.2,
-              y: -5,
-              transition: { duration: 0.2 },
+              scale: 1.06,
+              y: -1,
+              transition: { duration: 0.1 },
             }}
             className="relative"
           >
-            <div className="w-10 h-10 rounded-lg shadow-md flex items-center justify-center border transition-all duration-200 hover:shadow-lg">
+            <div className="flex size-8 items-center justify-center rounded-md border border-border/70 bg-background transition-colors duration-100 hover:border-clay-500/60">
               {React.isValidElement(skillData.logo) ? (
                 <div className="w-6 h-6">{skillData.logo}</div>
               ) : (
-                <Image
-                  src={logoSrc}
-                  alt={skillData.name}
-                  width={24}
-                  height={24}
-                  className="object-contain"
-                />
+                <span className="relative block size-[18px]">
+                  <Image src={logoSrc} alt={skillData.name} fill sizes="18px" className="object-contain" />
+                </span>
               )}
             </div>
           </m.div>

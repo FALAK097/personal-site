@@ -12,13 +12,13 @@ export const metadata = {
 
 export default function HireMePage() {
   return (
-    <div className="flex flex-col min-h-[calc(100vh-2rem)]">
+    <div className="page-shell">
       <Navbar />
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-12">
+      <main className="page-main">
+        <div className="space-y-12">
           <div className="space-y-4">
-            <h1 className="text-xl font-semibold">Hire Me</h1>
-            <p className="text-md text-muted-foreground">
+            <h1 className="page-heading">Let&apos;s work together</h1>
+            <p className="page-intro">
               I&apos;m always interested in hearing about new opportunities.
               Feel free to reach out if you&apos;d like to work together or
               simply discuss ideas.

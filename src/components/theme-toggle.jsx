@@ -10,13 +10,6 @@ export function ThemeToggle() {
   const handleToggle = () => {
     const nextTheme = resolvedTheme === "dark" ? "light" : "dark";
 
-    // Play sound effect
-    const soundFile =
-      nextTheme === "dark"
-        ? "/sounds/switch-off.mp3"
-        : "/sounds/switch-on.mp3";
-    const audio = new Audio(soundFile);
-    audio.play().catch(err => console.error("Failed to play theme sound:", err));
     setTheme(nextTheme);
   };
 
@@ -25,7 +18,7 @@ export function ThemeToggle() {
       size="icon"
       variant="ghost"
       onClick={handleToggle}
-      className="cursor-pointer hover:bg-transparent mt-1 text-muted-foreground"
+      className="cursor-pointer text-muted-foreground hover:bg-muted"
       aria-label="Toggle theme"
     >
       <SunIcon className="w-5 h-5 transition-all scale-100 rotate-0 dark:-rotate-90 dark:scale-0" />

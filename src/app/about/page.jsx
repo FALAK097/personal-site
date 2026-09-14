@@ -10,11 +10,11 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col min-h-[calc(100vh-2rem)]">
+    <div className="page-shell">
       <Navbar />
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <h1 className="text-xl font-semibold">About Me</h1>
+      <main className="page-main">
+        <div className="space-y-10">
+          <div><h1 className="page-heading">About</h1><p className="page-intro">How I became a developer, what I care about, and the experience I bring to a product team.</p></div>
           <AboutContent />
         </div>
       </main>

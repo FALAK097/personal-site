@@ -1,6 +1,7 @@
 "use client";
 
 import { EChartsAreaChart } from "@/components/evilcharts/charts/echarts-area-chart";
+import { brandForClient, brandForModel, brandSrc } from "@/lib/ai-brand";
 
 const PALETTE = [
   { light: "#2f7fb8", dark: "#5cbeff" },
@@ -63,15 +64,24 @@ function rankEntries(row, keys, labels, formatValue, limit) {
     .slice(0, limit);
 }
 
-function tooltipRows(entries, formatValue) {
+function tooltipRows(entries, formatValue, iconFor) {
   return entries
-    .map(
-      ({ label, value }) => `
+    .map(({ label, value }) => {
+      const icon = iconFor ? iconFor(label) : null;
+
+      return `
       <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;">
-        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${label}</span>
+        <span style="display:flex;align-items:center;gap:6px;min-width:0;">
+          ${
+            icon
+              ? `<img src="${icon}" alt="" style="width:12px;height:12px;border-radius:3px;flex-shrink:0;object-fit:contain;" />`
+              : ""
+          }
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${label}</span>
+        </span>
         <span style="font-variant-numeric:tabular-nums;white-space:nowrap;">${formatValue(value)}</span>
-      </div>`,
-    )
+      </div>`;
+    })
     .join("");
 }
 
@@ -98,6 +108,10 @@ function buildTooltipFormatter({
 
     const total = keys.reduce((sum, key) => sum + (Number(modelRow[key]) || 0), 0);
     const clients = rankEntries(clientRow, clientKeys, clientLabels, formatValue, 5);
+    // The tooltip surface is dark in both themes, so its marks always use the
+    // light-glyph variant — theme switching here made black logos vanish.
+    const clientIcon = (label) => brandSrc(brandForClient(label), true);
+    const modelIcon = (label) => brandSrc(brandForModel(label), true);
 
     // Named series first, then the models that share the grouped series — listed
     // by their real names (the chart legend still shows a single "other models").
@@ -115,28 +129,9 @@ function buildTooltipFormatter({
 
     const divider = `<div style="height:1px;background:currentColor;opacity:0.14;margin:7px 0;"></div>`;
     const heading = (text) =>
-      `<div style="font-size:10px;text-transform:uppercase;letter-spacing:0.12em;opacity:0.5;margin-bottom:5px;">${text}</div>`;
+      `<div style="font-size:11px;opacity:0.55;margin-bottom:5px;">${text}</div>`;
     const indent = `<span style="display:inline-block;width:8px;flex-shrink:0;"></span>`;
-
-    const modelRows = [
-      ...namedModels,
-      ...shownOthers.map((entry) => ({ ...entry, muted: true })),
-    ]
-      .map(
-        ({ key, label, value, muted }) => `
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;">
-        <span style="display:flex;align-items:center;gap:6px;min-width:0;">
-          ${
-            muted
-              ? indent
-              : `<span style="width:8px;height:8px;border-radius:2px;flex-shrink:0;background:var(--color-${key}-0);"></span>`
-          }
-          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;${muted ? "opacity:0.75;" : ""}">${label}</span>
-        </span>
-        <span style="font-variant-numeric:tabular-nums;white-space:nowrap;${muted ? "opacity:0.75;" : ""}">${formatValue(value)}</span>
-      </div>`,
-      )
-      .join("");
+    const modelRows = tooltipRows([...namedModels, ...shownOthers], formatValue, modelIcon);
 
     const othersNote =
       hiddenOthers > 0
@@ -154,7 +149,7 @@ function buildTooltipFormatter({
         </div>
         ${
           clients.length
-            ? `${divider}${heading("clients")}<div style="display:flex;flex-direction:column;gap:4px;">${tooltipRows(clients, formatValue)}</div>`
+            ? `${divider}${heading("clients")}<div style="display:flex;flex-direction:column;gap:4px;">${tooltipRows(clients, formatValue, clientIcon)}</div>`
             : ""
         }
         ${divider}${heading("models")}

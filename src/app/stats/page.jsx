@@ -1,8 +1,10 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PageHeader } from "@/components/custom/page-header";
-import { TokenUsage, TokscaleLink } from "@/components/stats/token-usage";
+import { TokenUsage } from "@/components/stats/token-usage";
+import { SiteTraffic } from "@/components/stats/site-traffic";
 import { getTokscaleInsights } from "@/lib/tokscale";
+import { getSiteTraffic } from "@/lib/vercel-analytics";
 import { createMetadata } from "@/lib/metadata";
 
 export const metadata = createMetadata({
@@ -12,10 +14,12 @@ export const metadata = createMetadata({
   path: "/stats",
 });
 
-export const revalidate = 86400;
+// Page refreshes hourly so site traffic stays current; the Tokscale payload
+// keeps its own 24h cache, so the heavier scrape is not repeated.
+export const revalidate = 3600;
 
 export default async function StatsPage() {
-  const insights = await getTokscaleInsights();
+  const [insights, traffic] = await Promise.all([getTokscaleInsights(), getSiteTraffic()]);
 
   return (
     <div className="page-shell">
@@ -24,21 +28,12 @@ export default async function StatsPage() {
         <div className="space-y-10">
           <PageHeader
             title="stats"
-            intro={
-              <>
-                Tokens my AI coding agents burn{" "}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/fire.gif"
-                  alt=""
-                  className="inline-block h-5 w-auto align-[-4px]"
-                  aria-hidden="true"
-                />
-                , tracked with <TokscaleLink />.
-              </>
-            }
+            intro="A running snapshot of my AI token usage and this site's traffic."
           />
           <TokenUsage insights={insights} />
+          <div className="border-t border-border/70 pt-10">
+            <SiteTraffic traffic={traffic} />
+          </div>
         </div>
       </main>
       <Footer />

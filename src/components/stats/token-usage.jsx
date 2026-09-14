@@ -1,5 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { TokenChart } from "@/components/stats/token-chart";
+import { BrandMark } from "@/components/stats/brand-mark";
+import { brandForModel } from "@/lib/ai-brand";
 import { TOKSCALE_PROFILE_URL } from "@/lib/tokscale";
 
 const tokenFormatter = new Intl.NumberFormat("en-US", {
@@ -81,9 +83,10 @@ function ModelList({ models }) {
         {models.map((model) => (
           <div
             key={model.name}
-            className="flex items-baseline justify-between gap-4 border-b border-border/70 py-3 first:pt-0 last:border-0"
+            className="flex items-center justify-between gap-4 border-b border-border/70 py-3 first:pt-0 last:border-0"
           >
-            <div className="flex min-w-0 items-baseline gap-2.5">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <BrandMark brand={brandForModel(model.name)} />
               <span className="truncate font-mono text-xs">{model.name}</span>
               <span className="shrink-0 font-mono text-[11px] text-muted-foreground/70 tabular-nums">
                 {(model.share ?? model.tokenShare ?? 0).toFixed(1)}%
@@ -114,14 +117,29 @@ export function TokenUsage({ insights }) {
 
   return (
     <section className="space-y-8">
-      {favoriteModel ? (
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 text-sm">
-          <p className="text-muted-foreground">
-            Favorite model
-            <span className="ml-2 font-semibold text-foreground">{favoriteModel.name}</span>
-          </p>
-          {range ? <p className="font-medium text-foreground tabular-nums">{range}</p> : null}
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+          <h2 className="section-heading">AI token usage</h2>
+          {range ? <p className="font-mono text-xs text-muted-foreground">{range}</p> : null}
         </div>
+        <p className="text-sm text-muted-foreground">
+          Tokens my AI coding agents burn{" "}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/fire.gif"
+            alt=""
+            className="inline-block h-5 w-auto align-[-4px]"
+            aria-hidden="true"
+          />
+          , tracked with <TokscaleLink />.
+        </p>
+      </div>
+
+      {favoriteModel ? (
+        <p className="text-sm text-muted-foreground">
+          Favorite model
+          <span className="ml-2 font-semibold text-foreground">{favoriteModel.name}</span>
+        </p>
       ) : null}
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">

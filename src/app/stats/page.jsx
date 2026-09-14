@@ -8,7 +8,7 @@ import { createMetadata } from "@/lib/metadata";
 export const metadata = createMetadata({
   title: "Stats",
   description:
-    "Metrics behind my work — AI token usage and build activity, synced from Tokscale.",
+    "Metrics behind my work: AI token usage and build activity, synced from Tokscale.",
   path: "/stats",
 });
 

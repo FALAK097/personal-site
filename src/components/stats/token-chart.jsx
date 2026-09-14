@@ -8,7 +8,7 @@ const TokenAreaChart = dynamic(
   () => import("./token-area-chart").then((module) => module.TokenAreaChart),
   {
     ssr: false,
-    loading: () => <div className="h-72 w-full animate-pulse rounded-lg bg-muted/40" />,
+    loading: () => <div className="h-80 w-full animate-pulse rounded-lg bg-muted/40" />,
   },
 );
 
@@ -17,9 +17,9 @@ const MODES = [
   { value: "cost", label: "Cost" },
 ];
 
-export function TokenChart({ rows, costRows, keys, labels }) {
+export function TokenChart({ chart }) {
   const [mode, setMode] = useState("tokens");
-  const data = mode === "cost" ? costRows : rows;
+  const isCost = mode === "cost";
 
   return (
     <div className="space-y-3">
@@ -49,7 +49,18 @@ export function TokenChart({ rows, costRows, keys, labels }) {
         </div>
       </div>
       <div className="h-80">
-        <TokenAreaChart data={data} keys={keys} labels={labels} mode={mode} className="h-full w-full" />
+        <TokenAreaChart
+          data={isCost ? chart.costRows : chart.rows}
+          clientData={isCost ? chart.clientCostRows : chart.clientRows}
+          keys={chart.keys}
+          labels={chart.labels}
+          clientKeys={chart.clientKeys}
+          clientLabels={chart.clientLabels}
+          otherModelsByWeek={chart.otherModelsByWeek}
+          otherKey="other"
+          mode={mode}
+          className="h-full w-full"
+        />
       </div>
     </div>
   );

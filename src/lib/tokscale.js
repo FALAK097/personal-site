@@ -113,7 +113,10 @@ function findBiggestDay(series) {
 const COST_KEY_SUFFIX = "::cost";
 const OTHER_KEY = "other";
 const OTHER_LABEL = "other models";
+const OTHER_CLIENT_KEY = "other-clients";
+const OTHER_CLIENT_LABEL = "other clients";
 const CHART_MODEL_LIMIT = 5;
+const CHART_CLIENT_LIMIT = 6;
 
 function slugifyKey(name, index, used) {
   const base =
@@ -142,20 +145,53 @@ function weekStart(dateString) {
   return date.toISOString().slice(0, 10);
 }
 
-function buildModelSeries(contributions, modelKeyMap) {
+function collectClientNames(contributions, limit) {
+  const totals = new Map();
+
+  for (const point of contributions) {
+    for (const client of point.clients ?? []) {
+      const name = client?.client;
+      if (!name) continue;
+      let tokens = 0;
+      for (const usage of Object.values(client.models ?? {})) {
+        tokens += usage?.tokens ?? 0;
+      }
+      totals.set(name, (totals.get(name) ?? 0) + tokens);
+    }
+  }
+
+  return [...totals.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([name]) => name);
+}
+
+function buildChartData(contributions, modelKeyMap, clientNames) {
+  const modelKeys = [...modelKeyMap.values(), OTHER_KEY];
+  const clientKeys = [...clientNames, OTHER_CLIENT_KEY];
+  const knownClients = new Set(clientNames);
   const buckets = new Map();
+  const otherByWeek = new Map();
 
   const bucketFor = (dateString) => {
     if (!buckets.has(dateString)) {
-      const row = { date: dateString };
-      const costRow = { date: dateString };
+      const bucket = {
+        row: { date: dateString },
+        costRow: { date: dateString },
+        clientRow: { date: dateString },
+        clientCostRow: { date: dateString },
+      };
 
-      for (const key of [...modelKeyMap.values(), OTHER_KEY]) {
-        row[key] = 0;
-        costRow[key] = 0;
+      for (const key of modelKeys) {
+        bucket.row[key] = 0;
+        bucket.costRow[key] = 0;
+      }
+      for (const key of clientKeys) {
+        bucket.clientRow[key] = 0;
+        bucket.clientCostRow[key] = 0;
       }
 
-      buckets.set(dateString, { row, costRow });
+      buckets.set(dateString, bucket);
     }
 
     return buckets.get(dateString);
@@ -165,14 +201,40 @@ function buildModelSeries(contributions, modelKeyMap) {
     const week = weekStart(point.date);
     if (!week) continue;
 
-    const { row, costRow } = bucketFor(week);
+    const bucket = bucketFor(week);
 
     for (const client of point.clients ?? []) {
+      const clientKey = knownClients.has(client?.client) ? client.client : OTHER_CLIENT_KEY;
+
       for (const [name, usage] of Object.entries(client.models ?? {})) {
         if (name === SYNTHETIC_MODEL) continue;
-        const key = modelKeyMap.get(name) ?? OTHER_KEY;
-        row[key] += usage.tokens ?? 0;
-        costRow[key] += usage.cost ?? 0;
+
+        const tokens = usage.tokens ?? 0;
+        const cost = usage.cost ?? 0;
+        const modelKey = modelKeyMap.get(name);
+
+        if (modelKey) {
+          bucket.row[modelKey] += tokens;
+          bucket.costRow[modelKey] += cost;
+        } else {
+          bucket.row[OTHER_KEY] += tokens;
+          bucket.costRow[OTHER_KEY] += cost;
+
+          // Keep every grouped model's own numbers so the tooltip can name them
+          // instead of showing one anonymous "other models" line.
+          let weekOthers = otherByWeek.get(week);
+          if (!weekOthers) {
+            weekOthers = new Map();
+            otherByWeek.set(week, weekOthers);
+          }
+          const current = weekOthers.get(name) ?? { tokens: 0, cost: 0 };
+          current.tokens += tokens;
+          current.cost += cost;
+          weekOthers.set(name, current);
+        }
+
+        bucket.clientRow[clientKey] += tokens;
+        bucket.clientCostRow[clientKey] += cost;
       }
     }
   }
@@ -180,9 +242,21 @@ function buildModelSeries(contributions, modelKeyMap) {
   const order = (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime();
   const entries = [...buckets.values()];
 
+  const otherModelsByWeek = Object.fromEntries(
+    [...otherByWeek.entries()].map(([date, models]) => [
+      date,
+      [...models.entries()]
+        .map(([name, values]) => ({ name, tokens: values.tokens, cost: values.cost }))
+        .sort((a, b) => b.cost - a.cost || b.tokens - a.tokens),
+    ]),
+  );
+
   return {
     rows: entries.map((entry) => entry.row).sort(order),
     costRows: entries.map((entry) => entry.costRow).sort(order),
+    clientRows: entries.map((entry) => entry.clientRow).sort(order),
+    clientCostRows: entries.map((entry) => entry.clientCostRow).sort(order),
+    otherModelsByWeek,
   };
 }
 
@@ -190,16 +264,22 @@ function toInsights(data) {
   const stats = data?.stats;
   if (!stats || typeof stats.totalTokens !== "number") return null;
 
-  const models = (data.modelUsage ?? [])
+  const rankedModels = (data.modelUsage ?? [])
     .filter((entry) => entry?.model && entry.model !== SYNTHETIC_MODEL)
-    .sort((a, b) => b.tokens - a.tokens)
-    .slice(0, TOP_MODELS_LIMIT)
-    .map((entry) => ({
-      name: entry.model,
-      tokens: entry.tokens ?? 0,
-      cost: entry.cost ?? 0,
-      percentage: entry.percentage ?? 0,
-    }));
+    // Tokscale's own Models table is ranked by cost and its Share column is the
+    // cost share, so mirror that here to stay consistent with the source.
+    .sort((a, b) => (b.cost ?? 0) - (a.cost ?? 0));
+
+  const totalModelCost = rankedModels.reduce((sum, entry) => sum + (entry.cost ?? 0), 0) || 1;
+  const totalModelTokens = rankedModels.reduce((sum, entry) => sum + (entry.tokens ?? 0), 0) || 1;
+
+  const models = rankedModels.slice(0, TOP_MODELS_LIMIT).map((entry) => ({
+    name: entry.model,
+    tokens: entry.tokens ?? 0,
+    cost: entry.cost ?? 0,
+    share: ((entry.cost ?? 0) / totalModelCost) * 100,
+    tokenShare: ((entry.tokens ?? 0) / totalModelTokens) * 100,
+  }));
 
   const series = buildSeries(data.contributions ?? []);
 
@@ -215,7 +295,16 @@ function toInsights(data) {
   });
 
   const chartKeys = [...modelKeyMap.values(), OTHER_KEY];
-  const { rows, costRows } = buildModelSeries(data.contributions ?? [], modelKeyMap);
+  const clientNames = collectClientNames(data.contributions ?? [], CHART_CLIENT_LIMIT);
+  const { rows, costRows, clientRows, clientCostRows, otherModelsByWeek } = buildChartData(
+    data.contributions ?? [],
+    modelKeyMap,
+    clientNames,
+  );
+
+  const clientLabels = Object.fromEntries(
+    clientNames.map((name) => [name, name]).concat([[OTHER_CLIENT_KEY, OTHER_CLIENT_LABEL]]),
+  );
 
   return {
     stats: {
@@ -236,6 +325,11 @@ function toInsights(data) {
       labels,
       rows,
       costRows,
+      clientKeys: [...clientNames, OTHER_CLIENT_KEY],
+      clientLabels,
+      clientRows,
+      clientCostRows,
+      otherModelsByWeek,
     },
     biggestDay: findBiggestDay(series),
     dateRange: data.dateRange ?? null,

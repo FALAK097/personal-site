@@ -86,7 +86,7 @@ function ModelList({ models }) {
             <div className="flex min-w-0 items-baseline gap-2.5">
               <span className="truncate font-mono text-xs">{model.name}</span>
               <span className="shrink-0 font-mono text-[11px] text-muted-foreground/70 tabular-nums">
-                {model.percentage.toFixed(1)}%
+                {(model.share ?? model.tokenShare ?? 0).toFixed(1)}%
               </span>
             </div>
             <span className="shrink-0 font-mono text-xs text-muted-foreground tabular-nums">
@@ -141,14 +141,7 @@ export function TokenUsage({ insights }) {
         />
       </div>
 
-      {chart?.rows?.length ? (
-        <TokenChart
-          rows={chart.rows}
-          costRows={chart.costRows}
-          keys={chart.keys}
-          labels={chart.labels}
-        />
-      ) : null}
+      {chart?.rows?.length ? <TokenChart chart={chart} /> : null}
 
       <ModelList models={models} />
     </section>

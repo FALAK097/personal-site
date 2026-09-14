@@ -23,13 +23,6 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2,
 });
 
-const dateFormatter = new Intl.DateTimeFormat("en-US", {
-  month: "short",
-  day: "numeric",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
 const tokenTickFormatter = (value) => {
   const absolute = Math.abs(value);
   if (absolute >= 1_000_000_000) return `${(value / 1_000_000_000).toFixed(1)}B`;
@@ -50,54 +43,138 @@ const dateTickFormatter = (value) => {
   }).format(date);
 };
 
-function buildTooltipFormatter({ keys, labels, isCost }) {
+const withCommas = (value) => value.toLocaleString("en-US");
+
+function pickRow(rows, date) {
+  if (!rows?.length || date === undefined) return null;
+  return rows.find((row) => row.date === date) ?? null;
+}
+
+function rankEntries(row, keys, labels, formatValue, limit) {
+  if (!row) return [];
+
+  return keys
+    .map((key) => {
+      const value = typeof row[key] === "number" ? row[key] : Number(row[key] ?? 0);
+      return { key, label: labels[key] ?? key, value };
+    })
+    .filter((entry) => Number.isFinite(entry.value) && entry.value > 0)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, limit);
+}
+
+function tooltipRows(entries, formatValue) {
+  return entries
+    .map(
+      ({ label, value }) => `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;">
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${label}</span>
+        <span style="font-variant-numeric:tabular-nums;white-space:nowrap;">${formatValue(value)}</span>
+      </div>`,
+    )
+    .join("");
+}
+
+function buildTooltipFormatter({
+  data,
+  clientData,
+  otherByWeek,
+  keys,
+  labels,
+  clientKeys,
+  clientLabels,
+  otherKey,
+  isCost,
+}) {
   const formatValue = isCost
     ? (value) => currencyFormatter.format(value)
     : (value) => tokenFormatter.format(value);
 
   return (params) => {
-    const rows = Array.isArray(params) ? params : [params];
-    if (!rows.length) return "";
+    const date = String(params?.[0]?.axisValue ?? "");
+    const modelRow = pickRow(data, date);
+    const clientRow = pickRow(clientData, date);
+    if (!modelRow) return "";
 
-    const axisValue = rows[0]?.axisValue ?? rows[0]?.name ?? "";
-    const heading = dateTickFormatter(String(axisValue));
+    const total = keys.reduce((sum, key) => sum + (Number(modelRow[key]) || 0), 0);
+    const clients = rankEntries(clientRow, clientKeys, clientLabels, formatValue, 5);
 
-    const entries = rows
-      .map((row) => {
-        const key = String(row.seriesId ?? row.seriesName ?? "");
-        const value = typeof row.value === "number" ? row.value : Number(row.value);
-        if (!Number.isFinite(value) || value <= 0) return null;
-        return { key, label: labels[key] ?? row.seriesName ?? key, value };
-      })
-      .filter(Boolean)
-      .sort((a, b) => b.value - a.value);
+    // Named series first, then the models that share the grouped series — listed
+    // by their real names (the chart legend still shows a single "other models").
+    const namedModels = rankEntries(modelRow, keys, labels, formatValue, keys.length).filter(
+      (entry) => entry.key !== otherKey,
+    );
+    const otherEntries = (otherByWeek?.[date] ?? [])
+      .map((entry) => ({ label: entry.name, value: isCost ? entry.cost : entry.tokens }))
+      .filter((entry) => Number.isFinite(entry.value) && entry.value > 0);
+    const shownOthers = otherEntries.slice(0, 4);
+    const hiddenOthers = otherEntries.length - shownOthers.length;
+    const otherTotal = otherEntries.reduce((sum, entry) => sum + entry.value, 0);
 
-    if (!entries.length) return "";
+    if (!total || (!clients.length && !namedModels.length && !shownOthers.length)) return "";
 
-    const body = entries
+    const divider = `<div style="height:1px;background:currentColor;opacity:0.14;margin:7px 0;"></div>`;
+    const heading = (text) =>
+      `<div style="font-size:10px;text-transform:uppercase;letter-spacing:0.12em;opacity:0.5;margin-bottom:5px;">${text}</div>`;
+    const indent = `<span style="display:inline-block;width:8px;flex-shrink:0;"></span>`;
+
+    const modelRows = [
+      ...namedModels,
+      ...shownOthers.map((entry) => ({ ...entry, muted: true })),
+    ]
       .map(
-        ({ key, label, value }) => `
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
-          <span style="display:flex;align-items:center;gap:6px;min-width:0;">
-            <span style="width:8px;height:8px;border-radius:2px;flex-shrink:0;background:${
-              keys.includes(key) ? `var(--color-${key}-0)` : "currentColor"
-            };"></span>
-            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${label}</span>
-          </span>
-          <span style="font-variant-numeric:tabular-nums;white-space:nowrap;">${formatValue(value)}</span>
-        </div>`,
+        ({ key, label, value, muted }) => `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;">
+        <span style="display:flex;align-items:center;gap:6px;min-width:0;">
+          ${
+            muted
+              ? indent
+              : `<span style="width:8px;height:8px;border-radius:2px;flex-shrink:0;background:var(--color-${key}-0);"></span>`
+          }
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;${muted ? "opacity:0.75;" : ""}">${label}</span>
+        </span>
+        <span style="font-variant-numeric:tabular-nums;white-space:nowrap;${muted ? "opacity:0.75;" : ""}">${formatValue(value)}</span>
+      </div>`,
       )
       .join("");
 
+    const othersNote =
+      hiddenOthers > 0
+        ? `<div style="display:flex;align-items:center;justify-content:space-between;gap:20px;opacity:0.55;">
+             <span style="display:flex;align-items:center;gap:6px;">${indent}<span>+${hiddenOthers} more</span></span>
+             <span style="font-variant-numeric:tabular-nums;">${formatValue(otherTotal - shownOthers.reduce((sum, entry) => sum + entry.value, 0))}</span>
+           </div>`
+        : "";
+
     return `
-      <div style="border:1px solid rgba(127,127,127,0.2);border-radius:10px;background:rgba(20,20,24,0.92);padding:8px 10px;font-size:12px;line-height:1.5;color:#fafafa;box-shadow:0 8px 24px rgba(0,0,0,0.35);backdrop-filter:blur(8px);min-width:180px;">
-        <div style="margin-bottom:6px;font-size:11px;opacity:0.7;">${heading}</div>
-        <div style="display:flex;flex-direction:column;gap:4px;">${body}</div>
+      <div style="border:1px solid rgba(127,127,127,0.22);border-radius:10px;background:rgba(20,20,24,0.94);padding:9px 11px;font-size:12px;line-height:1.5;color:#fafafa;box-shadow:0 10px 30px rgba(0,0,0,0.4);backdrop-filter:blur(8px);min-width:220px;">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;">
+          <span style="font-size:11px;opacity:0.7;">${dateTickFormatter(date)}</span>
+          <span style="font-weight:600;font-variant-numeric:tabular-nums;">${formatValue(total)}</span>
+        </div>
+        ${
+          clients.length
+            ? `${divider}${heading("clients")}<div style="display:flex;flex-direction:column;gap:4px;">${tooltipRows(clients, formatValue)}</div>`
+            : ""
+        }
+        ${divider}${heading("models")}
+        <div style="display:flex;flex-direction:column;gap:4px;">${modelRows}${othersNote}</div>
       </div>`;
   };
 }
 
-export function TokenAreaChart({ data, keys, labels, mode, className }) {
+export function TokenAreaChart({
+  data,
+  clientData,
+  otherModelsByWeek,
+  otherKey,
+  keys,
+  labels,
+  clientKeys,
+  clientLabels,
+  mode,
+  className,
+}) {
   const config = {};
 
   keys.forEach((key, index) => {
@@ -131,7 +208,17 @@ export function TokenAreaChart({ data, keys, labels, mode, className }) {
           padding: 0,
           extraCssText: "box-shadow:none;",
           axisPointer: { type: "none" },
-          formatter: buildTooltipFormatter({ keys, labels, isCost }),
+          formatter: buildTooltipFormatter({
+            data,
+            clientData,
+            otherByWeek: otherModelsByWeek,
+            keys,
+            labels,
+            clientKeys,
+            clientLabels,
+            otherKey,
+            isCost,
+          }),
         },
       }}
     >

@@ -1,4 +1,5 @@
-const SITE_NAME = "Falak Gala";
+import { SITE_NAME } from "@/lib/site";
+
 const SITE_LOCALE = "en_US";
 const SITE_IMAGE = {
   url: "/opengraph-image.png",

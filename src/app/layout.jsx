@@ -9,18 +9,19 @@ import { ScrollProgress } from "@/components/custom/scroll-progress";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import "@/styles/globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { SITE_URL, SITE_NAME } from "@/lib/site";
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_WEBSITE_URL || "https://falakgala.dev"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Falak Gala's Portfolio",
     template: "%s | Falak Gala's Portfolio",
   },
   description:
     "Software engineer building across product engineering, AI systems, infrastructure, and full-stack software. Writing about what I ship and how it works.",
-  authors: [{ name: "Falak Gala", url: "https://falakgala.dev" }],
-  creator: "Falak Gala",
-  publisher: "Falak Gala",
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   keywords: [
     "Falak Gala",
     "software engineer",
@@ -38,7 +39,7 @@ export const metadata = {
   },
   openGraph: {
     type: "website",
-    siteName: "Falak Gala",
+    siteName: SITE_NAME,
     locale: "en_US",
     url: "/",
     title: "Falak Gala's Portfolio",

@@ -1,4 +1,5 @@
 import { getAllPosts } from "@/lib/blog-source";
+import { SITE_URL } from "@/lib/site";
 
 function escapeXml(value = "") {
   return value
@@ -11,7 +12,7 @@ function escapeXml(value = "") {
 
 export async function GET() {
   const posts = await getAllPosts();
-  const siteUrl = process.env.NEXT_PUBLIC_WEBSITE_URL || "https://falakgala.dev";
+  const siteUrl = SITE_URL;
   const items = posts
     .map(
       (post) => `

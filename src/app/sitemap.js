@@ -1,8 +1,8 @@
 import { getAllPosts } from "@/lib/blog-source";
+import { SITE_URL } from "@/lib/site";
 
 export default async function sitemap() {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_WEBSITE_URL || "https://falakgala.dev";
+  const baseUrl = SITE_URL;
 
   const posts = await getAllPosts();
   const postEntries = posts.map((post) => ({

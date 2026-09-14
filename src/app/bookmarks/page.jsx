@@ -18,7 +18,7 @@ export default function BookmarksPage() {
       <main className="page-main">
         <div className="space-y-10">
           <PageHeader
-            title="Bookmarks"
+            title="bookmarks"
             intro="A curated collection of my favorite tools, articles, and engineering resources that inspire and support my work as a developer."
           />
           <BookmarksList />

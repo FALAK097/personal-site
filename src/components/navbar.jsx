@@ -18,10 +18,10 @@ export function Navbar() {
   const extrasTriggerRef = useRef(null);
 
   const links = [
-    { href: "/projects", label: "Projects" },
-    { href: "/writing", label: "Writing" },
-    { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
+    { href: "/projects", label: "projects" },
+    { href: "/writing", label: "writing" },
+    { href: "/about", label: "about" },
+    { href: "/contact", label: "contact" },
   ];
 
   return (
@@ -50,13 +50,14 @@ export function Navbar() {
                   {label}
                 </Link>
               ))}
-              <div ref={extrasRef} className="relative" onPointerLeave={(event) => { if (event.pointerType === "mouse") setExtrasOpen(false); }} onFocus={(event) => { if (event.target.matches(":focus-visible")) setExtrasOpen(true); }} onBlur={(event) => { if (!extrasRef.current?.contains(event.relatedTarget)) setExtrasOpen(false); }} onKeyDown={(event) => { if (event.key === "Escape") { extrasTriggerRef.current?.focus(); setExtrasOpen(false); } }}>
-                <button ref={extrasTriggerRef} type="button" aria-expanded={extrasOpen} aria-controls="extras-navigation" onClick={() => setExtrasOpen((open) => !open)} className={cn("flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-100 hover:text-foreground focus:text-foreground", pathname === "/bookmarks" && "text-foreground")}>
-                  Extras <ChevronDown className={cn("size-3 transition-transform duration-150", extrasOpen && "rotate-180")} />
+              <div ref={extrasRef} className="relative" onPointerEnter={(event) => { if (event.pointerType === "mouse") setExtrasOpen(true); }} onPointerLeave={(event) => { if (event.pointerType === "mouse") setExtrasOpen(false); }} onFocus={(event) => { if (event.target.matches(":focus-visible")) setExtrasOpen(true); }} onBlur={(event) => { if (!extrasRef.current?.contains(event.relatedTarget)) setExtrasOpen(false); }} onKeyDown={(event) => { if (event.key === "Escape") { extrasTriggerRef.current?.focus(); setExtrasOpen(false); } }}>
+                <button ref={extrasTriggerRef} type="button" aria-expanded={extrasOpen} aria-controls="extras-navigation" onClick={() => setExtrasOpen((open) => !open)} className="flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-100 hover:text-foreground focus:text-foreground">
+                  extras <ChevronDown className={cn("size-3 transition-transform duration-150", extrasOpen && "rotate-180")} />
                 </button>
                 <div id="extras-navigation" className={cn("absolute top-full right-0 z-50 pt-3 transition-[opacity,visibility] duration-100", extrasOpen ? "visible opacity-100" : "invisible opacity-0")}>
                   <div className="w-36 rounded-lg border border-border bg-background p-1 shadow-lg">
-                    <Link href="/bookmarks" className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">Bookmarks</Link>
+                    <Link href="/bookmarks" className={cn("block rounded-md px-3 py-2 text-sm transition-colors hover:bg-muted hover:text-foreground", pathname === "/bookmarks" ? "font-medium text-foreground" : "text-muted-foreground")}>bookmarks</Link>
+                    <Link href="/stats" className={cn("block rounded-md px-3 py-2 text-sm transition-colors hover:bg-muted hover:text-foreground", pathname === "/stats" ? "font-medium text-foreground" : "text-muted-foreground")}>stats</Link>
                   </div>
                 </div>
               </div>
@@ -95,7 +96,8 @@ export function Navbar() {
               {label}
             </Link>
           ))}
-          <Link onClick={() => setIsOpen(false)} href="/bookmarks" className={cn("rounded-md px-2 py-2 text-sm text-muted-foreground transition-colors duration-100 hover:bg-muted hover:text-foreground", pathname === "/bookmarks" && "font-semibold text-foreground")}>Bookmarks</Link>
+          <Link onClick={() => setIsOpen(false)} href="/bookmarks" className={cn("rounded-md px-2 py-2 text-sm text-muted-foreground transition-colors duration-100 hover:bg-muted hover:text-foreground", pathname === "/bookmarks" && "font-semibold text-foreground")}>bookmarks</Link>
+          <Link onClick={() => setIsOpen(false)} href="/stats" className={cn("rounded-md px-2 py-2 text-sm text-muted-foreground transition-colors duration-100 hover:bg-muted hover:text-foreground", pathname === "/stats" && "font-semibold text-foreground")}>stats</Link>
         </div>
       )}
     </header>

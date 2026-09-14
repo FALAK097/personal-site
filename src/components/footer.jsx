@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { uniqueVisitors } from "@/actions/unique-visitors";
 import { SocialLinks } from "@/components/social-links";
-import { HeartIcon } from "@/components/icons";
 
 const timeFormatter = new Intl.DateTimeFormat("en-IN", {
   hour: "2-digit",
@@ -11,6 +10,15 @@ const timeFormatter = new Intl.DateTimeFormat("en-IN", {
   hour12: false,
   timeZone: "Asia/Kolkata",
 });
+
+const LAST_UPDATED = process.env.NEXT_PUBLIC_LAST_UPDATED
+  ? new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      timeZone: "UTC",
+    }).format(new Date(process.env.NEXT_PUBLIC_LAST_UPDATED))
+  : null;
 
 function getVisitorId() {
   const key = "visitorId";
@@ -46,9 +54,9 @@ export function Footer() {
   return (
     <footer className="border-t border-border/70">
       <div className="site-container flex flex-col items-center gap-4 py-6 text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:justify-between">
-        <div className="order-3 flex items-center gap-1 sm:order-1">
-          Made with <HeartIcon className="size-4 text-clay-500" /> by Falak Gala
-        </div>
+        {LAST_UPDATED ? (
+          <p className="order-3 tabular-nums sm:order-1">Last updated · {LAST_UPDATED}</p>
+        ) : null}
         <div className="order-1 flex flex-col items-center gap-3 sm:order-2 sm:ml-auto sm:flex-row sm:gap-5">
           <p>Mumbai · <span className="tabular-nums">{mumbaiTime}</span></p>
           <p className="min-w-24 text-center tabular-nums sm:text-right">

@@ -19,7 +19,7 @@ export default function ProjectsPage() {
       <main className="page-main">
         <div className="space-y-10">
           <PageHeader
-            title="Projects"
+            title="projects"
             intro="Production products, independent tools, and experiments I&apos;ve designed and shipped."
           />
           <ProjectList projects={projects} />

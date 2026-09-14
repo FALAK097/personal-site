@@ -18,7 +18,7 @@ export default function AboutPage() {
       <main className="page-main">
         <div className="space-y-10">
           <PageHeader
-            title="About"
+            title="about"
             intro="How I became a developer, what I care about, and the experience I bring to a product team."
           />
           <AboutContent />

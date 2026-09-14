@@ -21,7 +21,7 @@ export default async function WritingPage() {
       <main className="page-main">
         <div className="space-y-10">
           <PageHeader
-            title="Writing"
+            title="writing"
             intro="Notes from building frontend systems, AI products, and production infrastructure."
           />
           <BlogList posts={posts} />

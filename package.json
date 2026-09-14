@@ -22,6 +22,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
+    "echarts": "^6.1.0",
     "fumadocs-core": "^16.15.10",
     "fumadocs-mdx": "^15.4.0",
     "geist": "^1.7.2",

@@ -18,7 +18,7 @@ export default function ContactPage() {
       <main className="page-main">
         <div className="space-y-16">
           <PageHeader
-            title="Contact"
+            title="contact"
             intro="I help teams turn complex product ideas into clear, scalable, production ready systems across product, AI, and infrastructure."
           >
             <div className="flex flex-wrap gap-2 pt-3">

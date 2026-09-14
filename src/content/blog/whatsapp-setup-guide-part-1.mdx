@@ -76,7 +76,7 @@ WhatsApp messages are charged per conversation. Check current pricing:
    - **UseCase**: Select **Other** option
    - **Business Account:** Select the business account you created
 
-![App Details Form](/blog/app-details-form.png)
+![App Details Form](/writing/app-details-form.png)
 
 4. Click **"Create App"**
 
@@ -85,7 +85,7 @@ WhatsApp messages are charged per conversation. Check current pricing:
 1. In your app dashboard, find **"WhatsApp"** in the products list
 2. Click **"Set Up"**
 
-![WhatsApp Product in Dashboard](/blog/whatsapp-setup.png)
+![WhatsApp Product in Dashboard](/writing/whatsapp-setup.png)
 
 3. You'll be redirected to the WhatsApp setup page
 
@@ -96,7 +96,7 @@ WhatsApp messages are charged per conversation. Check current pricing:
    - **App ID**
    - **App Secret** (click "Show" to reveal)
 
-![App ID and Secret](/blog/app-id-secret.png)
+![App ID and Secret](/writing/app-id-secret.png)
 
 3. Add your app domain:
    - **App Domains:** yourdomain.com
@@ -111,7 +111,7 @@ WhatsApp messages are charged per conversation. Check current pricing:
 2. Scroll to **"Add Platform"** → Select **"Website"**
 3. Enter your **Site URL:** https://yourdomain.com
 
-![Add Platform](/blog/add-platform.png)
+![Add Platform](/writing/add-platform.png)
 
 ---
 
@@ -155,7 +155,7 @@ Test numbers have limitations:
 - Cannot be used in production
 - Perfect for development and testing
 
-![WhatsApp Business Account](/blog/whatsapp-business-account.png)
+![WhatsApp Business Account](/writing/whatsapp-business-account.png)
 
 ### Step 3: Get Your Credentials
 
@@ -174,7 +174,7 @@ You need these values for your application:
    - In the same section, you'll see a temporary 24 hour token
    - This is just for testing - OAuth will generate long-lived tokens
 
-![Access Token](/blog/access-token.png)
+![Access Token](/writing/access-token.png)
 
 #### Refer this docs page for more details on these values: [WhatsApp Cloud API Overview](https://developers.facebook.com/docs/whatsapp/cloud-api/get-started/)
 ---
@@ -211,7 +211,7 @@ Save this as your **WHATSAPP_VERIFY_TOKEN** - you'll need it in your code and Me
    - **Callback URL:** https://yourdomain.com/api/webhooks/whatsapp
    - **Verify Token:** The token you generated above
 
-![Webhook Configuration Button](/blog/webhook-configuration.png)
+![Webhook Configuration Button](/writing/webhook-configuration.png)
 
 5. Create a GET endpoint in your Next.js app to handle verification:
 
@@ -317,7 +317,7 @@ Replace:
 - `YOUR_ACCESS_TOKEN` with the temporary token from Meta
 - `RECIPIENT_PHONE_NUMBER` with a verified test number (format: `1234567890`)
 
-![Test Message Screenshot](/blog/test-message.png)
+![Test Message Screenshot](/writing/test-message.png)
 
 ### Step 3: Verify Webhook Reception
 

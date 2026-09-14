@@ -61,6 +61,14 @@ const skillLogos = {
   Drizzle: { logo: "/skills/drizzle.svg", name: "Drizzle" },
   Stripe: { logo: "/skills/stripe.jpeg", name: "Stripe" },
   Gemini: { logo: "/skills/gemini.svg", name: "Gemini" },
+  Resend: {
+    logo: {
+      light: "/skills/resend.svg",
+      dark: "/skills/resend-dark.svg",
+    },
+    name: "Resend",
+  },
+  Cloudflare: { logo: "/skills/cloudflare.svg", name: "Cloudflare" },
   OpenAI: {
     logo: {
       light: "/skills/openai.svg",
@@ -87,14 +95,13 @@ const skillLogos = {
     },
     name: "Vercel",
   },
-  "GitHub API": {
+  GitHub: {
     logo: {
       light: "/skills/github-light.svg",
       dark: "/skills/github.svg",
     },
-    name: "GitHub API",
+    name: "GitHub",
   },
-  Git: { logo: "/skills/git.svg", name: "Git" },
   Warp: { logo: "/skills/warp.svg", name: "Warp" },
   VsCode: { logo: "/skills/vscode.svg", name: "Vs Code" },
   Pnpm: {

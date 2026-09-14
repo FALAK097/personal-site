@@ -44,14 +44,14 @@ export function Navbar() {
                   href={href}
                   className={cn(
                     "text-sm text-muted-foreground transition-colors duration-100 hover:text-foreground",
-                    pathname === href && "text-foreground"
+                    (pathname === href || pathname.startsWith(`${href}/`)) && "text-foreground"
                   )}
                 >
                   {label}
                 </Link>
               ))}
               <div ref={extrasRef} className="relative" onPointerEnter={(event) => { if (event.pointerType === "mouse") setExtrasOpen(true); }} onPointerLeave={(event) => { if (event.pointerType === "mouse") setExtrasOpen(false); }} onFocus={() => setExtrasOpen(true)} onBlur={(event) => { if (!extrasRef.current?.contains(event.relatedTarget)) setExtrasOpen(false); }} onKeyDown={(event) => { if (event.key === "Escape") { extrasTriggerRef.current?.focus(); setExtrasOpen(false); } }}>
-                <button ref={extrasTriggerRef} type="button" aria-expanded={extrasOpen} aria-controls="extras-navigation" onClick={() => setExtrasOpen(true)} className={cn("flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-100 hover:text-foreground focus:text-foreground", pathname === "/bookmarks" && "text-foreground")}>
+                <button ref={extrasTriggerRef} type="button" aria-expanded={extrasOpen} aria-controls="extras-navigation" onClick={() => setExtrasOpen((open) => !open)} className={cn("flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-100 hover:text-foreground focus:text-foreground", pathname === "/bookmarks" && "text-foreground")}>
                   Extras <ChevronDown className={cn("size-3 transition-transform duration-150", extrasOpen && "rotate-180")} />
                 </button>
                 <div id="extras-navigation" className={cn("absolute top-full right-0 z-50 pt-3 transition-[opacity,visibility] duration-100", extrasOpen ? "visible opacity-100" : "invisible opacity-0")}>

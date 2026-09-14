@@ -15,6 +15,7 @@ export function ThemeToggle() {
 
   return (
     <Button
+      data-theme-sound={resolvedTheme === "dark" ? "/sounds/switch-on.mp3" : "/sounds/switch-off.mp3"}
       size="icon"
       variant="ghost"
       onClick={handleToggle}

@@ -52,7 +52,7 @@ Answer:
 - Be accurate to the source content, don't make up structures or details.
 - If unsure, say so briefly.
 - Respond in plain text only. Do not use Markdown, code blocks, special formatting, or any formatting tokens (like **, __, \`, etc). Only output plain text.
-- Include links exactly as they appear in the context (e.g., https://falakgala.dev/blog/your-post) Do not modify or shorten them.
+- Include links exactly as they appear in the context (e.g., https://falakgala.dev/writing/your-post) Do not modify or shorten them.
 - Do not remove hyphens or change the structure of any URL also do not add trailing dots after URLs.
 `;
 

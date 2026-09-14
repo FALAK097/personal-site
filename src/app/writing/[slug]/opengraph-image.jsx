@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getPostBySlug } from "@/lib/blog-source";
 
-export const alt = "Falak Gala's Blog";
+export const alt = "Falak Gala's Writing";
 export const size = {
   width: 1200,
   height: 630,

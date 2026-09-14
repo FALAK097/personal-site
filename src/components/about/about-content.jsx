@@ -6,9 +6,10 @@ export function AboutContent() {
   return (
     <div className="space-y-16 sm:space-y-20">
       <section className="max-w-[62ch] space-y-4 text-base leading-7 text-muted-foreground">
-        <p>I started programming in 2016 and found my direction in frontend engineering: turning complicated systems into interfaces people can understand immediately.</p>
-        <p>Today I build production software across Next.js, React, TypeScript, Python, AI systems, and infrastructure. I care most about the part users feel—clarity, speed, accessibility, and the small interaction details that make a product trustworthy.</p>
-        <p>At SSingularitee Technologies, I lead product development for AI-powered workflows, including multilingual voice automation, healthcare operations, and real-time analytics.</p>
+        <p>My journey into programming began in <Highlight>2016</Highlight>. I was 14, learning <Highlight>Java and C++</Highlight> by memorising small programs for exams. I did not understand much of the theory yet, but seeing a program run successfully gave me a reason to keep exploring.</p>
+        <p>That curiosity led me to a <Highlight>Diploma in Computer Engineering</Highlight>, where computers, networks, and software started to make sense as connected systems. In 2022, I built my first websites with HTML, CSS, JavaScript, and SCSS, then published them by dragging the files into GitHub. It was a scrappy beginning, but it made building for the web feel real.</p>
+        <p>I joined a startup as an intern in <Highlight>2023</Highlight> and experienced how production software is designed, reviewed, and shipped. Alongside college, I spent the following year strengthening my fundamentals, learning modern web development, and building projects that pushed me beyond tutorials.</p>
+        <p>Today I work across <Highlight>frontend, backend, AI engineering, infrastructure, and system design</Highlight>. I care most about clarity, speed, accessibility, and the small interaction details that make a product trustworthy. I still approach every new build with the curiosity that started with my first <Highlight>Hello World</Highlight>.</p>
       </section>
       <section className="space-y-5" id="experience">
         <h2 className="section-heading">Experience</h2>
@@ -21,4 +22,8 @@ export function AboutContent() {
       <section className="space-y-5" id="education"><h2 className="section-heading">Education</h2><div>{education.map((item) => <div key={item.degree} className="flat-row flex flex-col gap-1 sm:flex-row sm:justify-between"><div><h3 className="text-sm font-medium">{item.degree}</h3><p className="text-sm text-muted-foreground">{item.institution}</p></div><p className="font-mono text-xs text-muted-foreground">{item.duration} · {item.grade}</p></div>)}</div></section>
     </div>
   );
+}
+
+function Highlight({ children }) {
+  return <strong className="font-medium text-foreground decoration-clay-400/60 decoration-2 underline-offset-4">{children}</strong>;
 }

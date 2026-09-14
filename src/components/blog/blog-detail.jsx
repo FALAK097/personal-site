@@ -35,10 +35,10 @@ export default function BlogDetail({ post, children, toc, prevPost, nextPost }) 
     <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-12 sm:px-6">
       <div className="mb-8">
         <Link
-          href="/blog"
+          href="/writing"
           className="flex items-center gap-2 text-muted-foreground hover:text-clay-400 transition-colors"
         >
-          <ArrowLeftIcon /> Back to Blog
+          <ArrowLeftIcon /> Back to Writing
         </Link>
       </div>
       <div className="grid items-start gap-14 lg:grid-cols-[minmax(0,1fr)_220px]">
@@ -91,7 +91,7 @@ export default function BlogDetail({ post, children, toc, prevPost, nextPost }) 
       <nav className="mt-8 pt-8 flex justify-between items-center">
         {prevPost && (
           <Link
-            href={`/blog/${prevPost.slug}`}
+            href={`/writing/${prevPost.slug}`}
             className="flex items-center gap-2 text-muted-foreground hover:text-clay-400 transition-colors no-underline"
           >
             <ArrowLeftIcon />
@@ -100,7 +100,7 @@ export default function BlogDetail({ post, children, toc, prevPost, nextPost }) 
         )}
         {nextPost && (
           <Link
-            href={`/blog/${nextPost.slug}`}
+            href={`/writing/${nextPost.slug}`}
             className="flex items-center gap-2 text-muted-foreground hover:text-clay-400 transition-colors ml-auto no-underline"
           >
             {nextPost.title}

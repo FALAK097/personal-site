@@ -16,7 +16,7 @@ const commandIcons = {
   "/about": <UserIcon className="h-4 w-4" />,
   "/contact": <AtSignIcon className="h-4 w-4" />,
   "/projects": <ShipIcon className="h-4 w-4" />,
-  "/blog": <FilePenLineIcon className="h-4 w-4" />,
+  "/writing": <FilePenLineIcon className="h-4 w-4" />,
   "/help": <CircleHelpIcon className="h-4 w-4" />,
 };
 

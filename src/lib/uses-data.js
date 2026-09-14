@@ -1,6 +1,0 @@
-export const usesSections = [
-  { title: "Hardware", items: [{ name: "MacBook", detail: "Primary development machine" }, { name: "External display", detail: "Focused product and code workspace" }] },
-  { title: "Development", items: [{ name: "VS Code", detail: "Editor for everyday product work" }, { name: "Ghostty", detail: "Fast, minimal terminal" }, { name: "GitHub", detail: "Source control, reviews, and delivery" }, { name: "pnpm", detail: "JavaScript package management" }, { name: "Postman", detail: "API exploration and verification" }] },
-  { title: "Product stack", items: [{ name: "Next.js + React", detail: "Web applications and interfaces" }, { name: "TypeScript", detail: "Reliable frontend and full-stack code" }, { name: "Tailwind CSS", detail: "Design systems and responsive UI" }, { name: "Motion", detail: "Purposeful interface motion" }, { name: "Figma", detail: "Interface thinking and visual references" }] },
-  { title: "Infrastructure", items: [{ name: "Docker", detail: "Reproducible services and deployments" }, { name: "Vercel", detail: "Frontend delivery and observability" }, { name: "DigitalOcean", detail: "Production application hosting" }, { name: "PostgreSQL + Redis", detail: "Durable and real-time application data" }] },
-];

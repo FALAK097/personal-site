@@ -3,20 +3,21 @@
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { GithubIcon } from "@/components/icons";
+import { SkillsLogo } from "@/components/custom/skills-logo";
 import { cn } from "@/lib/utils";
 import { ViewToggle, useViewPreference } from "@/components/view-toggle";
 
 export function ProjectList({ projects, compact = false }) {
-  const [view, setView] = useViewPreference();
+  const [view, setView, viewReady] = useViewPreference();
   const shown = compact ? projects.slice(0, 4) : projects;
 
   return (
     <section className="space-y-5">
       <div className="flex items-center justify-between gap-4">
-        {compact ? <h2 className="section-heading">Selected work</h2> : <span />}
+        {compact ? <h2 className="section-heading">Things I&apos;ve built</h2> : <span />}
         <ViewToggle value={view} onChange={setView} />
       </div>
-      <div className={cn(view === "grid" && "grid gap-x-5 gap-y-8 sm:grid-cols-2")}>
+      <div className={cn("transition-opacity duration-100", !viewReady && "opacity-0", view === "grid" && "grid gap-x-5 gap-y-8 sm:grid-cols-2")}>
         {shown.map((project, index) => (
           <article key={project.id} className={cn("group", view === "list" && "flat-row")}>
             {view === "grid" ? (
@@ -47,7 +48,9 @@ function ProjectCopy({ project }) {
           {project.deployedUrl ? <ProjectLink href={project.deployedUrl} label={`Open ${project.title}`}><ArrowUpRight /></ProjectLink> : null}
         </div>
       </div>
-      <p className="truncate font-mono text-xs text-muted-foreground/80">{project.tags.slice(0, 6).join(" / ")}</p>
+      <div className="flex flex-wrap gap-2 pt-1" aria-label={`${project.title} technology stack`}>
+        {project.tags.slice(0, 7).map((tag, index) => <SkillsLogo key={tag} skill={tag} index={index} />)}
+      </div>
     </div>
   );
 }

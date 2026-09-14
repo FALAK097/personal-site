@@ -1,32 +1,41 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import { Button } from "./ui/button";
 import { ArrowRightIcon } from "./icons/arrow-right";
 import { AtSignIcon } from "./icons/at-sign";
+import { SquigglyUnderline } from "./custom/squiggly-underline";
 
 export function Profile() {
+  const roles = ["AI Engineer", "Frontend Engineer", "Software Engineer"];
+  const [roleIndex, setRoleIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setRoleIndex((index) => (index + 1) % roles.length), 2600);
+    return () => window.clearInterval(timer);
+  }, [roles.length]);
+
   return (
-    <section className="space-y-7 pt-6 sm:pt-10">
-      <div className="space-y-5">
-        <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">Frontend-focused software engineer in Mumbai</p>
-            <h1 className="max-w-[18ch] text-3xl font-semibold leading-[1.12] tracking-[-0.04em] text-foreground sm:text-4xl">
-              I build fast, thoughtful products that feel good to use.
-            </h1>
-          </div>
-          <div className="max-w-[62ch] space-y-3 text-base leading-7 text-muted-foreground">
-            <p>
-              I&apos;m Falak Gala. I turn complex workflows into clear interfaces and ship production software across frontend, backend, AI, and infrastructure.
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-3 pt-1">
+    <section className="space-y-6 pt-5 sm:space-y-7 sm:pt-8">
+      <div className="space-y-2">
+        <h1 className="text-2xl font-medium tracking-[-0.035em] sm:text-3xl">Hey I&apos;m Falak</h1>
+        <p key={roles[roleIndex]} className="h-7 animate-in fade-in slide-in-from-bottom-1 text-lg font-semibold text-clay-500 duration-150 sm:text-xl">{roles[roleIndex]}</p>
+      </div>
+      <div className="max-w-[62ch] space-y-3 text-base leading-7 text-muted-foreground">
+        <p>Whipping up clever solutions and wrestling with tricky challenges because who doesn&apos;t love a good tech puzzle?</p>
+        <p>This is my quirky web nook for spilling my <SquigglyUnderline href="/writing" className="font-medium text-clay-500">learnings</SquigglyUnderline> and <SquigglyUnderline href="/projects" className="font-medium text-clay-500">projects</SquigglyUnderline>.</p>
+        <p>Outside work, I&apos;m usually watching football, playing Valorant, or at the gym.</p>
+      </div>
+      <div className="flex flex-wrap items-center gap-3 pt-1">
               <Button
                 variant="outline"
                 className="hover:border-clay-400 hover:bg-transparent"
                 asChild
               >
-                <Link href="/hire-me">
-                  <span className="me-1.5 size-2 rounded-full bg-clay-500" />
+                <Link href="/contact">
+                  <span className="me-1.5 size-5 rounded-full bg-gradient-to-br from-clay-300 via-clay-500 to-slate-600 shadow-[0_0_10px_rgba(92,190,255,0.5)]" />
                   Available for work
                 </Link>
               </Button>
@@ -51,7 +60,6 @@ export function Profile() {
                   </a>
                 </Button>
               </div>
-          </div>
       </div>
     </section>
   );

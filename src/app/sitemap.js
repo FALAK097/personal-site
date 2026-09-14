@@ -26,10 +26,16 @@ export default async function sitemap() {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/blog`,
+      url: `${baseUrl}/writing`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/bookmarks`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.5,
     },
     {
       url: `${baseUrl}/projects`,
@@ -38,13 +44,7 @@ export default async function sitemap() {
       priority: 0.6,
     },
     {
-      url: `${baseUrl}/uses`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/hire-me`,
+      url: `${baseUrl}/contact`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.6,

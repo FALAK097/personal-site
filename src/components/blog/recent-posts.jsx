@@ -9,7 +9,7 @@ export function RecentPosts({ posts }) {
           I love writing things down
         </h2>
         <Link
-          href="/blog"
+          href="/writing"
           className="text-sm text-muted-foreground hover:text-clay-400 transition-colors"
         >
           View All
@@ -24,7 +24,7 @@ export function RecentPosts({ posts }) {
               >
                 <Link
                   className="space-y-3 hover:no-underline"
-                  href={`/blog/${post.slug}`}
+                  href={`/writing/${post.slug}`}
                 >
                   <div className="flex items-center gap-2">
                     <h3 className="text-lg font-medium transition-colors hover:text-clay-500">

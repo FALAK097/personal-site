@@ -10,7 +10,7 @@ export function BlogList({ posts }) {
               return (
                 <article key={post.slug} className="group flat-row">
                   <Link
-                    href={`/blog/${post.slug}`}
+                    href={`/writing/${post.slug}`}
                     className="block transition-opacity duration-100"
                   >
                     <div className="flex flex-col space-y-2">

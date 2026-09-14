@@ -26,15 +26,18 @@ export async function uniqueVisitors(visitorId) {
       return { error: validated.error.issues[0].message };
     }
 
-    const cachedCount = await redis.get(UNIQUE_VISITORS_COUNT_KEY);
-    if (cachedCount !== null) {
-      return { uniqueVisitors: Number(cachedCount) };
-    }
-
     const isMember = await redis.sismember(UNIQUE_VISITORS_KEY, visitorId);
 
     if (!isMember) {
-      await redis.sadd(UNIQUE_VISITORS_KEY, visitorId);
+      const wasAdded = await redis.sadd(UNIQUE_VISITORS_KEY, visitorId);
+      if (wasAdded) {
+        await redis.del(UNIQUE_VISITORS_COUNT_KEY);
+      }
+    } else {
+      const cachedCount = await redis.get(UNIQUE_VISITORS_COUNT_KEY);
+      if (cachedCount !== null) {
+        return { uniqueVisitors: Number(cachedCount) };
+      }
     }
 
     const count = await redis.scard(UNIQUE_VISITORS_KEY);

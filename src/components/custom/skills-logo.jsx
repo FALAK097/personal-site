@@ -105,6 +105,7 @@ const skillLogos = {
   },
   Postman: { logo: "/skills/postman.svg", name: "Postman" },
   Posthog: { logo: "/skills/posthog.svg", name: "Posthog" },
+  "Tailwind CSS": { logo: "/skills/tailwindcss.svg", name: "Tailwind CSS" },
   Ghostty: { logo: "/skills/ghostty.svg", name: "Ghostty" },
 };
 

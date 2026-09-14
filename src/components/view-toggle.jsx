@@ -1,7 +1,7 @@
 "use client";
 
 import { LayoutGrid, TextAlignJustify } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -11,13 +11,21 @@ const views = [
 ];
 
 export function useViewPreference() {
-  const [value, setValue] = useState("list");
-  useEffect(() => {
-    const saved = localStorage.getItem("portfolio-collection-view");
-    if (saved === "list" || saved === "grid") setValue(saved);
-  }, []);
-  const update = (next) => { setValue(next); localStorage.setItem("portfolio-collection-view", next); };
-  return [value, update];
+  const subscribe = (callback) => {
+    window.addEventListener("storage", callback);
+    window.addEventListener("portfolio-view-change", callback);
+    return () => {
+      window.removeEventListener("storage", callback);
+      window.removeEventListener("portfolio-view-change", callback);
+    };
+  };
+  const value = useSyncExternalStore(subscribe, () => localStorage.getItem("portfolio-collection-view") || "list", () => "list");
+  const ready = useSyncExternalStore(() => () => {}, () => true, () => false);
+  const update = (next) => {
+    localStorage.setItem("portfolio-collection-view", next);
+    window.dispatchEvent(new Event("portfolio-view-change"));
+  };
+  return [value, update, ready];
 }
 
 export function ViewToggle({ value, onChange }) {

@@ -4,12 +4,12 @@ import { BlogList } from "@/components/blog/blog-list";
 import { getAllPosts } from "@/lib/blog-source";
 
 export const metadata = {
-  title: "Blog",
+  title: "Writing",
   description:
     "Read my thoughts on software development, technology, and personal experiences in the tech industry.",
 };
 
-export default async function BlogPage() {
+export default async function WritingPage() {
   const posts = await getAllPosts();
 
   return (

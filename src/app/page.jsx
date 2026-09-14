@@ -27,10 +27,7 @@ export default async function Home() {
           <Profile />
           <RecentProjects projects={recentProjects} />
           <RecentPosts posts={recentPosts} />
-          <section className="space-y-5">
-            <h2 className="section-heading">Open source</h2>
-            <GitHubCalendarChart />
-          </section>
+          <GitHubCalendarChart />
         </div>
       </main>
       {/* <div className="mx-auto max-w-4xl container">

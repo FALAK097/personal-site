@@ -28,9 +28,9 @@ export async function GET() {
   const feed = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Falak Gala&apos;s Blog</title>
+    <title>Falak Gala&apos;s Writing</title>
     <description>Software engineering notes and practical build stories by Falak Gala.</description>
-    <link>${escapeXml(`${siteUrl}/blog`)}</link>
+    <link>${escapeXml(`${siteUrl}/writing`)}</link>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <language>en-us</language>
     <atom:link href="${escapeXml(`${siteUrl}/rss.xml`)}" rel="self" type="application/rss+xml"/>${items}

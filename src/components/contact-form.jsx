@@ -49,52 +49,56 @@ export function ContactForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="grid gap-6 sm:grid-cols-2">
-        <div>
-          <label htmlFor="name">Name</label>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div className="space-y-2">
+          <label className="text-sm font-medium" htmlFor="name">Name</label>
           <Input
             id="name"
             {...register("name")}
             disabled={loading}
-            placeholder="Enter your name"
+            placeholder="Your name"
+            className="shadow-none"
           />
           {errors.name && (
             <p className="text-sm text-clay-500">{errors.name.message}</p>
           )}
         </div>
-        <div>
-          <label htmlFor="email">Email</label>
+        <div className="space-y-2">
+          <label className="text-sm font-medium" htmlFor="email">Email</label>
           <Input
             id="email"
             {...register("email")}
             disabled={loading}
-            placeholder="Enter your email"
+            placeholder="you@company.com"
+            className="shadow-none"
           />
           {errors.email && (
             <p className="text-sm text-clay-500">{errors.email.message}</p>
           )}
         </div>
       </div>
-      <div>
-        <label htmlFor="subject">Subject</label>
+      <div className="space-y-2">
+        <label className="text-sm font-medium" htmlFor="subject">What are you building?</label>
         <Input
           id="subject"
           {...register("subject")}
           disabled={loading}
-          placeholder="Enter the subject"
+          placeholder="A short project summary"
+          className="shadow-none"
         />
         {errors.subject && (
           <p className="text-sm text-clay-500">{errors.subject.message}</p>
         )}
       </div>
-      <div>
-        <label htmlFor="message">Message</label>
+      <div className="space-y-2">
+        <label className="text-sm font-medium" htmlFor="message">Details</label>
         <Textarea
           id="message"
           {...register("message")}
           disabled={loading}
-          placeholder="Enter your message"
+          placeholder="The problem, timeline, and how I can help"
+          className="min-h-36 resize-y shadow-none"
         />
         {errors.message && (
           <p className="text-sm text-clay-500">{errors.message.message}</p>
@@ -104,9 +108,9 @@ export function ContactForm() {
         type="submit"
         variant="outline"
         disabled={loading}
-        className="hover:bg-transparent hover:border-clay-400"
+        className="border-clay-500/60 bg-clay-500/10 text-foreground shadow-none hover:bg-clay-500/15"
       >
-        {loading ? "Sending..." : "Send Message"}
+        {loading ? "Sending…" : "Send message"}
       </Button>
     </form>
   );

@@ -27,7 +27,7 @@ export function ProjectList({ projects, compact = false }) {
                 </a>
                 <ProjectCopy project={project} />
               </div>
-            ) : <div className="relative"><ProjectCopy project={project} /><div className="pointer-events-none absolute top-1/2 left-[calc(100%+2rem)] hidden w-64 -translate-y-1/2 overflow-hidden rounded-lg border border-border bg-background opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100 lg:block"><div className="relative aspect-[16/10]"><Image src={project.imageUrl} alt="" fill sizes="256px" className="object-cover object-top" /></div></div></div>}
+            ) : <div className="relative"><ProjectCopy project={project} /><div className="pointer-events-none absolute top-1/2 left-[calc(100%+2rem)] hidden w-64 -translate-y-1/2 overflow-hidden rounded-lg border border-border bg-background opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100 xl:block"><div className="relative aspect-[16/10]"><Image src={project.imageUrl} alt="" fill sizes="256px" className="object-cover object-top" /></div></div></div>}
           </article>
         ))}
       </div>

@@ -31,14 +31,10 @@ export const BookmarksList = () => {
 
   return (
     <div className="space-y-6">
-      <div className="overflow-x-auto pb-2">
-        <div className="flex items-center gap-2 w-full">
-          <Tabs
-            value={activeTag}
-            onValueChange={setActiveTag}
-            className="flex-1 min-w-0"
-          >
-            <TabsList className="bg-background h-auto p-1 flex flex-wrap">
+      <div className="flex items-center gap-2">
+        <div className="min-w-0 flex-1 overflow-x-auto pb-2">
+          <Tabs value={activeTag} onValueChange={setActiveTag}>
+            <TabsList className="flex h-auto w-max flex-nowrap bg-background p-1 sm:w-full sm:flex-wrap">
               {allTags.map((tag) => (
                 <TabsTrigger
                   key={tag}
@@ -59,8 +55,8 @@ export const BookmarksList = () => {
               ))}
             </TabsList>
           </Tabs>
-          <ViewToggle value={viewMode} onChange={setViewMode} />
         </div>
+        <ViewToggle value={viewMode} onChange={setViewMode} />
       </div>
 
       {status === "loading" ? <p className="py-10 text-sm text-muted-foreground">Loading bookmarks…</p> : null}

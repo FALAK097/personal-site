@@ -212,6 +212,7 @@
     line-height: 1.5;
     font-kerning: normal;
     text-rendering: optimizeLegibility;
+    overflow-x: clip;
   }
   code, pre, kbd { font-family: var(--font-geist-mono), monospace; }
   h1, h2, h3 { text-wrap: balance; letter-spacing: -0.025em; }

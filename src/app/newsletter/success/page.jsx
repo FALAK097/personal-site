@@ -7,6 +7,10 @@ export const metadata = {
   title: "Subscription Successful",
   description:
     "Thank you for subscribing to my newsletter! You'll receive updates about new content and projects.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function NewsletterSuccessPage() {

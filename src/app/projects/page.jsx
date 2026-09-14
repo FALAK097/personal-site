@@ -3,12 +3,14 @@ import { Navbar } from "@/components/navbar";
 import { PageHeader } from "@/components/custom/page-header";
 import { ProjectList } from "@/components/project-list";
 import { projects } from "@/lib/project-data";
+import { createMetadata } from "@/lib/metadata";
 
-export const metadata = {
+export const metadata = createMetadata({
   title: "Projects",
   description:
     "Explore my portfolio of projects, including web applications, saas products and personal experiments.",
-};
+  path: "/projects",
+});
 
 export default function ProjectsPage() {
   return (

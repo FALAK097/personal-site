@@ -3,11 +3,13 @@ import { ContactForm } from "@/components/contact-form";
 import { PageHeader } from "@/components/custom/page-header";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
+import { createMetadata } from "@/lib/metadata";
 
-export const metadata = {
+export const metadata = createMetadata({
   title: "Contact",
   description: "Work with Falak Gala across product engineering, AI systems, infrastructure, and full-stack software.",
-};
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

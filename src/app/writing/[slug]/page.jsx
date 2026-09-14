@@ -23,12 +23,17 @@ export async function generateMetadata(context) {
     description: post.description,
     alternates: {
       canonical: `/writing/${slug}`,
+      types: {
+        "application/rss+xml": "/rss.xml",
+      },
     },
     openGraph: {
       type: "article",
       title: post.title,
       description: post.description,
       url: `/writing/${slug}`,
+      siteName: "Falak Gala",
+      locale: "en_US",
       publishedTime: new Date(post.date).toISOString(),
       modifiedTime: new Date(post.updated || post.date).toISOString(),
       tags: post.tags,
@@ -37,6 +42,7 @@ export async function generateMetadata(context) {
       card: "summary_large_image",
       title: post.title,
       description: post.description,
+      creator: "@FalakGala097",
     },
   };
 }

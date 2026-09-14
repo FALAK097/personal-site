@@ -11,12 +11,56 @@ import "@/styles/globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata = {
-  metadataBase: new URL("https://falakgala.dev"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_WEBSITE_URL || "https://falakgala.dev"),
   title: {
     default: "Falak Gala's Portfolio",
     template: "%s | Falak Gala's Portfolio",
   },
-  description: "My personal space on the web",
+  description:
+    "Software engineer building across product engineering, AI systems, infrastructure, and full-stack software. Writing about what I ship and how it works.",
+  authors: [{ name: "Falak Gala", url: "https://falakgala.dev" }],
+  creator: "Falak Gala",
+  publisher: "Falak Gala",
+  keywords: [
+    "Falak Gala",
+    "software engineer",
+    "AI engineer",
+    "full-stack developer",
+    "Next.js",
+    "FastAPI",
+    "RAG",
+    "system design",
+  ],
+  alternates: {
+    types: {
+      "application/rss+xml": "/rss.xml",
+    },
+  },
+  openGraph: {
+    type: "website",
+    siteName: "Falak Gala",
+    locale: "en_US",
+    url: "/",
+    title: "Falak Gala's Portfolio",
+    description:
+      "Software engineer building across product engineering, AI systems, infrastructure, and full-stack software.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    creator: "@FalakGala097",
+    site: "@FalakGala097",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
 };
 
 export default function RootLayout({ children }) {

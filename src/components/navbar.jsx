@@ -50,7 +50,7 @@ export function Navbar() {
                   {label}
                 </Link>
               ))}
-              <div ref={extrasRef} className="relative" onPointerEnter={(event) => { if (event.pointerType === "mouse") setExtrasOpen(true); }} onPointerLeave={(event) => { if (event.pointerType === "mouse") setExtrasOpen(false); }} onFocus={() => setExtrasOpen(true)} onBlur={(event) => { if (!extrasRef.current?.contains(event.relatedTarget)) setExtrasOpen(false); }} onKeyDown={(event) => { if (event.key === "Escape") { extrasTriggerRef.current?.focus(); setExtrasOpen(false); } }}>
+              <div ref={extrasRef} className="relative" onPointerLeave={(event) => { if (event.pointerType === "mouse") setExtrasOpen(false); }} onFocus={(event) => { if (event.target.matches(":focus-visible")) setExtrasOpen(true); }} onBlur={(event) => { if (!extrasRef.current?.contains(event.relatedTarget)) setExtrasOpen(false); }} onKeyDown={(event) => { if (event.key === "Escape") { extrasTriggerRef.current?.focus(); setExtrasOpen(false); } }}>
                 <button ref={extrasTriggerRef} type="button" aria-expanded={extrasOpen} aria-controls="extras-navigation" onClick={() => setExtrasOpen((open) => !open)} className={cn("flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-100 hover:text-foreground focus:text-foreground", pathname === "/bookmarks" && "text-foreground")}>
                   Extras <ChevronDown className={cn("size-3 transition-transform duration-150", extrasOpen && "rotate-180")} />
                 </button>

@@ -65,6 +65,7 @@
   --think-shimmer: 2000ms;
   --think-base: var(--color-clay-500);
   --think-highlight: var(--foreground);
+
   position: relative;
   display: block;
   width: fit-content;

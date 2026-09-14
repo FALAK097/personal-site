@@ -31,7 +31,7 @@ export function Navbar() {
           <Link
             href="/"
             className={cn(
-              "text-sm font-semibold tracking-tight text-foreground transition-opacity hover:opacity-70"
+              "translate-y-px text-sm font-medium tracking-tight text-foreground transition-opacity hover:opacity-70"
             )}
           >
             Falak<span className="text-clay-500">.</span>

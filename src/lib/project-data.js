@@ -9,7 +9,7 @@ export const projects = [
       "OpenAI",
       "Gemini",
       "FastAPI",
-      "JavaScript",
+      "TypeScript",
       "React.js",
       "Next.js",
       "Tailwind",

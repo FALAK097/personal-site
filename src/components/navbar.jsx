@@ -65,7 +65,7 @@ export function Navbar() {
             <InteractionToggles />
             <ThemeToggle />
               <button
-              className="grid size-8 place-items-center rounded-md text-muted-foreground md:hidden"
+              className="mb-2 grid size-9 place-items-center rounded-md text-muted-foreground md:hidden"
               aria-label={isOpen ? "Close navigation" : "Open navigation"}
               aria-expanded={isOpen}
               aria-controls="mobile-navigation"

@@ -11,11 +11,11 @@ export function BlogList({ posts }) {
                 <article key={post.slug} className="group flat-row">
                   <Link
                     href={`/writing/${post.slug}`}
-                    className="block transition-opacity duration-100"
+                    className="portfolio-hover block"
                   >
                     <div className="flex flex-col space-y-2">
                       <div className="flex items-center justify-between">
-                        <h2 className="text-base font-medium text-foreground group-hover:text-clay-600 transition-colors duration-100">
+                        <h2 className="text-base font-medium text-foreground">
                           {post.title}
                         </h2>
                       </div>

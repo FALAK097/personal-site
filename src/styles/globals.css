@@ -228,6 +228,31 @@
   .page-intro { @apply mt-3 max-w-[62ch] text-base leading-7 text-muted-foreground; }
   .section-heading { @apply text-base font-medium tracking-[-0.02em] sm:text-lg; }
   .flat-row { @apply border-b border-border/70 py-5 first:pt-0 last:border-0; }
+
+  /* Extend the hit area without shifting the collection's text alignment. */
+  .portfolio-hover {
+    position: relative;
+    margin: -12px;
+    padding: 12px;
+    border-radius: 6px;
+    transition: background-color 180ms ease;
+  }
+
+  .portfolio-hover:has(:focus-visible),
+  .portfolio-hover:focus-visible {
+    background-color: var(--color-muted);
+    outline: 2px solid var(--color-clay-500);
+    outline-offset: 2px;
+    transition: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .portfolio-hover:hover { background-color: var(--color-muted); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .portfolio-hover { transition: none; }
+  }
 }
 
 @keyframes fade-in {

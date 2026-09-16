@@ -7,7 +7,8 @@ export const TOKSCALE_PROFILE_URL = `${TOKSCALE_BASE_URL}?utm_source=falakgala.d
 
 const TOP_MODELS_LIMIT = 8;
 const SYNTHETIC_MODEL = "<synthetic>";
-const REVALIDATE_SECONDS = 60 * 60 * 24;
+// 3h keeps the profile close to live without re-scraping the ~7.6MB page hourly.
+const REVALIDATE_SECONDS = 60 * 60 * 3;
 
 const FLIGHT_PUSH_CHUNK = /self\.__next_f\.push\(\[1,("(?:[^"\\]|\\.)*")\]\)/gu;
 const NULL_PLACEHOLDER = "\u0000";
@@ -354,6 +355,6 @@ export const getTokscaleInsights = unstable_cache(
       return null;
     }
   },
-  ["tokscale-insights"],
-  { revalidate: REVALIDATE_SECONDS, tags: ["tokscale-insights"] },
+  ["tokscale-insights-v2"],
+  { revalidate: REVALIDATE_SECONDS, tags: ["tokscale-insights-v2"] },
 );

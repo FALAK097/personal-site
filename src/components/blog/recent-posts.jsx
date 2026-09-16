@@ -23,11 +23,11 @@ export function RecentPosts({ posts }) {
                 className="group"
               >
                 <Link
-                  className="space-y-3 hover:no-underline"
+                  className="portfolio-hover block space-y-3 hover:no-underline"
                   href={`/writing/${post.slug}`}
                 >
                   <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-medium transition-colors hover:text-clay-500">
+                    <h3 className="text-lg font-medium">
                       {post.title}
                     </h3>
                   </div>

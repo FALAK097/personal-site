@@ -10,6 +10,7 @@ const TOKEN = process.env.VERCEL_ANALYTICS_TOKEN;
 
 const WINDOW_DAYS = 30;
 const LIST_LIMIT = 8;
+const PAGE_LIST_LIMIT = 12;
 const REVALIDATE_SECONDS = 60 * 60;
 
 // The API expects epoch milliseconds for since/until.
@@ -114,7 +115,7 @@ export const getSiteTraffic = unstable_cache(
       const [counts, daily, pages, referrers, countries, devices] = await Promise.all([
         query("visits/count", range),
         query("visits/aggregate", { ...range, by: "day" }),
-        query("visits/aggregate", { ...range, by: "requestPath", limit: LIST_LIMIT }),
+        query("visits/aggregate", { ...range, by: "requestPath", limit: PAGE_LIST_LIMIT }),
         query("visits/aggregate", { ...range, by: "referrerHostname", limit: 12 }),
         query("visits/aggregate", { ...range, by: "country", limit: 12 }),
         query("visits/aggregate", { ...range, by: "deviceType", limit: 6 }),
@@ -137,7 +138,7 @@ export const getSiteTraffic = unstable_cache(
         days: WINDOW_DAYS,
         totals: totals ?? summed,
         series,
-        pages: readRows(pages, "requestPath", LIST_LIMIT),
+        pages: readRows(pages, "requestPath", PAGE_LIST_LIMIT, { dropOthers: true }),
         referrers: readRows(referrers, "referrerHostname", 6, { fallbackLabel: "direct", dropOthers: true }),
         countries: readRows(countries, "country", 12, { format: formatRegion, dropOthers: true }),
         devices: readRows(devices, "deviceType", 5, { dropOthers: true }),

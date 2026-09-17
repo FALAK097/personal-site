@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @import "tw-animate-css";
+@import "./footer.css";
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
@@ -174,7 +175,7 @@
   }
 
   .dark {
-    --background: #1a1a1a;
+    --background: 0 0% 10.2%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;

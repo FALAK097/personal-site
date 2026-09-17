@@ -1,0 +1,154 @@
+.portfolio-footer {
+  --shore-ink: oklch(0.45 0.055 238);
+  --boat-paper: oklch(0.99 0.008 235);
+  --boat-fold: oklch(0.83 0.045 235);
+  position: relative;
+  isolation: isolate;
+  margin-top: 32px;
+}
+
+.footer-details {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  column-gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted-foreground);
+  font-size: 13px;
+}
+
+.footer-socials > div { gap: 0; }
+.footer-socials a {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 6px;
+}
+.footer-socials svg { width: 16px; height: 16px; }
+
+.footer-location { justify-self: start; display: flex; align-items: center; gap: 8px; }
+.footer-visitors { justify-self: center; font-variant-numeric: tabular-nums; }
+.footer-socials { justify-self: end; }
+.footer-location-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--color-clay-600); }
+.footer-time { margin-left: 4px; font-variant-numeric: tabular-nums; }
+
+.footer-seascape { position: relative; margin-top: 8px; }
+
+.footer-scene {
+  position: relative;
+  isolation: isolate;
+  background: var(--color-background);
+  height: clamp(220px, 25vw, 360px);
+  overflow: hidden;
+}
+
+.footer-landscape {
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+  min-width: 960px;
+  max-width: none;
+  height: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  object-fit: cover;
+  object-position: center 60%;
+  mix-blend-mode: multiply;
+  mask-image: linear-gradient(to bottom, transparent, black 22%, black 83%, transparent);
+}
+
+.footer-boat-course {
+  container-type: inline-size;
+  position: absolute;
+  top: 70%;
+  left: 24px;
+  right: 24px;
+  height: 44px;
+  color: var(--shore-ink);
+}
+.footer-paper-boat {
+  position: absolute;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  color: inherit;
+  border-radius: 6px;
+  -webkit-tap-highlight-color: transparent;
+}
+.footer-paper-boat[aria-disabled="true"] { cursor: default; }
+.footer-paper-boat svg { display: block; width: 40px; height: 28px; }
+.footer-boat-wake {
+  display: block;
+  height: 1px;
+  width: 48px;
+  background: currentColor;
+  opacity: 0.25;
+}
+.footer-paper-boat.is-sailing { animation: footer-sail 12s linear both; }
+.footer-paper-boat.is-sailing svg { animation: footer-bob 1.8s ease-in-out infinite; }
+
+.footer-signoff {
+  margin-top: 12px;
+  color: var(--color-muted-foreground);
+  font-size: 11px;
+}
+
+.portfolio-footer a { -webkit-tap-highlight-color: transparent; }
+.portfolio-footer :is(a, button):focus-visible {
+  outline: 2px solid var(--color-clay-500);
+  outline-offset: 5px;
+  border-radius: 2px;
+}
+
+.dark .portfolio-footer {
+  --shore-ink: oklch(0.77 0.065 238);
+  --boat-paper: oklch(0.8 0.035 235);
+  --boat-fold: oklch(0.48 0.055 235);
+}
+.dark .footer-landscape {
+  filter: invert(1) hue-rotate(180deg);
+  mix-blend-mode: screen;
+  opacity: 0.65;
+}
+@media (hover: hover) and (pointer: fine) {
+  .footer-socials a:hover { background: var(--color-muted); }
+  .footer-paper-boat:not(.is-sailing):hover { color: var(--color-clay-600); }
+  .dark .footer-paper-boat:not(.is-sailing):hover { color: var(--color-clay-400); }
+}
+
+@media (max-width: 639px) {
+  /* the three parts do not fit on a phone: location + visitors share a row,
+     socials drop to their own line */
+  .footer-details {
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    row-gap: 4px;
+    font-size: 11px;
+  }
+  .footer-visitors { justify-self: end; }
+  .footer-socials { grid-column: 1 / -1; justify-self: start; margin-left: -14px; }
+  .footer-location { gap: 6px; }
+  .footer-time { margin-left: 2px; }
+  .footer-landscape { left: 0; transform: translateX(-8%); }
+}
+
+@keyframes footer-sail {
+  0% { transform: translateX(0); opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateX(calc(100cqw - 48px)); opacity: 0; }
+}
+@keyframes footer-bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-2px) rotate(2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-paper-boat.is-sailing { animation-name: footer-sail-still; }
+  .footer-paper-boat.is-sailing svg { animation: none; }
+}
+@keyframes footer-sail-still { from, to { opacity: 1; } }

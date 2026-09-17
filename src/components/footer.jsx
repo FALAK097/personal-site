@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { uniqueVisitors } from "@/actions/unique-visitors";
 import { SocialLinks } from "@/components/social-links";
+import { FooterSeascape } from "@/components/footer-seascape";
 
 const timeFormatter = new Intl.DateTimeFormat("en-IN", {
   hour: "2-digit",
@@ -35,7 +36,9 @@ export function Footer() {
   const [mumbaiTime, setMumbaiTime] = useState("--:--");
 
   useEffect(() => {
-    uniqueVisitors(getVisitorId())
+    // Storage can be unavailable in private or restricted browsing contexts.
+    Promise.resolve()
+      .then(() => uniqueVisitors(getVisitorId()))
       .then((result) => {
         if (typeof result?.uniqueVisitors === "number") {
           setVisitorCount(result.uniqueVisitors);
@@ -52,19 +55,22 @@ export function Footer() {
   }, []);
 
   return (
-    <footer className="border-t border-border/70">
-      <div className="site-container flex flex-col items-center gap-4 py-6 text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:justify-between">
-        {LAST_UPDATED ? (
-          <p className="order-3 tabular-nums sm:order-1">Last updated · {LAST_UPDATED}</p>
-        ) : null}
-        <div className="order-1 flex flex-col items-center gap-3 sm:order-2 sm:ml-auto sm:flex-row sm:gap-5">
-          <p>Mumbai · <span className="tabular-nums">{mumbaiTime}</span></p>
-          <p className="min-w-24 text-center tabular-nums sm:text-right">
-            {visitorCount === null ? "Visitors —" : `${visitorCount.toLocaleString()} visitors`}
+    <footer className="portfolio-footer">
+      <div className="site-container">
+        <div className="footer-details">
+          <p className="footer-location">
+            <span className="footer-location-dot" aria-hidden="true" />
+            Mumbai, India
+            <span className="footer-time">{mumbaiTime} IST</span>
           </p>
+          <p className="footer-visitors">
+            {visitorCount === null ? "Visitors —" : `${visitorCount.toLocaleString("en-US")} visitors`}
+          </p>
+          <div className="footer-socials"><SocialLinks /></div>
         </div>
-        <div className="order-2 sm:order-3"><SocialLinks /></div>
+        {LAST_UPDATED ? <p className="footer-signoff">Last updated · {LAST_UPDATED}</p> : null}
       </div>
+      <FooterSeascape />
     </footer>
   );
 }

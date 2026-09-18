@@ -202,21 +202,27 @@
 }
 
 @media (max-width: 639px) {
-  /* the three parts do not fit on a phone: location + visitors share a row,
-     socials drop to their own line */
+  /* tighten the three-part row so it still fits on small tablets and large phones */
+  .footer-details { column-gap: 12px; font-size: 11px; }
+  .footer-socials a { width: 40px; }
+  .footer-landscape { left: 0; transform: translateX(-8%); }
+  .footer-landscape-night { left: auto; right: 0; transform: none; }
+  .footer-boat-course { --sail-duration: 12s; }
+}
+
+@media (max-width: 479px) {
+  /* the three parts no longer fit on a phone: location + visitors share a row,
+     socials spread across their own line */
   .footer-details {
     grid-template-columns: auto auto;
     justify-content: space-between;
     row-gap: 4px;
-    font-size: 11px;
   }
   .footer-visitors { justify-self: end; }
-  .footer-socials { grid-column: 1 / -1; justify-self: start; margin-left: -14px; }
+  .footer-socials { grid-column: 1 / -1; justify-self: stretch; margin-inline: -12px; }
+  .footer-socials > div { width: 100%; justify-content: space-between; }
   .footer-location { gap: 6px; }
   .footer-time { margin-left: 2px; }
-  .footer-landscape { left: 0; transform: translateX(-8%); }
-  .footer-landscape-night { left: auto; right: 0; transform: none; }
-  .footer-boat-course { --sail-duration: 12s; }
 }
 
 @keyframes footer-sail-east {

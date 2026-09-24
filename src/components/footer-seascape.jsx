@@ -252,8 +252,8 @@ export function FooterSeascape() {
             ) : null}
             <span ref={vesselRef} className="footer-vessel-direction">
               <span className="footer-vessel footer-water-motion">
-                <Image className="footer-vessel-image" src="/images/mumbai-fishing-boat.webp" alt="" width={480} height={220} sizes="120px" />
-                <Image className="footer-vessel-reflection" src="/images/mumbai-fishing-boat.webp" alt="" width={480} height={220} sizes="120px" aria-hidden="true" />
+                <Image className="footer-vessel-image" src="/images/mumbai-yacht.svg" alt="" width={480} height={220} sizes="120px" unoptimized />
+                <Image className="footer-vessel-reflection" src="/images/mumbai-yacht.svg" alt="" width={480} height={220} sizes="120px" aria-hidden="true" unoptimized />
               </span>
               <BoatWake />
             </span>

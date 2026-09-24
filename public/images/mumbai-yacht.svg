@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -6 480 220" fill="none">
+  <defs>
+    <linearGradient id="yacht-hull" x1="240" y1="118" x2="240" y2="206" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.5" stop-color="#f3f8fc"/>
+      <stop offset="1" stop-color="#c4d3e1"/>
+    </linearGradient>
+    <linearGradient id="yacht-cabin" x1="240" y1="58" x2="240" y2="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#d7e2ec"/>
+    </linearGradient>
+    <linearGradient id="yacht-glass" x1="240" y1="66" x2="240" y2="132" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4a657f"/>
+      <stop offset="0.55" stop-color="#25384a"/>
+      <stop offset="1" stop-color="#16212d"/>
+    </linearGradient>
+    <linearGradient id="yacht-rail" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d9e3ec"/>
+      <stop offset="1" stop-color="#a9bccd"/>
+    </linearGradient>
+    <clipPath id="yacht-hull-clip">
+      <path d="M22 150 C150 141 300 133 436 126 C452 124 466 121 474 118 C470 150 460 180 446 204 L72 204 C44 204 22 180 22 150 Z" />
+    </clipPath>
+  </defs>
+
+  <!-- Hull -->
+  <path d="M22 150 C150 141 300 133 436 126 C452 124 466 121 474 118 C470 150 460 180 446 204 L72 204 C44 204 22 180 22 150 Z" fill="url(#yacht-hull)"/>
+
+  <!-- Boot stripe + hull shading follow the hull outline -->
+  <g clip-path="url(#yacht-hull-clip)">
+    <rect x="0" y="181" width="480" height="30" fill="#173a5e"/>
+    <rect x="0" y="179" width="480" height="2.5" fill="#2f6ea3" opacity="0.85"/>
+    <rect x="0" y="118" width="480" height="14" fill="#ffffff" opacity="0.35"/>
+  </g>
+
+  <!-- Sheer accent -->
+  <path d="M24 150 C150 141 300 133 436 126 C452 124 466 121 474 118" stroke="#93aabf" stroke-width="1.6" fill="none" opacity="0.75"/>
+
+  <!-- Portholes -->
+  <g fill="url(#yacht-glass)" stroke="#b7c7d6" stroke-width="1.4">
+    <circle cx="118" cy="160" r="4.6"/>
+    <circle cx="156" cy="158" r="4.6"/>
+    <circle cx="194" cy="157" r="4.6"/>
+    <circle cx="232" cy="155" r="4.6"/>
+  </g>
+
+  <!-- Main deckhouse -->
+  <path d="M100 136 L100 90 Q100 86 106 86 L346 86 Q360 86 372 96 L400 117 Q407 121 407 128 L407 136 Z" fill="url(#yacht-cabin)"/>
+  <path d="M100 136 L407 136" stroke="#b9c8d6" stroke-width="1.2" opacity="0.7"/>
+
+  <!-- Deckhouse glazing -->
+  <path d="M114 101 L344 101 Q350 101 356 105 L386 121 Q392 124 392 128 L114 128 Z" fill="url(#yacht-glass)"/>
+  <g stroke="#c9d7e3" stroke-width="1.6" opacity="0.5">
+    <line x1="160" y1="101" x2="160" y2="128"/>
+    <line x1="206" y1="101" x2="206" y2="128"/>
+    <line x1="252" y1="101" x2="252" y2="128"/>
+    <line x1="298" y1="101" x2="298" y2="128"/>
+  </g>
+
+  <!-- Flybridge -->
+  <path d="M154 88 L154 66 Q154 62 160 62 L316 62 Q330 62 342 73 L356 86 Z" fill="url(#yacht-cabin)"/>
+  <path d="M166 72 L320 72 Q328 72 336 78 L344 84 L166 84 Z" fill="url(#yacht-glass)"/>
+  <g stroke="#c9d7e3" stroke-width="1.4" opacity="0.45">
+    <line x1="206" y1="72" x2="206" y2="84"/>
+    <line x1="252" y1="72" x2="252" y2="84"/>
+    <line x1="298" y1="72" x2="298" y2="84"/>
+  </g>
+
+  <!-- Flybridge rail -->
+  <path d="M158 60 L336 60" stroke="url(#yacht-rail)" stroke-width="2" stroke-linecap="round"/>
+  <g stroke="url(#yacht-rail)" stroke-width="1.4">
+    <line x1="176" y1="60" x2="176" y2="66"/>
+    <line x1="216" y1="60" x2="216" y2="62"/>
+    <line x1="256" y1="60" x2="256" y2="62"/>
+    <line x1="296" y1="60" x2="296" y2="62"/>
+    <line x1="330" y1="60" x2="330" y2="66"/>
+  </g>
+
+  <!-- Radar arch + antenna -->
+  <path d="M246 62 C238 46 246 32 262 32 C278 32 286 46 278 62" stroke="url(#yacht-cabin)" stroke-width="6.5" stroke-linecap="round"/>
+  <ellipse cx="262" cy="30" rx="12" ry="5" fill="#dfe9f2" stroke="#b3c4d3" stroke-width="1.2"/>
+  <line x1="262" y1="25" x2="262" y2="12" stroke="#b3c4d3" stroke-width="1.6" stroke-linecap="round"/>
+  <circle cx="262" cy="10.5" r="2.2" fill="#e8b04b"/>
+
+  <!-- Bow rail -->
+  <path d="M404 122 C430 118 452 114 470 110" stroke="url(#yacht-rail)" stroke-width="2" stroke-linecap="round"/>
+  <g stroke="url(#yacht-rail)" stroke-width="1.4">
+    <line x1="424" y1="120" x2="424" y2="126"/>
+    <line x1="446" y1="116" x2="446" y2="122"/>
+    <line x1="466" y1="112" x2="466" y2="117"/>
+  </g>
+
+  <!-- Stern flag -->
+  <line x1="46" y1="152" x2="46" y2="100" stroke="#b3c4d3" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M46 100 L74 107 L46 115 Z" fill="#c0392b"/>
+</svg>

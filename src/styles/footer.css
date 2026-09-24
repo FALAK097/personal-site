@@ -62,12 +62,11 @@
 
 .footer-boat-course {
   --boat-width: clamp(88px, 8vw, 116px);
-  --sail-duration: 18s;
   container-type: inline-size;
   position: absolute;
   top: calc(70% - 64px);
-  left: 24px;
-  right: 24px;
+  left: 0;
+  right: 0;
   height: 64px;
   color: var(--shore-ink);
 }
@@ -79,20 +78,18 @@
   color: inherit;
   border-radius: 6px;
   -webkit-tap-highlight-color: transparent;
+  /* Parked just off the left shore until the JS ferry loop takes over. */
+  transform: translateX(-105%);
+  will-change: transform;
 }
-.footer-boat[aria-disabled="true"] { cursor: default; }
-.footer-boat[data-shore="right"] { transform: translateX(calc(100cqw - var(--boat-width))); }
-.footer-boat.is-sailing { animation: footer-sail-east var(--sail-duration) linear both; }
-.footer-boat.is-sailing[data-shore="right"] { animation-name: footer-sail-west; }
 .footer-vessel-direction {
   position: relative;
   display: block;
   width: 100%;
   height: 100%;
-  transform: perspective(320px) rotateY(0deg);
-  transition: transform var(--boat-turn-duration) cubic-bezier(0.45, 0, 0.2, 1);
+  transform: scaleX(1);
+  transform-origin: 50% 50%;
 }
-.footer-boat[data-heading="west"] .footer-vessel-direction { transform: perspective(320px) rotateY(180deg); }
 .footer-bon-voyage {
   position: absolute;
   bottom: calc(100% + 4px);
@@ -138,22 +135,29 @@
 }
 .footer-boat-wake {
   position: absolute;
-  right: 72%;
+  right: 100%;
   bottom: -8px;
   display: block;
   height: 24px;
-  width: 145%;
+  width: 158%;
   overflow: visible;
-  stroke: color-mix(in oklch, var(--shore-ink), white 48%);
-  stroke-width: 0.85;
+  stroke: color-mix(in oklch, var(--shore-ink), white 8%);
+  stroke-width: 1.4;
   stroke-linecap: round;
-  mask-image: linear-gradient(to right, transparent, black);
-  opacity: 0;
+  mask-image: linear-gradient(to right, transparent, black 38%);
+  opacity: 0.95;
   transform-origin: right center;
+  animation: footer-wake 3.6s ease-in-out infinite;
 }
-.footer-boat.is-sailing .footer-boat-wake { opacity: 0.75; animation: footer-wake 3.6s ease-in-out infinite; }
 .footer-wake-ripples { animation: footer-wake-ripples 3s linear infinite; }
-.footer-wake-foam { stroke: oklch(0.96 0.015 210); stroke-width: 1.3; animation: footer-wake-foam 2s linear infinite; }
+.footer-wake-foam { stroke: oklch(0.99 0.008 210); stroke-width: 1.7; animation: footer-wake-foam 2s linear infinite; }
+
+/* A click nudges the throttle: the wake froths harder and the water churns. */
+.footer-seascape[data-boost="true"] .footer-boat-wake { opacity: 1; }
+.footer-seascape[data-boost="true"] .footer-wake-ripples { animation-duration: 1.4s; }
+.footer-seascape[data-boost="true"] .footer-wake-foam { animation-duration: 0.9s; }
+.footer-seascape[data-boost="true"] .footer-water-drift { animation-duration: 9s; }
+.footer-seascape[data-boost="true"] .footer-water-glints { animation-duration: 7s; opacity: 0.55; }
 
 /* Only the open water is duplicated; the bridge, skyline, and rocks stay still. */
 .footer-water {
@@ -178,7 +182,6 @@
 }
 .footer-water-motion { animation-play-state: paused !important; }
 .footer-seascape[data-active="true"] .footer-water-motion { animation-play-state: running !important; }
-.footer-seascape[data-active="false"] .footer-boat { animation-play-state: paused; }
 
 .footer-signoff {
   margin-top: 12px;
@@ -207,7 +210,6 @@
   .footer-socials a { width: 40px; }
   .footer-landscape { left: 0; transform: translateX(-8%); }
   .footer-landscape-night { left: auto; right: 0; transform: none; }
-  .footer-boat-course { --sail-duration: 12s; }
 }
 
 @media (max-width: 479px) {
@@ -225,14 +227,6 @@
   .footer-time { margin-left: 2px; }
 }
 
-@keyframes footer-sail-east {
-  from { transform: translateX(0); }
-  to { transform: translateX(calc(100cqw - var(--boat-width))); }
-}
-@keyframes footer-sail-west {
-  from { transform: translateX(calc(100cqw - var(--boat-width))); }
-  to { transform: translateX(0); }
-}
 @keyframes footer-bob {
   0%, 100% { transform: translateY(0) rotate(-0.8deg); }
   50% { transform: translateY(-1.5px) rotate(0.8deg); }
@@ -264,6 +258,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .footer-water-motion { animation: none !important; }
-  .footer-boat.is-sailing { animation-duration: 0.01ms; }
-  .footer-vessel-direction { transition: none; }
+  /* No ferry loop: park the boat mid-water, facing east. */
+  .footer-boat { transform: translateX(35cqw); }
+  .footer-vessel-direction { transform: scaleX(1); }
 }

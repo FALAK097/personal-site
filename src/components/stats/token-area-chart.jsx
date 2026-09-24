@@ -2,6 +2,7 @@
 
 import { EChartsAreaChart } from "@/components/evilcharts/charts/echarts-area-chart";
 import { brandForClient, brandForModel, brandSrc } from "@/lib/ai-brand";
+import { useEffect, useState } from "react";
 
 const PALETTE = [
   { light: "#2f7fb8", dark: "#5cbeff" },
@@ -183,6 +184,20 @@ export function TokenAreaChart({
   const isCost = mode === "cost";
   const tickFormatter = isCost ? costTickFormatter : tokenTickFormatter;
 
+  // On narrow screens the model legend wraps to multiple rows; give the plot
+  // area extra headroom so the wrapped legend never overlaps the top labels.
+  const [isNarrow, setIsNarrow] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches,
+  );
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 640px)");
+    const sync = () => setIsNarrow(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
+
   return (
     <EChartsAreaChart
       data={data}
@@ -193,7 +208,7 @@ export function TokenAreaChart({
       stackType="stacked"
       enableHoverHighlight
       chartOptions={{
-        grid: { left: 0, right: 0, top: 68, bottom: 0 },
+        grid: { left: 0, right: 0, top: isNarrow ? 88 : 68, bottom: 0 },
         tooltip: {
           show: true,
           trigger: "axis",

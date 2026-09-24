@@ -50,7 +50,7 @@ function LegendOverlay({
   style
 }) {
   const legendJustify = align === "left" ? "justify-start" : align === "center" ? "justify-center" : "justify-end";
-  return <div style={style} className={`flex items-center gap-4 select-none ${legendJustify}`}>
+  return <div style={style} className={`flex flex-wrap items-center gap-x-4 gap-y-1 select-none ${legendJustify}`}>
       {seriesKeys.map((key) => {
     const item = config[key];
     const colorsCount = item ? getColorsCount(item) : 1;

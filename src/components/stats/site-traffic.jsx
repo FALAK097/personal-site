@@ -35,7 +35,7 @@ function Metric({ label, value, children }) {
     <div className="rounded-lg border border-border/70 p-4">
       <p className="flex items-center gap-2 font-mono text-lg font-medium tabular-nums tracking-tight">
         {children}
-        <span className="truncate">{value}</span>
+        <span className="min-w-0 truncate">{value}</span>
       </p>
       <p className="mt-1 text-xs text-muted-foreground">{label}</p>
     </div>
@@ -46,7 +46,7 @@ function RankedList({ title, rows, unit = "views", showFlag = false, showFavicon
   if (!rows?.length) return null;
 
   return (
-    <div className="space-y-2">
+    <div className="min-w-0 space-y-2">
       <h4 className="text-xs font-medium text-muted-foreground">{title}</h4>
       <div>
         {rows.map((row) => {

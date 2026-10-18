@@ -117,7 +117,8 @@ function collectConfig(children) {
         dataKey: props.dataKey,
         tickFormatter: props.tickFormatter,
         label: props.label,
-        hideDots: props.hideDots ?? false
+        hideDots: props.hideDots ?? false,
+        interval: props.interval
       };
     } else if (type === YAxis) {
       const props = child.props;
@@ -398,7 +399,9 @@ function buildMainAxes(ctx) {
       fontSize: 10,
       margin: 8,
       formatter: xTickFormatter ? (value, index) => xTickFormatter(value, index) : void 0
-    }
+    },
+    // Explicit tick spacing — overrides ECharts' auto-interval calculation.
+    interval: xAxisSlot.interval
   };
   const yAxis = {
     type: "value",

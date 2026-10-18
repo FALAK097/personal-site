@@ -233,7 +233,7 @@ export function TokenAreaChart({
       }}
     >
       <EChartsAreaChart.Grid />
-      <EChartsAreaChart.XAxis dataKey="date" tickFormatter={dateTickFormatter} />
+      <EChartsAreaChart.XAxis dataKey="date" tickFormatter={dateTickFormatter} interval={2} />
       <EChartsAreaChart.YAxis tickFormatter={tickFormatter} />
       <EChartsAreaChart.Legend variant="rounded-square" align="right" verticalAlign="top" isClickable />
       {keys.map((key) => (

@@ -229,10 +229,10 @@ Convert code snippets into beautiful images with customizable themes and styles.
 
 ![Tailwind](https://falakgala.dev/skills/tailwindcss.svg)
 
-![Vercel](https://falakgala.dev/skills/vercel-light.svg)
+![Cloudflare](https://falakgala.dev/skills/cloudflare.svg)
 
 [GitHub](https://github.com/FALAK097/codetoimg)
 
-[Live Demo](https://codetoimg-seven.vercel.app/)
+[Live Demo](https://codetoimg.falakgala.dev/)
 
 ![CodeToImage](https://falakgala.dev/_next/image?url=%2Fprojects%2Fcodetoimg.png&w=3840&q=75)

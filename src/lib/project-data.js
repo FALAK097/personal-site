@@ -150,8 +150,8 @@ export const projects = [
     title: "CodeToImage",
     description:
       "Convert code snippets into beautiful images with customizable themes and styles.",
-    tags: ["TypeScript", "React.js", "Next.js", "Tailwind", "Vercel"],
-    deployedUrl: "https://codetoimg-seven.vercel.app",
+    tags: ["TypeScript", "React.js", "Next.js", "Tailwind", "Cloudflare"],
+    deployedUrl: "https://codetoimg.falakgala.dev",
     githubUrl: "https://github.com/FALAK097/codetoimg",
     imageUrl: "/projects/codetoimg.png",
   },

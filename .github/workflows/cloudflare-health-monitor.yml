@@ -108,7 +108,7 @@ jobs:
                   "repo": "FALAK097/bootstrap-host",
                   "url": "https://bootstrap.falakgala.dev",
                   "expected_status": [200],
-                  "must_contain": "<html",
+                  "must_contain": "#!/usr/bin/env bash",
               },
           ]
 

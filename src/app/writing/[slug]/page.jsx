@@ -47,6 +47,9 @@ export async function generateMetadata(context) {
   };
 }
 
+export const dynamic = "force-static";
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const posts = await getAllPosts();
   return posts.map((post) => ({

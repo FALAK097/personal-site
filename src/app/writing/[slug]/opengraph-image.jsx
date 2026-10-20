@@ -1,5 +1,14 @@
 import { ImageResponse } from "next/og";
-import { getPostBySlug } from "@/lib/blog-source";
+import { getPostBySlug, getAllPosts } from "@/lib/blog-source";
+
+export const dynamic = "force-static";
+
+export async function generateStaticParams() {
+  const posts = await getAllPosts();
+  return posts.map((post) => ({
+    slug: post.slug,
+  }));
+}
 
 export const alt = "Falak Gala's Writing";
 export const size = {

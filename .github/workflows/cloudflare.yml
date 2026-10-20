@@ -8,6 +8,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -49,3 +53,30 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy --dry-run
+
+      - name: Open GitHub Issue on Build/Deploy Failure
+        if: failure() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const title = `[Cloudflare CI/CD] 🚨 Build or Deployment Failed on ${context.repo.repo}`;
+            const body = [
+              `### 🚨 Cloudflare Build / Deployment Failure`,
+              ``,
+              `- **Repository**: \`${context.repo.owner}/${context.repo.repo}\``,
+              `- **Branch**: \`${context.ref}\``,
+              `- **Commit**: \`${context.sha}\``,
+              `- **Workflow Run**: [View Failure Logs](${runUrl})`,
+              ``,
+              `cc @FALAK097`
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              assignees: ['FALAK097'],
+              labels: ['bug'],
+            });

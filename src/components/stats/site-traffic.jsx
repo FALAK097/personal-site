@@ -3,14 +3,15 @@ import { TrafficChart } from "@/components/stats/traffic-chart";
 
 const numberFormatter = new Intl.NumberFormat("en-US");
 
-export const VERCEL_ANALYTICS_URL = "https://vercel.com/analytics?utm_source=falakgala.dev&utm_medium=referral";
+export const CLOUDFLARE_ANALYTICS_URL = "https://www.cloudflare.com/web-analytics/?utm_source=falakgala.dev&utm_medium=referral";
 
 const formatCount = (value) => numberFormatter.format(value ?? 0);
 
-function VercelLogo({ className }) {
+function CloudflareLogo({ className }) {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
-      <path d="M12 1.5 23.5 22.5H0.5L12 1.5Z" />
+    <svg viewBox="0 0 256 116" fill="currentColor" aria-hidden="true" className={className}>
+      <path d="M176.332 108.348c1.593-5.31 1.062-10.622-1.593-13.809-2.656-3.187-6.374-5.31-11.154-5.842L71.17 87.634c-.531 0-1.062-.53-1.593-.53-.531-.532-.531-1.063 0-1.594.531-1.062 1.062-1.594 2.124-1.594l92.946-1.062c11.154-.53 22.839-9.56 27.087-20.182l5.312-13.809c0-.532.531-1.063 0-1.594C191.203 20.182 166.772 0 138.091 0 111.535 0 88.697 16.995 80.73 40.896c-5.311-3.718-11.684-5.843-19.12-5.31-12.747 1.061-22.838 11.683-24.432 24.43-.531 3.187 0 6.374.532 9.56C16.996 70.107 0 87.103 0 108.348c0 2.124 0 3.718.531 5.842 0 1.063 1.062 1.594 1.594 1.594h170.489c1.062 0 2.125-.53 2.125-1.594l1.593-5.842Z" />
+      <path d="M205.544 48.863h-2.656c-.531 0-1.062.53-1.593 1.062l-3.718 12.747c-1.593 5.31-1.062 10.623 1.594 13.809 2.655 3.187 6.373 5.31 11.153 5.843l19.652 1.062c.53 0 1.062.53 1.593.53.53.532.53 1.063 0 1.594-.531 1.063-1.062 1.594-2.125 1.594l-20.182 1.062c-11.154.53-22.838 9.56-27.087 20.182l-1.063 4.78c-.531.532 0 1.594 1.063 1.594h70.108c1.062 0 1.593-.531 1.593-1.593 1.062-4.25 2.124-9.03 2.124-13.81 0-27.618-22.838-50.456-50.456-50.456" />
     </svg>
   );
 }
@@ -107,18 +108,18 @@ export function SiteTraffic({ traffic }) {
           <p className="font-mono text-xs text-muted-foreground">last {days} days</p>
         </div>
         <p className="text-sm text-muted-foreground">
-          Pageviews and visitors, preserved from{" "}
+          Pageviews and visitors, synced from{" "}
           <a
-            href={VERCEL_ANALYTICS_URL}
+            href={CLOUDFLARE_ANALYTICS_URL}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1 font-medium text-clay-500 transition-colors hover:text-clay-600"
+            className="inline-flex items-center gap-1.5 font-medium text-clay-500 transition-colors hover:text-clay-600"
           >
-            <VercelLogo className="size-3" />
-            Vercel Web Analytics
+            <CloudflareLogo className="h-3 w-auto" />
+            Cloudflare Web Analytics
             <ArrowUpRight className="size-3.5" aria-hidden="true" />
-          </a>{" "}
-          and synced with Cloudflare Web Analytics.
+          </a>
+          .
         </p>
       </div>
 

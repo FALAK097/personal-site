@@ -1,7 +1,7 @@
 {
   "counts": {
-    "visitors": 251,
-    "pageviews": 437
+    "visitors": 260,
+    "pageviews": 457
   },
   "daily": [
     {
@@ -156,15 +156,20 @@
     },
     {
       "timestamp": "2026-10-19T00:00:00.000Z",
-      "visitors": 6,
-      "pageviews": 7
+      "visitors": 13,
+      "pageviews": 26
+    },
+    {
+      "timestamp": "2026-10-20T00:00:00.000Z",
+      "visitors": 2,
+      "pageviews": 2
     }
   ],
   "pages": [
     {
       "requestPath": "/",
-      "visitors": 128,
-      "pageviews": 164
+      "visitors": 132,
+      "pageviews": 170
     },
     {
       "requestPath": "/stats",
@@ -173,8 +178,13 @@
     },
     {
       "requestPath": "/writing",
-      "visitors": 34,
-      "pageviews": 38
+      "visitors": 36,
+      "pageviews": 40
+    },
+    {
+      "requestPath": "/projects",
+      "visitors": 18,
+      "pageviews": 23
     },
     {
       "requestPath": "/writing/whatsapp-setup-guide-part-1",
@@ -319,13 +329,13 @@
   "devices": [
     {
       "deviceType": "desktop",
-      "visitors": 167,
-      "pageviews": 289
+      "visitors": 175,
+      "pageviews": 303
     },
     {
       "deviceType": "mobile",
-      "visitors": 88,
-      "pageviews": 153
+      "visitors": 89,
+      "pageviews": 154
     }
   ]
 }

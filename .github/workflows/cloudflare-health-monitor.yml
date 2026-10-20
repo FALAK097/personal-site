@@ -1,0 +1,301 @@
+name: Cloudflare Fleet Health Monitor
+
+on:
+  schedule:
+    # Runs every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  monitor:
+    name: Check All Cloudflare Deployments
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Synthetic Health & Edge-Case Checks
+        id: health
+        run: |
+          python3 - << 'EOF'
+          import json
+          import os
+          import time
+          import urllib.request
+          import urllib.error
+
+          CHECKS = [
+              {
+                  "project": "Personal Site (Root)",
+                  "repo": "FALAK097/personal-site",
+                  "url": "https://falakgala.dev",
+                  "expected_status": [200],
+                  "must_contain": "Falak",
+              },
+              {
+                  "project": "Personal Site (WWW)",
+                  "repo": "FALAK097/personal-site",
+                  "url": "https://www.falakgala.dev",
+                  "expected_status": [200],
+                  "must_contain": "Falak",
+              },
+              {
+                  "project": "Personal Site (/stats)",
+                  "repo": "FALAK097/personal-site",
+                  "url": "https://falakgala.dev/stats",
+                  "expected_status": [200],
+                  "must_contain": "Cloudflare Web Analytics",
+              },
+              {
+                  "project": "Spotify Clone (SSR & Neon DB)",
+                  "repo": "FALAK097/spotify-clone",
+                  "url": "https://spotify.falakgala.dev",
+                  "expected_status": [200],
+                  "must_contain": "Spotify Clone",
+              },
+              {
+                  "project": "Spotify Clone (/search)",
+                  "repo": "FALAK097/spotify-clone",
+                  "url": "https://spotify.falakgala.dev/search",
+                  "expected_status": [200],
+                  "must_contain": "Search",
+              },
+              {
+                  "project": "Glyph Web",
+                  "repo": "FALAK097/glyph",
+                  "url": "https://glyph.falakgala.dev",
+                  "expected_status": [200],
+                  "must_contain": "Glyph",
+              },
+              {
+                  "project": "FitHub",
+                  "repo": "FALAK097/fithub_landing_page",
+                  "url": "https://fithub.falakgala.dev",
+                  "expected_status": [200],
+                  "must_contain": "FitHub",
+              },
+              {
+                  "project": "Portfolio (Legacy)",
+                  "repo": "FALAK097/Portfolio-Falak",
+                  "url": "https://portfolio.falakgala.dev",
+                  "expected_status": [200],
+                  "must_contain": "<html",
+              },
+              {
+                  "project": "Luscious",
+                  "repo": "FALAK097/Luscious",
+                  "url": "https://luscious.falakgala.dev",
+                  "expected_status": [200],
+                  "must_contain": "<div id=\"root\"",
+              },
+              {
+                  "project": "CodeToImg",
+                  "repo": "FALAK097/codetoimg",
+                  "url": "https://codetoimg.falakgala.dev",
+                  "expected_status": [200],
+                  "must_contain": "<html",
+              },
+              {
+                  "project": "Hermanos Store",
+                  "repo": "FALAK097/hermanosStore",
+                  "url": "https://hermanos.falakgala.dev",
+                  "expected_status": [200],
+                  "must_contain": "<div id=\"root\"",
+              },
+              {
+                  "project": "Bootstrap Host",
+                  "repo": "FALAK097/bootstrap-host",
+                  "url": "https://bootstrap.falakgala.dev",
+                  "expected_status": [200],
+                  "must_contain": "<html",
+              },
+          ]
+
+          def check_endpoint(item):
+              for attempt in range(3):
+                  start = time.time()
+                  try:
+                      req = urllib.request.Request(
+                          item["url"],
+                          headers={"User-Agent": "CloudflareFleetMonitor/1.0 (+https://falakgala.dev)"}
+                      )
+                      with urllib.request.urlopen(req, timeout=15) as resp:
+                          status = resp.getcode()
+                          body = resp.read().decode("utf-8", errors="ignore")
+                          latency_ms = int((time.time() - start) * 1000)
+
+                          if status not in item["expected_status"]:
+                              err = f"Unexpected HTTP {status} (expected {item['expected_status']})"
+                          elif item.get("must_contain") and item["must_contain"].lower() not in body.lower():
+                              err = f"Missing expected content marker: '{item['must_contain']}'"
+                          else:
+                              return {
+                                  **item,
+                                  "ok": True,
+                                  "status": status,
+                                  "latency_ms": latency_ms,
+                                  "error": None,
+                              }
+                  except Exception as e:
+                      latency_ms = int((time.time() - start) * 1000)
+                      err = str(e)
+                      status = getattr(e, "code", "ERR")
+
+                  if attempt < 2:
+                      time.sleep(2)
+
+              return {
+                  **item,
+                  "ok": False,
+                  "status": status,
+                  "latency_ms": latency_ms,
+                  "error": err,
+              }
+
+          results = [check_endpoint(c) for c in CHECKS]
+
+          # Also verify Glyph macOS (.dmg) and Windows (.exe) release asset downloads
+          try:
+              start = time.time()
+              req = urllib.request.Request(
+                  "https://api.github.com/repos/FALAK097/glyph/releases/latest",
+                  headers={"User-Agent": "CloudflareFleetMonitor/1.0"}
+              )
+              with urllib.request.urlopen(req, timeout=15) as resp:
+                  rel = json.loads(resp.read().decode("utf-8"))
+                  assets = rel.get("assets", [])
+                  has_mac = any(a["name"].endswith(".dmg") for a in assets)
+                  has_win = any(a["name"].endswith(".exe") for a in assets)
+                  latency_ms = int((time.time() - start) * 1000)
+                  if has_mac and has_win:
+                      results.append({
+                          "project": "Glyph Release Assets (macOS .dmg & Windows .exe)",
+                          "repo": "FALAK097/glyph",
+                          "url": "https://github.com/FALAK097/glyph/releases/latest",
+                          "ok": True,
+                          "status": 200,
+                          "latency_ms": latency_ms,
+                          "error": None,
+                      })
+                  else:
+                      results.append({
+                          "project": "Glyph Release Assets (macOS .dmg & Windows .exe)",
+                          "repo": "FALAK097/glyph",
+                          "url": "https://github.com/FALAK097/glyph/releases/latest",
+                          "ok": False,
+                          "status": 200,
+                          "latency_ms": latency_ms,
+                          "error": f"Missing release binaries (mac={has_mac}, win={has_win})",
+                      })
+          except Exception as e:
+              results.append({
+                  "project": "Glyph Release Assets (macOS .dmg & Windows .exe)",
+                  "repo": "FALAK097/glyph",
+                  "url": "https://github.com/FALAK097/glyph/releases/latest",
+                  "ok": False,
+                  "status": "ERR",
+                  "latency_ms": 0,
+                  "error": str(e),
+              })
+
+          failures = [r for r in results if not r["ok"]]
+
+          with open("health_report.json", "w") as f:
+              json.dump({"results": results, "failures": failures}, f, indent=2)
+
+          for r in results:
+              icon = "✅" if r["ok"] else "❌"
+              print(f"{icon} {r['project']} ({r['url']}) -> {r['status']} [{r['latency_ms']}ms] {r['error'] or ''}")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+              out.write(f"has_failures={'true' if failures else 'false'}\n")
+              out.write(f"failure_count={len(failures)}\n")
+          EOF
+
+      - name: Create or Update Incident Issue on Failure
+        if: steps.health.outputs.has_failures == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('health_report.json', 'utf8'));
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const issueTitle = '[Cloudflare Monitor] 🚨 Outage / Degraded Service Detected';
+
+            const rows = report.results.map(r => {
+              const statusBadge = r.ok ? '✅ Healthy' : '❌ **FAILED**';
+              return `| ${statusBadge} | **${r.project}** | \`${r.repo}\` | ${r.url} | \`${r.status}\` | ${r.latency_ms}ms | ${r.error || '—'} |`;
+            }).join('\n');
+
+            const body = [
+              `### 🚨 Cloudflare Fleet Health Alert`,
+              ``,
+              `**${report.failures.length}** check(s) failed during the automated health check at **${new Date().toUTCString()}**.`,
+              ``,
+              `| Status | Project | Repo | URL | HTTP | Latency | Error |`,
+              `| :--- | :--- | :--- | :--- | :--- | :--- | :--- |`,
+              rows,
+              ``,
+              `🔗 **Workflow Run**: [View Full Logs](${runUrl})`,
+              ``,
+              `cc @FALAK097`
+            ].join('\n');
+
+            const { data: openIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 50,
+            });
+
+            const existing = openIssues.find(i => i.title === issueTitle);
+
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: issueTitle,
+                body,
+                assignees: ['FALAK097'],
+                labels: ['bug'],
+              });
+            }
+
+            core.setFailed(`${report.failures.length} Cloudflare health check(s) failed.`);
+
+      - name: Auto-Resolve Open Incident Issue When Healthy
+        if: steps.health.outputs.has_failures == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueTitle = '[Cloudflare Monitor] 🚨 Outage / Degraded Service Detected';
+            const { data: openIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 50,
+            });
+
+            const existing = openIssues.find(i => i.title === issueTitle);
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body: `✅ **Resolved**: All Cloudflare domains and endpoints passed synthetic health checks at **${new Date().toUTCString()}**. Auto-closing this incident.`,
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                state: 'closed',
+              });
+            }

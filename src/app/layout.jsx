@@ -1,8 +1,6 @@
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import Script from "next/script";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "@/components/theme-provider";
 import { MotionProvider } from "@/components/motion-provider";
 
@@ -81,8 +79,6 @@ export default function RootLayout({ children }) {
             <Toaster />
           </MotionProvider>
         </ThemeProvider>
-        <Analytics />
-        <SpeedInsights />
         <Script
           defer
           src="https://static.cloudflareinsights.com/beacon.min.js"

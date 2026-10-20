@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import snapshot from "@/data/vercel-analytics-snapshot.json";
 
 const API_BASE = "https://api.vercel.com/v1/query/web-analytics";
 
@@ -103,9 +104,23 @@ function readSeries(data) {
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
 
+function getSnapshotTraffic() {
+  const totals = readCount(snapshot.counts);
+  const series = readSeries(snapshot.daily);
+  return {
+    days: WINDOW_DAYS,
+    totals: totals ?? { pageviews: 0, visitors: 0 },
+    series,
+    pages: readRows(snapshot.pages, "requestPath", PAGE_LIST_LIMIT, { dropOthers: true }),
+    referrers: readRows(snapshot.referrers, "referrerHostname", 6, { fallbackLabel: "direct", dropOthers: true }),
+    countries: readRows(snapshot.countries, "country", 12, { format: formatRegion, dropOthers: true }),
+    devices: readRows(snapshot.devices, "deviceType", 5, { dropOthers: true }),
+  };
+}
+
 export const getSiteTraffic = unstable_cache(
   async () => {
-    if (!TOKEN) return null;
+    if (!TOKEN) return getSnapshotTraffic();
 
     try {
       const since = msDaysAgo(WINDOW_DAYS);
@@ -124,7 +139,7 @@ export const getSiteTraffic = unstable_cache(
       const totals = readCount(counts);
       const series = readSeries(daily);
 
-      if (!totals && !series.length) return null;
+      if (!totals && !series.length) return getSnapshotTraffic();
 
       const summed = series.reduce(
         (acc, point) => ({
@@ -144,7 +159,7 @@ export const getSiteTraffic = unstable_cache(
         devices: readRows(devices, "deviceType", 5, { dropOthers: true }),
       };
     } catch {
-      return null;
+      return getSnapshotTraffic();
     }
   },
   ["vercel-site-traffic"],

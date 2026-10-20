@@ -107,7 +107,7 @@ export function SiteTraffic({ traffic }) {
           <p className="font-mono text-xs text-muted-foreground">last {days} days</p>
         </div>
         <p className="text-sm text-muted-foreground">
-          Pageviews and visitors, synced from{" "}
+          Pageviews and visitors, preserved from{" "}
           <a
             href={VERCEL_ANALYTICS_URL}
             target="_blank"
@@ -117,8 +117,8 @@ export function SiteTraffic({ traffic }) {
             <VercelLogo className="size-3" />
             Vercel Web Analytics
             <ArrowUpRight className="size-3.5" aria-hidden="true" />
-          </a>
-          .
+          </a>{" "}
+          and synced with Cloudflare Web Analytics.
         </p>
       </div>
 

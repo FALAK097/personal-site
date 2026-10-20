@@ -1,20 +1,19 @@
 "use server";
 
+import { createHash } from "node:crypto";
 import { OpenAI } from "openai";
 import { generateAIContext } from "@/lib/ai-context";
-import { Redis } from "@upstash/redis";
-
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN,
-});
+import { getCacheValue, setCacheValue } from "@/lib/site-data-store";
 
 const AI_REPLY_CACHE_PREFIX = "ai:reply:";
 const AI_REPLY_CACHE_TTL_SECONDS = 60 * 60 * 24;
 
 export async function askFalakAI(question, history = []) {
-  const cacheKey = AI_REPLY_CACHE_PREFIX + question.trim().toLowerCase();
-  const cached = await redis.get(cacheKey);
+  const normalizedQuestion = question.trim().toLowerCase();
+  const cacheKey =
+    AI_REPLY_CACHE_PREFIX +
+    createHash("sha256").update(normalizedQuestion).digest("hex");
+  const cached = await getCacheValue(cacheKey);
 
   if (cached) {
     return cached;
@@ -68,6 +67,6 @@ Answer:
     completion.choices[0].message.content?.trim() ??
     "Sorry, I don't know the answer to that.";
 
-  await redis.set(cacheKey, answer, { ex: AI_REPLY_CACHE_TTL_SECONDS });
+  await setCacheValue(cacheKey, answer, AI_REPLY_CACHE_TTL_SECONDS);
   return answer;
 }

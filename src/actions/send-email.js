@@ -2,12 +2,7 @@
 
 import nodemailer from "nodemailer";
 import { z } from "zod";
-import { Redis } from "@upstash/redis";
-
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN,
-});
+import { incrementRateLimit } from "@/lib/site-data-store";
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -29,12 +24,11 @@ export async function sendContactEmail(formData) {
 
   const { name, email, subject, message } = parsed.data;
 
-  const redisKey = `rate_limit:contact:${email}`;
-  const attempts = await redis.incr(redisKey);
-
-  if (attempts === 1) {
-    await redis.expire(redisKey, RATE_LIMIT_WINDOW_SECONDS);
-  }
+  const rateLimitKey = `rate_limit:contact:${email}`;
+  const attempts = await incrementRateLimit(
+    rateLimitKey,
+    RATE_LIMIT_WINDOW_SECONDS
+  );
 
   if (attempts > RATE_LIMIT_MAX) {
     return { success: false, error: "Too many requests. Try again later." };

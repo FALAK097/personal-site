@@ -40,7 +40,7 @@ function ProjectCopy({ project }) {
     <div className="space-y-2">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-base font-medium tracking-tight"><a href={project.deployedUrl || project.githubUrl} target="_blank" rel="noreferrer" className="after:absolute after:inset-0 after:rounded-md">{project.title}</a></h2>
+          <h2 className="text-base font-medium tracking-tight"><a href={project.deployedUrl || project.githubUrl} target="_blank" rel="noreferrer" className="after:absolute after:inset-0 after:rounded-md">{project.title}</a> {project.kind === "work" ? <span className="relative z-10 ml-1 inline-flex translate-y-[-1px] items-center gap-1.5 rounded-full bg-clay-500/10 px-2 py-[3px] align-middle text-[11px] font-medium leading-none text-clay-700 dark:text-clay-300"><span aria-hidden="true" className="size-1.5 rounded-full bg-clay-500" />Work</span> : null}</h2>
           <p className="mt-1 max-w-[58ch] text-sm leading-6 text-muted-foreground">{project.description}</p>
         </div>
         <div className="flex shrink-0 items-center gap-1">

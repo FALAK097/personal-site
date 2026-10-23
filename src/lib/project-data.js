@@ -2,6 +2,7 @@ export const projects = [
   {
     id: "outcallerai",
     title: "OutCallerAI",
+    kind: "work",
     description:
       "Automate inbound & outbound calls with ultra-realistic AI voices. Scale your outreach across any industry without extra manpower.",
     tags: [
@@ -43,19 +44,18 @@ export const projects = [
     id: "waitlyze",
     title: "Waitlyze",
     description:
-      "No-code platform to build waitlists, collect signups, and track analytics in real-time.",
+      "Create a branded waitlist in minutes — collect signups, grow with referrals, and know who's ready for launch day.",
     tags: [
-      "Neon",
-      "Docker",
-      "Vercel",
-      "BetterAuth",
       "JavaScript",
       "React.js",
       "Next.js",
       "Tailwind",
+      "BetterAuth",
       "Prisma",
       "PostgreSQL",
-      // "Uploadthing",
+      "Neon",
+      "Resend",
+      "Vercel",
     ],
     deployedUrl: "https://waitlyze.falakgala.dev",
     imageUrl: "/projects/waitlyze.png",
@@ -64,7 +64,7 @@ export const projects = [
     id: "dms",
     title: "DMS",
     description:
-      "Upload, search, and chat with your documents using AI. Automatic OCR, smart search, and seamless cloud syncing.",
+      "Ask your documents. Get answers you can cite. Upload deeds, contracts, and case files, then trace every answer back to the exact clause, page, and PDF.",
     tags: [
       "JavaScript",
       "React.js",
@@ -72,12 +72,12 @@ export const projects = [
       "Tailwind",
       "BetterAuth",
       "Prisma",
+      "PostgreSQL",
+      "Neon",
       "OpenAI",
       "Gemini",
-      "PostgreSQL",
-      "Vercel",
-      "Neon",
-      "Upstash",
+      "Tesseract.js",
+      "Cloudflare",
     ],
     deployedUrl: "https://dms.falakgala.dev",
     imageUrl: "/projects/dms.png",

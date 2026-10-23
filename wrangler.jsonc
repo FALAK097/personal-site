@@ -3,7 +3,7 @@
   "name": "personal-site",
   "main": ".open-next/worker.js",
   "build": {
-    "command": "pnpm run build:cf"
+    "command": "pnpm run build:cf && npx opennextjs-cloudflare populateCache remote"
   },
   "compatibility_date": "2024-12-30",
   "compatibility_flags": [
@@ -18,6 +18,32 @@
       "binding": "DB",
       "database_name": "personal-site",
       "database_id": "27a1fc58-02cb-42ae-8712-cc58f3d79cea"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "personal-site-inc-cache"
+    }
+  ],
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "personal-site"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "NEXT_CACHE_DO_QUEUE",
+        "class_name": "DOQueueHandler"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["DOQueueHandler"]
     }
   ],
   "workers_dev": false,

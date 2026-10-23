@@ -1,14 +1,15 @@
 export const experiences = [
   {
     title: "Software Engineer",
-    company: "SSingularitee Technologies Pvt Ltd",
+    company: "SSingularitee Technologies",
+    location: "Thane, Mumbai",
     duration: "July 2024 - Present",
     technologies: [
       "JavaScript",
       "React.js",
       "Next.js",
       "Tailwind",
-      "Authjs",
+      "Langfuse",
       "Prisma",
       "OpenAI",
       "Gemini",
@@ -21,12 +22,13 @@ export const experiences = [
       "DigitalOcean",
     ],
     achievements: [
-      "Leading the development of [OutCallerAI](https://outcallerai.com) — AI-powered outbound & inbound calling platform that automates multilingual lead qualification and follow-ups, boosting conversion efficiency.",
-      "Built a live energy monitoring and analytics system using `Next.js`, `WebSockets` and `InfluxDB` to display real-time and historical data, implemented `GitHub Actions` for `CI/CD`.",
-      "_RPA for Healthcare_ - Automated data workflows across 7+ healthcare platforms using `Selenium` and `FastAPI`, leading a team of 5 developers to reduce manual input for nurses and doctors.",
-      "Integrated `WhatsApp Business` and `Gmail APIs` to enable seamless _calendar bookings_ and _multi-channel communication_ within [OutCallerAI](https://outcallerai.com)",
-      "Designed and deployed scalable APIs using `FastAPI` and `Redis` queues to support _background job processing_ and _high-throughput workflows_.",
-      "Implemented robust authentication and access control with `Auth.js`, `Prisma`, and `PostgreSQL`; containerized services with `Docker` and deployed to `DigitalOcean` for reliability and scalability.",
+      "Built [OutCallerAI](https://outcallerai.com), an AI-powered outbound & inbound calling platform with integrations like `WhatsApp`, `Excel`, `Forms`, `Sheets`, `Drive` & many more that automates multilingual lead qualification and follow-ups.",
+      "Built _Echo_, an AI chat widget that captures inbound leads and converts them into automated outbound calls via [OutCallerAI](https://outcallerai.com).",
+      "Led a 5 member team to build a production-grade RAG system (_Bharatgen_) over `22k+ documents`, implementing end-to-end pipelines with `Qdrant`, `Neo4j`, and `Langfuse` on a self-hosted infrastructure, achieving `<3s` response latency.",
+      "Developed [OutRiskAI](https://outriskai.com), a legal AI assistant that summarizes contracts, highlights risks, and connects users with real lawyers to streamline contract review workflows.",
+      "Built a live energy monitoring and analytics system using `Next.js`, `WebSockets`, and `InfluxDB` to display real-time and historical data, implemented `GitHub Actions` for `CI/CD`.",
+      "Led a 5 member team to build an RPA platform for healthcare using `Selenium` + `FastAPI`, automating data entry across `7+ hospital platforms`, saving hundreds of manual work for doctors and nurses.",
+      "Developed a production-ready platform for [Cureight](https://cureight.xyz) with `Stripe`-powered subscriptions, enabling seamless onboarding, payments, and gated content access for users.",
     ],
   },
   {
@@ -98,8 +100,9 @@ export const skillCategories = {
   "Tools / API's": [
     "OpenAI",
     "Gemini",
+    "OpenCode",
+    "Langfuse",
     "Resend",
-    "Authjs",
     "BetterAuth",
     "Stripe",
     "GitHub",

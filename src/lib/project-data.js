@@ -13,7 +13,7 @@ export const projects = [
       "React.js",
       "Next.js",
       "Tailwind",
-      "Authjs",
+      "Langfuse",
       "Prisma",
       "PostgreSQL",
       "Redis",

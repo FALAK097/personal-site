@@ -48,7 +48,14 @@ const skillLogos = {
   Sass: { logo: "/skills/sass.svg", name: "Sass" },
   Bootstrap: { logo: "/skills/bootstrap.svg", name: "Bootstrap" },
   "Chart.js": { logo: "/skills/chartjs.svg", name: "Chart.js" },
-  Authjs: { logo: "/skills/authjs.svg", name: "Authjs" },
+  Langfuse: { logo: "/skills/langfuse.svg", name: "Langfuse" },
+  OpenCode: {
+    logo: {
+      light: "/skills/opencode-light.svg",
+      dark: "/skills/opencode-dark.svg",
+    },
+    name: "OpenCode",
+  },
   BetterAuth: { logo: "/skills/better-auth.svg", name: "BetterAuth" },
   Clerk: {
     logo: {

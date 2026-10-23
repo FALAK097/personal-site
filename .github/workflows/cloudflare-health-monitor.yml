@@ -48,20 +48,6 @@ jobs:
                   "must_contain": "Cloudflare Web Analytics",
               },
               {
-                  "project": "Spotify Clone (SSR & Neon DB)",
-                  "repo": "FALAK097/spotify-clone",
-                  "url": "https://spotify.falakgala.dev",
-                  "expected_status": [200],
-                  "must_contain": "Spotify Clone",
-              },
-              {
-                  "project": "Spotify Clone (/search)",
-                  "repo": "FALAK097/spotify-clone",
-                  "url": "https://spotify.falakgala.dev/search",
-                  "expected_status": [200],
-                  "must_contain": "Search",
-              },
-              {
                   "project": "Glyph Web",
                   "repo": "FALAK097/glyph",
                   "url": "https://glyph.falakgala.dev",
@@ -74,13 +60,6 @@ jobs:
                   "url": "https://fithub.falakgala.dev",
                   "expected_status": [200],
                   "must_contain": "FitHub",
-              },
-              {
-                  "project": "Portfolio (Legacy)",
-                  "repo": "FALAK097/Portfolio-Falak",
-                  "url": "https://portfolio.falakgala.dev",
-                  "expected_status": [200],
-                  "must_contain": "<html",
               },
               {
                   "project": "Luscious",
@@ -97,20 +76,13 @@ jobs:
                   "must_contain": "<html",
               },
               {
-                  "project": "Hermanos Store",
-                  "repo": "FALAK097/hermanosStore",
-                  "url": "https://hermanos.falakgala.dev",
-                  "expected_status": [200],
-                  "must_contain": "<div id=\"root\"",
-              },
-              {
                   "project": "Bootstrap Host",
                   "repo": "FALAK097/bootstrap-host",
-                  "url": "https://bootstrap.falakgala.dev",
+                  "url": "https://bootstrap.falakgala.dev/bootstrap.sh",
                   "expected_status": [200],
                   "must_contain": "#!/usr/bin/env bash",
               },
-          ]
+            ]
 
           def check_endpoint(item):
               for attempt in range(3):

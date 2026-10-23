@@ -125,7 +125,6 @@ export const projects = [
       "Cloudflare",
       "Stripe",
     ],
-    deployedUrl: "https://spotify.falakgala.dev",
     githubUrl: "https://github.com/FALAK097/spotify-clone",
     imageUrl: "/projects/spotify-clone.png",
   },

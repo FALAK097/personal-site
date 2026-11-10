@@ -26,6 +26,27 @@ export const projects = [
     imageUrl: "/projects/outcallerai.png",
   },
   {
+    id: "waitlyze",
+    title: "Waitlyze",
+    description:
+      "Launch branded waitlist pages or embeds, grow signups with verified referral loops and rewards, automate emails, and track real-time analytics.",
+    tags: [
+      "JavaScript",
+      "React.js",
+      "Next.js",
+      "Tailwind",
+      "BetterAuth",
+      "Prisma",
+      "PostgreSQL",
+      "Neon",
+      "Resend",
+      "Cloudflare",
+    ],
+    deployedUrl: "https://waitlyze.com",
+    githubUrl: "https://github.com/FALAK097/waitlyze",
+    imageUrl: "/projects/waitlyze.png",
+  },
+  {
     id: "glyph",
     title: "Glyph",
     description:
@@ -39,26 +60,6 @@ export const projects = [
     deployedUrl: "https://glyph.falakgala.dev",
     githubUrl: "https://github.com/FALAK097/glyph",
     imageUrl: "/projects/glyph.png",
-  },
-  {
-    id: "waitlyze",
-    title: "Waitlyze",
-    description:
-      "Create a branded waitlist in minutes — collect signups, grow with referrals, and know who's ready for launch day.",
-    tags: [
-      "JavaScript",
-      "React.js",
-      "Next.js",
-      "Tailwind",
-      "BetterAuth",
-      "Prisma",
-      "PostgreSQL",
-      "Neon",
-      "Resend",
-      "Vercel",
-    ],
-    deployedUrl: "https://waitlyze.falakgala.dev",
-    imageUrl: "/projects/waitlyze.png",
   },
   {
     id: "dms",

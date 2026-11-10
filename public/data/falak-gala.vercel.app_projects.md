@@ -45,6 +45,38 @@ AI-powered outbound caller that pre-qualifies leads with life-like conversations
 
 ![OutCallerAI](https://falakgala.dev/_next/image?url=%2Fprojects%2Foutcallerai.png&w=3840&q=75)
 
+## Waitlyze
+
+Launch branded waitlist pages or embeds, grow signups with verified referral loops and rewards, automate emails, and track real-time analytics.
+
+### Tech Stack
+
+![JavaScript](https://falakgala.dev/skills/javascript.svg)
+
+![React.js](https://falakgala.dev/skills/react.svg)
+
+![Next.js](https://falakgala.dev/skills/nextjs.svg)
+
+![Tailwind](https://falakgala.dev/skills/tailwindcss.svg)
+
+![BetterAuth](https://falakgala.dev/skills/better-auth.svg)
+
+![Prisma](https://falakgala.dev/skills/prisma.svg)
+
+![PostgreSQL](https://falakgala.dev/skills/postgresql.svg)
+
+![Neon](https://falakgala.dev/skills/neon.svg)
+
+![Resend](https://falakgala.dev/skills/resend.svg)
+
+![Cloudflare](https://falakgala.dev/skills/cloudflare.svg)
+
+[GitHub](https://github.com/FALAK097/waitlyze)
+
+[Live Demo](https://waitlyze.com)
+
+![Waitlyze](https://falakgala.dev/_next/image?url=%2Fprojects%2Fwaitlyze.png&w=3840&q=75)
+
 ## Glyph
 
 Local-first markdown editor and reader for macOS and Windows. Read local notes, edit markdown quickly, and keep everything on disk.
@@ -64,36 +96,6 @@ Local-first markdown editor and reader for macOS and Windows. Read local notes, 
 [GitHub](https://github.com/FALAK097/glyph)
 
 [Live Demo](https://glyph.falakgala.dev/)
-
-## Waitlyze
-
-No-code platform to build waitlists, collect signups, and track analytics in real-time.
-
-### Tech Stack
-
-![JavaScript](https://falakgala.dev/skills/javascript.svg)
-
-![React.js](https://falakgala.dev/skills/react.svg)
-
-![Next.js](https://falakgala.dev/skills/nextjs.svg)
-
-![Tailwind](https://falakgala.dev/skills/tailwindcss.svg)
-
-![Prisma](https://falakgala.dev/skills/prisma.svg)
-
-![PostgreSQL](https://falakgala.dev/skills/postgresql.svg)
-
-![Neon](https://falakgala.dev/skills/neon.svg)
-
-![Docker](https://falakgala.dev/skills/docker.svg)
-
-![Vercel](https://falakgala.dev/skills/vercel-light.svg)
-
-![BetterAuth](https://falakgala.dev/skills/betterauth-light.svg)
-
-[Live Demo](https://waitlyze.falakgala.dev)
-
-![Waitlyze](https://falakgala.dev/_next/image?url=%2Fprojects%2Fwaitlyze.png&w=3840&q=75)
 
 ## DMS
 

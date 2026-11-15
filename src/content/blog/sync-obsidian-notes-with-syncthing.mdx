@@ -1,0 +1,256 @@
+---
+title: "How I Sync My Obsidian Notes Across Devices for Free Using Syncthing"
+date: "2026-11-15"
+description: "A hands-on guide to syncing an Obsidian vault directly between devices with Syncthing, including setup, screenshots, conflict handling, versioning, and backup caveats."
+tags:
+  - Obsidian
+  - Syncthing
+  - Productivity
+  - Self-Hosting
+image: "/writing/syncthing-obsidian/dashboard-annotated.png"
+featured: true
+---
+
+My Obsidian vault currently contains 201 Markdown files, 25 folders, and about 47 MiB of notes and attachments. Syncthing keeps that vault in sync between my devices without putting a copy in Google Drive, Dropbox, or another central storage account.
+
+There is no sync subscription in this setup. Obsidian reads an ordinary local folder, and Syncthing keeps that folder consistent across the devices I have approved.
+
+The important caveat is in the wording: **Syncthing is file synchronisation, not a hosted backup service**. At least two devices must be online at the same time to exchange a new change, and a deletion can propagate just as quickly as a useful edit. I still keep a separate backup.
+
+<Figure
+  src="/writing/syncthing-obsidian/dashboard-annotated.png"
+  alt="Annotated Syncthing dashboard showing an Obsidian Notes folder and a second device both marked Up to Date"
+  caption="My live Syncthing setup, with device names and identifiers replaced before publishing."
+/>
+
+### Why I Wanted a Different Sync Setup
+
+Obsidian stores notes locally, which is one of the reasons I use it. My writing is a directory of Markdown files rather than content trapped behind a web application.
+
+That local-first model creates one practical problem: the useful copy on my laptop does not automatically appear on another computer or phone. I could use a hosted drive or pay for a dedicated sync product, but I wanted to see how far I could get with a direct device-to-device workflow.
+
+My requirements were small:
+
+- Keep the vault as ordinary files on my own devices.
+- Sync notes, folders, attachments, and Obsidian settings.
+- Avoid another recurring subscription.
+- Work on my local network and over the internet.
+- Make conflicts visible instead of silently choosing a version.
+
+Syncthing fits those requirements well, with a few operational tradeoffs that are worth understanding before using it for important notes.
+
+### What Syncthing Actually Does
+
+[Syncthing](https://syncthing.net/) is an open-source continuous file synchronisation tool. You install it on two or more devices, approve those devices using their unique IDs, and decide which folders they may share.
+
+The devices then exchange file changes directly when they can reach each other. Discovery and relay services may help the devices find and connect to one another, but the vault is not stored in a central Syncthing cloud account. Connections between devices are encrypted, and only explicitly approved devices can join the cluster.
+
+<Figure
+  src="/writing/syncthing-obsidian/peer-to-peer-flow.svg"
+  alt="Diagram showing an Obsidian vault synchronising directly between a laptop and a second device without a central cloud copy"
+  caption="The vault lives on the devices. Syncthing transfers changed files between approved peers."
+/>
+
+This distinction matters. If my laptop edits a note while the other device is offline, the laptop keeps the change locally. The change moves when both devices are available again. There is no always-online hosted copy unless I deliberately add an always-on third device of my own.
+
+### Why Syncthing and Obsidian Work Well Together
+
+An Obsidian vault is already a folder on disk. A typical vault contains:
+
+- Markdown files for notes
+- Subfolders for organisation
+- Images, PDFs, audio, and other attachments
+- A hidden `.obsidian` directory for settings, themes, plugins, and workspace state
+
+Syncthing does not need an Obsidian integration. It sees those items as files and directories, detects changes, and transfers the changed blocks. Obsidian continues reading and writing the local copy, so it remains fast and available when the network is down.
+
+This is also why the combination is easy to reason about. If I can find the vault in Finder, File Explorer, or a terminal, I can point Syncthing at it.
+
+### Before You Start: Check Device Support
+
+The desktop path is straightforward: Syncthing runs on macOS, Windows, and Linux. My screenshots use two Macs, but the pairing and folder-sharing steps are the same across desktop operating systems.
+
+Mobile needs more care:
+
+| Device | Practical option | What to know |
+| --- | --- | --- |
+| Android | A community Syncthing client such as Syncthing-Fork | Usually the easiest mobile route; battery restrictions can delay background sync |
+| iPhone or iPad | A third-party Syncthing-compatible app | Syncthing does not provide an official iOS client; third-party pricing and filesystem limits vary |
+
+That means “free across devices” is accurate for the desktop setup and common Android setups, but it is not a universal promise for iOS. Check the current [community integrations](https://docs.syncthing.net/users/contrib.html) before building the workflow around a phone.
+
+Before changing any sync settings, make a copy of the vault outside the folder you are about to share. It takes a minute and gives you a clean recovery point if you select the wrong directory.
+
+### Step 1: Install and Start Syncthing on Both Devices
+
+Install Syncthing from its [official downloads page](https://syncthing.net/downloads/) or use a package recommended for your operating system. Start it on both devices.
+
+The desktop service normally exposes a local management page at `http://127.0.0.1:8384`. That address is the control panel, not a cloud dashboard. Set a GUI username and a strong password, especially if you later change the listening address beyond localhost.
+
+Give each device a useful name such as `Personal Laptop`, `Work Laptop`, or `Android Phone`. Human-readable names make the status screen and conflict investigation much easier.
+
+### Step 2: Connect the Devices
+
+On the first device:
+
+1. Open **Actions → Show ID**.
+2. Copy the device ID, or display its QR code for a phone.
+3. On the second device, choose **Add Remote Device**.
+4. Enter or scan the first device's ID and give it a recognisable name.
+5. Repeat the approval on the first device when the second device appears.
+
+A device ID identifies a Syncthing installation. Treat the approval step seriously: adding a device gives it access only to folders you explicitly share, but those folders may contain private notes.
+
+You do not need to open a public web dashboard. Syncthing can use local discovery, global discovery, direct connections, and relays to establish the device-to-device connection.
+
+### Step 3: Add the Obsidian Vault as a Syncthing Folder
+
+On the device that already contains the complete vault, choose **Add Folder** and configure:
+
+- **Folder Label:** a readable name such as `Obsidian Notes`
+- **Folder Path:** the existing Obsidian vault directory
+- **Folder Type:** `Send & Receive`
+- **Sharing:** select the remote device you just approved
+
+`Send & Receive` is the standard Syncthing folder type: local changes are sent, and remote changes are applied. That is what most two-way Obsidian setups need.
+
+Do not select the parent `Documents` directory by accident. Share the vault itself. A narrow folder boundary reduces the chance of synchronising unrelated or sensitive files.
+
+<Figure
+  src="/writing/syncthing-obsidian/folder-details-annotated.png"
+  alt="Annotated Syncthing folder details showing the Obsidian vault path, Send and Receive folder type, shared device, and latest changed note"
+  caption="The useful checks are the vault path, Send & Receive mode, the shared device, and the latest detected change."
+/>
+
+### Step 4: Accept the Folder on the Second Device
+
+The second device should show a prompt for the newly shared folder. Accept it and choose where the local copy should live.
+
+Use an empty destination directory for the first sync. Pointing two independently edited vaults at each other during initial setup creates unnecessary ambiguity. Let the complete source vault populate the new destination, then wait until Syncthing reports **Up to Date**.
+
+If the second device already has notes you need, move them somewhere safe first. After the initial sync completes, add them back deliberately and let Syncthing treat them as new files.
+
+### Step 5: Open the Synced Folder in Obsidian
+
+On the second device, open Obsidian and choose **Open folder as vault**. Select the destination folder you accepted in Syncthing.
+
+Obsidian should now see the same notes, attachments, and internal links. If you synced `.obsidian`, it may also load the same themes, plugins, hotkeys, and settings.
+
+That configuration sync is convenient, but it can also be noisy across different device types. Desktop and mobile layouts do not always want the same workspace state. If tabs or sidebars keep jumping between layouts, add device-specific workspace files to the `.stignore` file on each device:
+
+```text
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+```
+
+Syncthing's ignore rules are local to each device, so check the rule on every peer where you want that behaviour. I prefer to sync the rest of `.obsidian` because shared plugins and settings are useful, while keeping workspace layout state device-specific.
+
+### Step 6: Test the Full Round Trip
+
+Create a note with a distinctive name on device A, for example `Syncthing Test.md`.
+
+Then verify this sequence:
+
+1. Syncthing detects the new file on device A.
+2. The remote device becomes active and receives it.
+3. Both sides return to **Up to Date**.
+4. Obsidian on device B shows the new note.
+5. Edit the note on device B and confirm that the change returns to device A.
+
+Testing both directions catches the most common setup mistake: a folder configured as `Send Only` or `Receive Only` when you expected two-way editing.
+
+### My Day-to-Day Workflow
+
+In normal use, I do not interact with Syncthing very often.
+
+I write in Obsidian on one device. Syncthing notices that the Markdown file changed and transfers it to the connected peer. Obsidian on the other device reads the updated local file. Attachments and folder changes follow the same path.
+
+Before switching devices, I give Syncthing a moment to return to **Up to Date**. On a phone, I may open the Syncthing client first so the operating system allows it to run. This small habit reduces conflicts dramatically.
+
+The workflow still works offline. I can keep editing the local vault without a connection; the pending changes simply wait. What I avoid is editing the same note independently on two offline devices.
+
+### What Happens When Two Devices Edit the Same Note
+
+Syncthing recognises conflicting file changes. If the same file is modified differently on two devices before they exchange updates, Syncthing keeps one version at the original name and creates another file with a name similar to:
+
+```text
+Project Plan.sync-conflict-20261115-142530-DEVICE.md
+```
+
+That is safer than silently discarding one edit, but Obsidian will show both files as notes. I compare them, merge the useful changes, and delete the conflict copy after confirming the result.
+
+The best conflict strategy is behavioural:
+
+- Let a device finish syncing before moving to another one.
+- Avoid editing the same note on two offline devices.
+- Keep device clocks reasonably accurate.
+- Search the vault occasionally for `sync-conflict`.
+
+For a personal knowledge base, conflicts are usually rare. For a team editing shared notes at the same time, a real-time collaborative system is a better fit.
+
+### Device Availability: The Main Tradeoff
+
+Syncthing does not provide an always-online central copy. A new note can move from the laptop to the phone only while both participate in the sync at the same time.
+
+They do not need to stay online permanently, and they do not need to be on the same Wi-Fi network. They only need an overlapping window in which Syncthing can connect them.
+
+If that overlap is unreliable, an optional third peer can help. A small home server or VPS running Syncthing can stay online and relay the latest folder state to devices that appear at different times. That improves availability, but it also creates another copy to secure, maintain, and back up. It is a design choice, not a requirement.
+
+### Sync Is Not Backup
+
+If I delete a note intentionally or accidentally, Syncthing can propagate that deletion. If a plugin corrupts several Markdown files, it can propagate those changes too. Fast replication is useful, but it does not know whether a change was a mistake.
+
+Syncthing offers per-folder [file versioning](https://docs.syncthing.net/users/versioning.html), including trash-can, simple, and staggered strategies. Enabling versioning on at least one peer gives you recovery options when a remote device replaces or deletes a file.
+
+There is an important limitation: Syncthing versioning archives changes **received from another device**. It cannot preserve the previous version of a file that was changed locally on that same device. That is why versioning is a safety net, not the whole backup plan.
+
+For notes I care about, I use three separate ideas:
+
+1. Syncthing for availability across devices
+2. Syncthing file versioning for some remote-change recovery
+3. An independent backup or version-control history stored outside the synced vault
+
+A backup should let you recover even when every synced peer has already accepted the bad change.
+
+### Privacy and Security Checks
+
+The absence of a central storage account does not remove every security responsibility.
+
+- Approve only device IDs you recognise.
+- Protect the local Syncthing GUI with authentication.
+- Keep Syncthing and community mobile clients updated.
+- Use full-disk encryption on devices that contain the vault.
+- Review which folders are shared with each peer.
+- Do not expose the management GUI directly to the public internet.
+- Remember that a connected device receives readable copies of the shared files.
+
+Syncthing protects data in transit between approved devices. It does not turn the vault into end-to-end encrypted storage while it sits open on those devices; local device security still matters.
+
+### Who Should Use This Setup
+
+This combination is a strong fit if you:
+
+- Prefer local Markdown files and control over where they live
+- Use Obsidian on two or more compatible devices
+- Do not mind running a small background service
+- Can tolerate sync happening when devices overlap online
+- Are willing to keep a separate backup
+
+It is a weaker fit if you need instant cloud availability, official iOS support, browser access, collaborative editing, or a managed recovery service. Paying for a hosted product can be reasonable when those features matter more than self-management.
+
+### Is It Worth It?
+
+For my setup, yes. Syncthing takes advantage of what Obsidian already does well: store a knowledge base as portable files on disk. Once the devices and vault are paired, the daily workflow is quiet, local-first, and free of another recurring sync fee.
+
+The honest description is not “free cloud sync.” It is **free peer-to-peer file sync that I operate myself**. Devices still need to meet online, conflicts still need human judgement, and backups remain my responsibility.
+
+If those tradeoffs sound acceptable, start with two devices, one backed-up vault, and one test note. Wait for **Up to Date**, verify the round trip, and only then trust it with your normal workflow.
+
+### References
+
+- [Syncthing Getting Started guide](https://docs.syncthing.net/intro/getting-started.html)
+- [Syncthing folder types](https://docs.syncthing.net/users/foldertypes.html)
+- [Syncthing conflict handling](https://docs.syncthing.net/users/syncing.html#conflicting-changes)
+- [Syncthing file versioning](https://docs.syncthing.net/users/versioning.html)
+- [Syncthing community integrations](https://docs.syncthing.net/users/contrib.html)
+- [Obsidian vault documentation](https://help.obsidian.md/vault)

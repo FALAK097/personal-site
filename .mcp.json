@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "daily-dev": {
+      "type": "http",
+      "url": "https://api.daily.dev/mcp"
+    },
+    "gscServer": {
+      "command": "/opt/homebrew/bin/uvx",
+      "args": [
+        "mcp-search-console"
+      ],
+      "env": {
+        "GSC_OAUTH_CLIENT_SECRETS_FILE": "/Users/falakgala/Documents/client_secret_405198345721-hhdnpu8kr79tek12e80h850dmo5vldli.apps.googleusercontent.com.json"
+      }
+    }
+  }
+}

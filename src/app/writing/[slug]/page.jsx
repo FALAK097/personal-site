@@ -76,8 +76,67 @@ export default async function BlogPost(context) {
     toc: undefined,
   };
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.description,
+    datePublished: new Date(post.date).toISOString(),
+    dateModified: new Date(post.updated || post.date).toISOString(),
+    url: `https://falakgala.dev/writing/${slug}`,
+    image: `https://falakgala.dev/writing/${slug}/opengraph-image`,
+    author: {
+      "@type": "Person",
+      name: "Falak Gala",
+      url: "https://falakgala.dev",
+    },
+    publisher: {
+      "@type": "Person",
+      name: "Falak Gala",
+      url: "https://falakgala.dev",
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://falakgala.dev/writing/${slug}`,
+    },
+    keywords: post.tags?.join(", "),
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://falakgala.dev",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Writing",
+        item: "https://falakgala.dev/writing",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: post.title,
+        item: `https://falakgala.dev/writing/${slug}`,
+      },
+    ],
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <Navbar />
       <BlogDetail
         post={postMetadata}

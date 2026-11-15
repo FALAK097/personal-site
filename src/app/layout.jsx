@@ -63,10 +63,28 @@ export const metadata = {
   },
 };
 
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Falak Gala",
+  url: "https://falakgala.dev",
+  description:
+    "Software engineer building across product engineering, AI systems, infrastructure, and full-stack software.",
+  author: {
+    "@type": "Person",
+    name: "Falak Gala",
+    url: "https://falakgala.dev",
+  },
+};
+
 export default function RootLayout({ children }) {
   return (
     <html suppressHydrationWarning lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body suppressHydrationWarning>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         <ThemeProvider
           disableTransitionOnChange
           attribute="class"

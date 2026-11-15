@@ -22,12 +22,13 @@ export async function GET() {
       <link>${escapeXml(`${siteUrl}${post.url}`)}</link>
       <description>${escapeXml(post.description)}</description>
       <pubDate>${new Date(post.date).toUTCString()}</pubDate>
+      ${post.content ? `<content:encoded><![CDATA[${post.content}]]></content:encoded>` : ""}
     </item>`,
     )
     .join("");
 
   const feed = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Falak Gala&apos;s Writing</title>
     <description>Software engineering notes and practical build stories by Falak Gala.</description>

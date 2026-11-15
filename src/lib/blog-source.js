@@ -22,6 +22,7 @@ async function toPost(page) {
     slug: page.slugs.join("/"),
     url: page.url,
     readingTime: Math.max(1, Math.ceil(readingTime(source).minutes)),
+    content: source,
   };
 }
 

@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import { ImageResponse } from "next/og";
 import { getPostBySlug, getAllPosts } from "@/lib/blog-source";
 
@@ -17,6 +19,987 @@ export const size = {
 };
 export const contentType = "image/png";
 
+// Load local Geist fonts for ultra-crisp typography
+const geistBlackPath = path.join(process.cwd(), "node_modules/geist/dist/fonts/geist-sans/Geist-Black.ttf");
+const geistRegularPath = path.join(process.cwd(), "node_modules/geist/dist/fonts/geist-sans/Geist-Regular.ttf");
+const geistBlack = fs.readFileSync(geistBlackPath);
+const geistRegular = fs.readFileSync(geistRegularPath);
+
+// Post-specific themes and visual identities
+const POST_THEMES = {
+  "sync-obsidian-notes-with-syncthing": {
+    badge: "Obsidian × Syncthing",
+    primary: "#74D600", // Vibrant Neon Lime (from reference cover)
+    secondary: "#7C3AED", // Obsidian Purple
+    highlights: ["Obsidian Notes", "Syncthing"],
+    subtitle: "A simple, self-hosted setup for seamless sync",
+    type: "syncthing-devices",
+  },
+  "production-graph-rag-22000-multilingual-pdfs": {
+    badge: "Graph RAG × AI Engineering",
+    primary: "#8B5CF6", // Electric AI Violet
+    secondary: "#06B6D4", // Cyan
+    highlights: ["Graph RAG", "22000", "Multilingual PDFs"],
+    subtitle: "Scaling ingestion, hybrid retrieval, citations & guardrails",
+    type: "graph-rag",
+  },
+  "zero-build-deployments-with-dokploy": {
+    badge: "VPS Deployments × Dokploy",
+    primary: "#F59E0B", // DevOps Amber
+    secondary: "#2563EB", // Docker Blue
+    highlights: ["Production", "Nextjs", "FastAPI", "VPS"],
+    subtitle: "Zero-build CI/CD pipeline with Dokploy, Docker & Traefik",
+    type: "devops-vps",
+  },
+  "free-custom-email-domain": {
+    badge: "Custom Domain × Cloudflare",
+    primary: "#F97316", // Cloudflare Orange
+    secondary: "#EC4899", // Rose
+    highlights: ["Free", "Custom Email", "hiyourdomaincom"],
+    subtitle: "Professional domain email forwarding to Gmail at zero cost",
+    type: "email-routing",
+  },
+  "whatsapp-setup-guide-part-1": {
+    badge: "WhatsApp API × Next.js · Part 1",
+    primary: "#10B981", // WhatsApp Emerald Green
+    secondary: "#059669", // Deep Emerald
+    highlights: ["WhatsApp Cloud API", "Setup Configuration"],
+    subtitle: "Meta developer setup, System User tokens & webhook verification",
+    type: "whatsapp-api",
+  },
+  "whatsapp-setup-guide-part-2": {
+    badge: "WhatsApp API × Next.js · Part 2",
+    primary: "#0D9488", // Deep Teal
+    secondary: "#0284C7", // Sky Blue
+    highlights: ["WhatsApp Cloud API", "Implementation"],
+    subtitle: "OAuth 2.0 flow, token exchange, and production messaging",
+    type: "whatsapp-code",
+  },
+  "tracking-unique-visitors": {
+    badge: "Upstash Redis × Next.js",
+    primary: "#EF4444", // Upstash / Redis Crimson
+    secondary: "#8B5CF6", // Violet
+    highlights: ["Unique Visitors Counter", "Upstash Redis"],
+    subtitle: "Privacy-friendly real-time analytics with Server Actions",
+    type: "redis-analytics",
+  },
+  "how-i-built-nextjs-blog": {
+    badge: "Next.js 16 × Fumadocs",
+    primary: "#6366F1", // Electric Indigo
+    secondary: "#0EA5E9", // Sky Blue
+    highlights: ["Portfolio Blog", "Nextjs", "Fumadocs"],
+    subtitle: "From a hand-rolled MDX pipeline to a typed publishing system",
+    type: "nextjs-blog",
+  },
+};
+
+// Generates the halftone dot pattern matching the reference cover
+function generateHalftoneDots(primaryColor) {
+  const dots = [];
+
+  // Top-left radiating cluster
+  for (let x = 12; x <= 460; x += 18) {
+    for (let y = 12; y <= 240; y += 18) {
+      const dist = x * 0.7 + y * 0.9;
+      if (dist < 380) {
+        const factor = 1 - dist / 380;
+        const r = Math.max(1.5, 4.8 * factor);
+        const opacity = Math.max(0.25, 0.95 * factor);
+        dots.push(
+          <circle
+            key={`tl-${x}-${y}`}
+            cx={x}
+            cy={y}
+            r={r}
+            fill={primaryColor}
+            opacity={opacity}
+          />
+        );
+      }
+    }
+  }
+
+  // Top-center gentle wave cluster
+  for (let x = 320; x <= 580; x += 18) {
+    for (let y = 12; y <= 140; y += 18) {
+      const wave = Math.sin((x - 320) / 45) * 35 + 45;
+      const diff = Math.abs(y - wave);
+      if (diff < 42) {
+        const factor = 1 - diff / 42;
+        const r = Math.max(1.4, 3.6 * factor);
+        const opacity = Math.max(0.2, 0.7 * factor);
+        dots.push(
+          <circle
+            key={`tc-${x}-${y}`}
+            cx={x}
+            cy={y}
+            r={r}
+            fill={primaryColor}
+            opacity={opacity}
+          />
+        );
+      }
+    }
+  }
+
+  // Bottom-right radiating cluster
+  for (let x = 740; x <= 1200; x += 18) {
+    for (let y = 360; y <= 630; y += 18) {
+      const dx = 1200 - x;
+      const dy = 630 - y;
+      const dist = Math.sqrt(dx * dx * 0.55 + dy * dy);
+      if (dist < 460) {
+        const factor = 1 - dist / 460;
+        const r = Math.max(1.6, 5.2 * factor);
+        const opacity = Math.max(0.25, 1 * factor);
+        dots.push(
+          <circle
+            key={`br-${x}-${y}`}
+            cx={x}
+            cy={y}
+            r={r}
+            fill={primaryColor}
+            opacity={opacity}
+          />
+        );
+      }
+    }
+  }
+
+  return dots;
+}
+
+// Splits title into words and highlights the target phrases
+function renderTitle(title, highlights, primaryColor, fontSize) {
+  const targetWords = new Set();
+  highlights.forEach((phrase) => {
+    phrase
+      .split(/\s+/)
+      .map((w) => w.replace(/[^a-zA-Z0-9+]/g, "").toLowerCase())
+      .filter((w) => w.length > 2 && !["with", "and", "for", "the", "how", "part"].includes(w))
+      .forEach((w) => targetWords.add(w));
+  });
+
+  const words = title.split(" ");
+  const elements = [];
+
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+    const cleanWord = word.replace(/[^a-zA-Z0-9+]/g, "").toLowerCase();
+    const isHighlighted = targetWords.has(cleanWord);
+
+    elements.push(
+      <span
+        key={i}
+        style={{
+          color: isHighlighted ? primaryColor : "#09090b",
+          marginRight: "0.26em",
+          display: "flex",
+          fontWeight: 900,
+        }}
+      >
+        {word}
+      </span>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        fontSize: fontSize,
+        fontWeight: 900,
+        lineHeight: 1.08,
+        letterSpacing: "-0.035em",
+        margin: 0,
+      }}
+    >
+      {elements}
+    </div>
+  );
+}
+
+// Specialized right-hand tech illustration components
+function renderIllustration(type, primary, secondary) {
+  switch (type) {
+    case "syncthing-devices":
+      return (
+        <svg width="450" height="380" viewBox="0 0 450 380" fill="none">
+          {/* Obsidian Gem (Top Left) */}
+          <g transform="translate(45, 30)">
+            <path d="M40 0 L68 28 L56 75 L24 75 L12 28 Z" fill="#7C3AED" />
+            <path d="M40 0 L68 28 L40 45 Z" fill="#9333EA" />
+            <path d="M40 0 L12 28 L40 45 Z" fill="#A855F7" />
+            <path d="M12 28 L40 45 L24 75 Z" fill="#6D28D9" />
+            <path d="M68 28 L40 45 L56 75 Z" fill="#581C87" />
+          </g>
+
+          {/* Curved Sync Arrows (Center Top) */}
+          <g transform="translate(160, 42)">
+            <path
+              d="M10 14 C25 2, 50 2, 65 14"
+              stroke="#09090b"
+              strokeWidth="5"
+              strokeLinecap="round"
+              fill="none"
+            />
+            <path d="M66 6 L72 16 L58 18 Z" fill="#09090b" />
+            <path
+              d="M65 34 C50 46, 25 46, 10 34"
+              stroke="#09090b"
+              strokeWidth="5"
+              strokeLinecap="round"
+              fill="none"
+            />
+            <path d="M9 42 L3 32 L17 30 Z" fill="#09090b" />
+          </g>
+
+          {/* Syncthing Node Ring (Top Right) */}
+          <g transform="translate(265, 32)">
+            <circle cx="36" cy="36" r="34" fill="#0284C7" />
+            <circle cx="36" cy="36" r="28" stroke="#ffffff" strokeWidth="3" fill="none" />
+            <circle cx="36" cy="18" r="6" fill="#ffffff" />
+            <circle cx="21" cy="46" r="6" fill="#ffffff" />
+            <circle cx="51" cy="46" r="6" fill="#ffffff" />
+            <line x1="36" y1="18" x2="21" y2="46" stroke="#ffffff" strokeWidth="3" />
+            <line x1="36" y1="18" x2="51" y2="46" stroke="#ffffff" strokeWidth="3" />
+            <line x1="21" y1="46" x2="51" y2="46" stroke="#ffffff" strokeWidth="3" />
+          </g>
+
+          {/* Dashed Connecting Lines to Devices */}
+          <line
+            x1="85"
+            y1="115"
+            x2="95"
+            y2="180"
+            stroke="#71717a"
+            strokeWidth="2.5"
+            strokeDasharray="6 6"
+          />
+          <line
+            x1="195"
+            y1="95"
+            x2="245"
+            y2="180"
+            stroke="#71717a"
+            strokeWidth="2.5"
+            strokeDasharray="6 6"
+          />
+          <line
+            x1="300"
+            y1="115"
+            x2="335"
+            y2="195"
+            stroke="#71717a"
+            strokeWidth="2.5"
+            strokeDasharray="6 6"
+          />
+
+          {/* Laptop (Bottom Left) */}
+          <g transform="translate(10, 180)">
+            <rect x="15" y="0" width="155" height="105" rx="8" fill="#18181b" />
+            <rect x="22" y="7" width="141" height="91" rx="4" fill="#f4f4f5" />
+            <line x1="32" y1="30" x2="70" y2="30" stroke="#d4d4d8" strokeWidth="4" strokeLinecap="round" />
+            <line x1="32" y1="42" x2="85" y2="42" stroke="#d4d4d8" strokeWidth="4" strokeLinecap="round" />
+            <line x1="32" y1="54" x2="60" y2="54" stroke="#d4d4d8" strokeWidth="4" strokeLinecap="round" />
+            <path d="M120 34 L132 46 L127 64 L113 64 L108 46 Z" fill="#7C3AED" />
+            <path d="M0 105 L185 105 L175 113 L10 113 Z" fill="#27272a" />
+            <rect x="70" y="107" width="45" height="4" rx="2" fill="#71717a" />
+          </g>
+
+          {/* Tablet (Bottom Center) */}
+          <g transform="translate(205, 180)">
+            <rect x="0" y="0" width="90" height="112" rx="8" fill="#18181b" />
+            <rect x="5" y="5" width="80" height="102" rx="4" fill="#f4f4f5" />
+            <path d="M45 35 L54 45 L50 60 L39 60 L35 45 Z" fill="#7C3AED" />
+            <line x1="20" y1="72" x2="70" y2="72" stroke="#d4d4d8" strokeWidth="3.5" strokeLinecap="round" />
+            <line x1="28" y1="82" x2="62" y2="82" stroke="#d4d4d8" strokeWidth="3.5" strokeLinecap="round" />
+          </g>
+
+          {/* Smartphone (Bottom Right) */}
+          <g transform="translate(310, 195)">
+            <rect x="0" y="0" width="52" height="95" rx="7" fill="#18181b" />
+            <rect x="4" y="4" width="44" height="87" rx="4" fill="#f4f4f5" />
+            <path d="M26 32 L32 40 L30 52 L22 52 L19 40 Z" fill="#7C3AED" />
+            <line x1="14" y1="62" x2="38" y2="62" stroke="#d4d4d8" strokeWidth="2.5" strokeLinecap="round" />
+          </g>
+        </svg>
+      );
+
+    case "graph-rag":
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            width: "410px",
+            height: "350px",
+            backgroundColor: "#ffffff",
+            borderRadius: "20px",
+            border: "2px solid #E4E4E7",
+            padding: "24px",
+            boxShadow: "0 20px 40px rgba(139, 92, 246, 0.12)",
+          }}
+        >
+          {/* Top Row: Corpus Badge */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "6px 14px",
+                borderRadius: 9999,
+                backgroundColor: "#F3E8FF",
+                color: "#7C3AED",
+                fontSize: 13,
+                fontWeight: 700,
+              }}
+            >
+              22,000 PDF Corpus
+            </div>
+            <div style={{ display: "flex", fontSize: 13, color: "#64748B", fontWeight: 600 }}>
+              Hybrid Retrieval
+            </div>
+          </div>
+
+          {/* Middle: Documents + Graph Flow */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0" }}>
+            {/* Document Stack */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+                padding: "14px",
+                backgroundColor: "#F8FAFC",
+                borderRadius: "12px",
+                border: "1.5px solid #CBD5E1",
+                width: "140px",
+              }}
+            >
+              <div style={{ display: "flex", fontSize: 11, fontWeight: 700, color: "#8B5CF6" }}>
+                [1] English PDF
+              </div>
+              <div style={{ display: "flex", fontSize: 11, fontWeight: 700, color: "#06B6D4" }}>
+                [2] Arabic PDF
+              </div>
+              <div style={{ display: "flex", fontSize: 11, fontWeight: 700, color: "#10B981" }}>
+                [3] Spanish PDF
+              </div>
+            </div>
+
+            {/* Connecting Arrow */}
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M12 5l7 7-7 7" stroke="#8B5CF6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+
+            {/* Knowledge Graph Cluster */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "160px",
+                height: "110px",
+                backgroundColor: "#FAF5FF",
+                borderRadius: "14px",
+                border: "2px solid #8B5CF6",
+                padding: "10px",
+              }}
+            >
+              <div style={{ display: "flex", fontSize: 16, fontWeight: 900, color: "#7C3AED" }}>
+                Graph RAG Hub
+              </div>
+              <div style={{ display: "flex", fontSize: 11, color: "#6B7280", marginTop: "4px" }}>
+                Entities • Vectors • Citations
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom: Guardrails Shield */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              padding: "12px 16px",
+              borderRadius: "12px",
+              backgroundColor: "#F0FDF4",
+              border: "1.5px solid #BBF7D0",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "32px",
+                height: "32px",
+                borderRadius: "50%",
+                backgroundColor: "#10B981",
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M20 6L9 17l-5-5" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ display: "flex", fontSize: 13, fontWeight: 700, color: "#065F46" }}>
+                NeMo Guardrails Active
+              </div>
+              <div style={{ display: "flex", fontSize: 11, color: "#047857" }}>
+                Faithful Citations &amp; Strict Factuality
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+    case "devops-vps":
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            width: "410px",
+            height: "350px",
+            backgroundColor: "#0F172A",
+            borderRadius: "20px",
+            border: "2px solid #1E293B",
+            padding: "24px",
+            boxShadow: "0 20px 40px rgba(245, 158, 11, 0.12)",
+          }}
+        >
+          {/* Unit 1: Traefik SSL */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "12px 18px",
+              backgroundColor: "#1E293B",
+              borderRadius: "10px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ display: "flex", width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#10B981" }} />
+              <div style={{ display: "flex", fontSize: 14, fontWeight: 700, color: "#F8FAFC" }}>
+                Traefik Reverse Proxy
+              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                padding: "4px 10px",
+                borderRadius: "6px",
+                backgroundColor: "#2563EB",
+                color: "#ffffff",
+                fontSize: 12,
+                fontWeight: 700,
+              }}
+            >
+              SSL :443
+            </div>
+          </div>
+
+          {/* Unit 2: Dokploy Container Cluster */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              padding: "16px",
+              backgroundColor: "#1E293B",
+              borderRadius: "12px",
+            }}
+          >
+            <div style={{ display: "flex", fontSize: 12, fontWeight: 700, color: "#94A3B8" }}>
+              DOKPLOY CONTAINER PODS
+            </div>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flex: 1,
+                  padding: "10px 0",
+                  backgroundColor: "#334155",
+                  borderRadius: "8px",
+                  border: "2px solid #F59E0B",
+                  color: "#F59E0B",
+                  fontSize: 13,
+                  fontWeight: 700,
+                }}
+              >
+                Next.js
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flex: 1,
+                  padding: "10px 0",
+                  backgroundColor: "#334155",
+                  borderRadius: "8px",
+                  border: "2px solid #10B981",
+                  color: "#10B981",
+                  fontSize: 13,
+                  fontWeight: 700,
+                }}
+              >
+                FastAPI
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flex: 1,
+                  padding: "10px 0",
+                  backgroundColor: "#334155",
+                  borderRadius: "8px",
+                  border: "2px solid #38BDF8",
+                  color: "#38BDF8",
+                  fontSize: 13,
+                  fontWeight: 700,
+                }}
+              >
+                Prefect
+              </div>
+            </div>
+          </div>
+
+          {/* Unit 3: Managed DB */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "12px 18px",
+              backgroundColor: "#1E293B",
+              borderRadius: "10px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ display: "flex", width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#10B981" }} />
+              <div style={{ display: "flex", fontSize: 14, fontWeight: 700, color: "#F8FAFC" }}>
+                Managed Database
+              </div>
+            </div>
+            <div style={{ display: "flex", color: "#94A3B8", fontSize: 13, fontWeight: 600 }}>
+              PostgreSQL
+            </div>
+          </div>
+        </div>
+      );
+
+    case "email-routing":
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            width: "410px",
+            height: "350px",
+            backgroundColor: "#ffffff",
+            borderRadius: "20px",
+            border: "2px solid #F97316",
+            padding: "24px",
+            boxShadow: "0 20px 40px rgba(249, 115, 22, 0.14)",
+          }}
+        >
+          {/* Custom Domain Envelope */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "16px 20px",
+              backgroundColor: "#FFF7ED",
+              borderRadius: "14px",
+              border: "1.5px solid #FDBA74",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ display: "flex", fontSize: 18, fontWeight: 900, color: "#09090b" }}>
+                hi@yourdomain.com
+              </div>
+              <div style={{ display: "flex", fontSize: 12, color: "#EA580C", fontWeight: 600 }}>
+                Catch-all custom alias
+              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                padding: "6px 14px",
+                borderRadius: 9999,
+                backgroundColor: "#FEF3C7",
+                color: "#D97706",
+                fontSize: 13,
+                fontWeight: 800,
+              }}
+            >
+              $0/mo
+            </div>
+          </div>
+
+          {/* Cloudflare Routing Hub */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "10px 0",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "8px 20px",
+                borderRadius: 9999,
+                backgroundColor: "#F97316",
+                color: "#ffffff",
+                fontSize: 13,
+                fontWeight: 700,
+              }}
+            >
+              <span>Cloudflare Email Routing</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M12 5l7 7-7 7" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Gmail Destination Card */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "14px",
+              padding: "16px 20px",
+              backgroundColor: "#F8FAFC",
+              borderRadius: "14px",
+              border: "1.5px solid #E2E8F0",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "36px",
+                height: "36px",
+                borderRadius: "50%",
+                backgroundColor: "#EF4444",
+                color: "#ffffff",
+                fontSize: 18,
+                fontWeight: 900,
+              }}
+            >
+              M
+            </div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ display: "flex", fontSize: 15, fontWeight: 800, color: "#09090b" }}>
+                Forwarded to Personal Gmail
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: 12, color: "#10B981", fontWeight: 700 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path d="M20 6L9 17l-5-5" stroke="#10B981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <span>Instant &amp; Encrypted TLS</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+    case "whatsapp-api":
+    case "whatsapp-code":
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: "330px",
+            height: "350px",
+            backgroundColor: "#18181B",
+            borderRadius: "28px",
+            padding: "10px",
+            boxShadow: "0 20px 40px rgba(16, 185, 129, 0.16)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              backgroundColor: "#ECE5DD",
+              borderRadius: "20px",
+              overflow: "hidden",
+              justifyContent: "space-between",
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "12px 16px",
+                backgroundColor: "#075E54",
+                gap: "10px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  width: "14px",
+                  height: "14px",
+                  borderRadius: "50%",
+                  backgroundColor: "#25D366",
+                }}
+              />
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ display: "flex", fontSize: 13, fontWeight: 700, color: "#ffffff" }}>
+                  WhatsApp Cloud API
+                </div>
+                <div style={{ display: "flex", fontSize: 10, color: "#A7F3D0" }}>
+                  Verified Business • Online
+                </div>
+              </div>
+            </div>
+
+            {/* Chat Bubbles */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+                padding: "12px",
+              }}
+            >
+              {/* Inbound bubble */}
+              <div
+                style={{
+                  display: "flex",
+                  alignSelf: "flex-start",
+                  backgroundColor: "#ffffff",
+                  padding: "8px 12px",
+                  borderRadius: "10px",
+                  fontSize: 12,
+                  color: "#111827",
+                  fontWeight: 500,
+                  maxWidth: "200px",
+                }}
+              >
+                Connect OutCaller AI
+              </div>
+
+              {/* Response bubble */}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignSelf: "flex-end",
+                  backgroundColor: "#DCF8C6",
+                  padding: "8px 12px",
+                  borderRadius: "10px",
+                  maxWidth: "220px",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: 12, fontWeight: 700, color: "#065F46" }}>
+                  <span>API Active &amp; Verified</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path d="M20 6L9 17l-5-5" stroke="#065F46" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <div style={{ display: "flex", fontSize: 10, color: "#047857" }}>
+                  Webhook: 200 OK • Token Valid
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom API Bar */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "8px 14px",
+                backgroundColor: "#1F2937",
+                margin: "0 10px 10px 10px",
+                borderRadius: "8px",
+              }}
+            >
+              <div style={{ display: "flex", fontSize: 11, fontWeight: 700, color: "#10B981" }}>
+                POST /v20.0/messages
+              </div>
+              <div style={{ display: "flex", fontSize: 11, fontWeight: 700, color: "#9CA3AF" }}>
+                200 OK
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+    case "redis-analytics":
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            width: "410px",
+            height: "350px",
+            backgroundColor: "#ffffff",
+            borderRadius: "20px",
+            border: "2px solid #E4E4E7",
+            padding: "26px",
+            boxShadow: "0 20px 40px rgba(239, 68, 68, 0.14)",
+          }}
+        >
+          {/* Top Row: Badge & Live */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "6px 14px",
+                borderRadius: 9999,
+                backgroundColor: "#FEE2E2",
+                color: "#DC2626",
+                fontSize: 13,
+                fontWeight: 700,
+              }}
+            >
+              UPSTASH REDIS
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#10B981", fontSize: 13, fontWeight: 700 }}>
+              <div style={{ display: "flex", width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#10B981" }} />
+              LIVE
+            </div>
+          </div>
+
+          {/* Metric Counter */}
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex", fontSize: 52, fontWeight: 900, color: "#09090b" }}>
+              14,290
+            </div>
+            <div style={{ display: "flex", fontSize: 15, color: "#71717A", fontWeight: 500 }}>
+              Unique Visitors (+18.4% this month)
+            </div>
+          </div>
+
+          {/* Bar Chart & Server Action */}
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", height: "80px" }}>
+            <div style={{ display: "flex", width: "22px", height: "35px", borderRadius: "4px", backgroundColor: "#FCA5A5" }} />
+            <div style={{ display: "flex", width: "22px", height: "50px", borderRadius: "4px", backgroundColor: "#FCA5A5" }} />
+            <div style={{ display: "flex", width: "22px", height: "42px", borderRadius: "4px", backgroundColor: "#F87171" }} />
+            <div style={{ display: "flex", width: "22px", height: "65px", borderRadius: "4px", backgroundColor: "#F87171" }} />
+            <div style={{ display: "flex", width: "22px", height: "55px", borderRadius: "4px", backgroundColor: "#EF4444" }} />
+            <div style={{ display: "flex", width: "22px", height: "75px", borderRadius: "4px", backgroundColor: "#EF4444" }} />
+            <div style={{ display: "flex", width: "22px", height: "85px", borderRadius: "4px", backgroundColor: "#DC2626" }} />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "8px 12px",
+                borderRadius: "8px",
+                backgroundColor: "#18181B",
+                color: "#ffffff",
+                fontSize: 13,
+                fontWeight: 700,
+              }}
+            >
+              +1 Server Action
+            </div>
+          </div>
+        </div>
+      );
+
+    case "nextjs-blog":
+    default:
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            width: "410px",
+            height: "350px",
+            backgroundColor: "#0F172A",
+            borderRadius: "20px",
+            border: "2px solid #1E293B",
+            padding: "24px",
+            boxShadow: "0 20px 40px rgba(99, 102, 241, 0.14)",
+          }}
+        >
+          {/* Header */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <div style={{ display: "flex", width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#EF4444" }} />
+              <div style={{ display: "flex", width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#F59E0B" }} />
+              <div style={{ display: "flex", width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#10B981" }} />
+            </div>
+            <div style={{ display: "flex", color: "#94A3B8", fontSize: 13, fontWeight: 600 }}>
+              src/content/blog/post.mdx
+            </div>
+          </div>
+
+          {/* Syntax Highlighted Lines */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px", padding: "10px 0" }}>
+            <div style={{ display: "flex", color: "#F43F5E", fontSize: 14, fontWeight: 700 }}>
+              ---
+            </div>
+            <div style={{ display: "flex", color: "#38BDF8", fontSize: 14 }}>
+              title: <span style={{ color: "#FDE047", marginLeft: "6px" }}>"Next.js 16 + Fumadocs"</span>
+            </div>
+            <div style={{ display: "flex", color: "#38BDF8", fontSize: 14 }}>
+              engine: <span style={{ color: "#A7F3D0", marginLeft: "6px" }}>"Turbopack &amp; RSC"</span>
+            </div>
+            <div style={{ display: "flex", color: "#F43F5E", fontSize: 14, fontWeight: 700 }}>
+              ---
+            </div>
+            <div style={{ display: "flex", color: "#6366F1", fontSize: 14, fontWeight: 700, marginTop: "4px" }}>
+              &lt;Figure src="/writing/system.png" /&gt;
+            </div>
+          </div>
+
+          {/* Bottom badge */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                padding: "6px 14px",
+                borderRadius: 9999,
+                backgroundColor: "#1E293B",
+                color: "#10B981",
+                fontSize: 12,
+                fontWeight: 700,
+              }}
+            >
+              &lt; 50ms Page Load
+            </div>
+            <div style={{ display: "flex", color: "#64748B", fontSize: 12, fontWeight: 600 }}>
+              TypeScript • React 19
+            </div>
+          </div>
+        </div>
+      );
+  }
+}
+
 export default async function Image({ params }) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
@@ -32,16 +1015,51 @@ export default async function Image({ params }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#082d48",
-            color: "#c9eaff",
+            backgroundColor: "#ffffff",
+            color: "#09090b",
             fontSize: 48,
+            fontWeight: 800,
           }}
         >
           Post Not Found
         </div>
-      )
+      ),
+      {
+        ...size,
+        fonts: [
+          {
+            name: "Geist",
+            data: geistBlack,
+            weight: 900,
+            style: "normal",
+          },
+        ],
+      }
     );
   }
+
+  // Retrieve customized theme or fallback
+  const theme = POST_THEMES[slug] || {
+    badge: (post.tags && post.tags.length > 0) ? `${post.tags[0]} × Engineering` : "Falak Gala · Writing",
+    primary: "#6366F1",
+    secondary: "#0EA5E9",
+    highlights: post.tags || [post.title.split(" ")[0]],
+    subtitle: post.description?.slice(0, 80) || "Engineering case study & walkthrough",
+    type: "nextjs-blog",
+  };
+
+  // Determine title font size based on length
+  const titleLength = post.title.length;
+  let titleFontSize = 58;
+  if (titleLength > 65) {
+    titleFontSize = 46;
+  } else if (titleLength > 48) {
+    titleFontSize = 50;
+  } else if (titleLength < 35) {
+    titleFontSize = 62;
+  }
+
+  const halftoneDots = generateHalftoneDots(theme.primary);
 
   return new ImageResponse(
     (
@@ -50,148 +1068,162 @@ export default async function Image({ params }) {
           height: "100%",
           width: "100%",
           display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
-          justifyContent: "center",
-          backgroundColor: "#eff9ff",
-          backgroundImage: "radial-gradient(circle at 25px 25px, #9edcff 2%, transparent 0%), radial-gradient(circle at 75px 75px, #9edcff 2%, transparent 0%)",
-          backgroundSize: "100px 100px",
-          padding: "60px",
-          fontFamily: "sans-serif",
+          position: "relative",
+          backgroundColor: "#ffffff",
+          overflow: "hidden",
+          fontFamily: "Geist",
         }}
       >
+        {/* Halftone Dot Matrix Vectors */}
+        <svg
+          width="1200"
+          height="630"
+          viewBox="0 0 1200 630"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          {halftoneDots}
+        </svg>
+
+        {/* Content Container (2-Column Layout) */}
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
             width: "100%",
             height: "100%",
-            backgroundColor: "#ffffff",
-            borderRadius: "24px",
-            padding: "50px",
-            boxShadow: "0 20px 40px rgba(92, 190, 255, 0.18)",
-            border: "2px solid #c9eaff",
           }}
         >
-          {/* Top Bar: Logo & Date */}
+          {/* Left Column: Pill, Title, Subtitle, Bar */}
           <div
             style={{
               display: "flex",
-              alignItems: "center",
+              flexDirection: "column",
               justifyContent: "space-between",
-              width: "100%",
+              width: "710px",
+              height: "100%",
+              padding: "54px 0 50px 64px",
             }}
           >
-            {/* Logo */}
+            {/* Top Pill Badge */}
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "9px 24px",
+                  borderRadius: 9999,
+                  border: "2px solid #09090b",
+                  backgroundColor: "#ffffff",
+                  color: "#09090b",
+                  fontSize: 22,
+                  fontWeight: 900,
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                {theme.badge}
+              </div>
+            </div>
+
+            {/* Middle: Big Title, Subtitle, and Accent Bar */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "18px",
+                maxWidth: "670px",
+              }}
+            >
+              {/* Highlighted Title */}
+              {renderTitle(post.title, theme.highlights, theme.primary, titleFontSize)}
+
+              {/* Subtitle */}
+              <div
+                style={{
+                  fontSize: 24,
+                  color: "#52525b",
+                  fontWeight: 400,
+                  lineHeight: 1.35,
+                  maxWidth: "650px",
+                }}
+              >
+                {theme.subtitle}
+              </div>
+
+              {/* Theme Color Accent Bar */}
+              <div
+                style={{
+                  width: 85,
+                  height: 7,
+                  backgroundColor: theme.primary,
+                  borderRadius: 9999,
+                  marginTop: 4,
+                }}
+              />
+            </div>
+
+            {/* Bottom Watermark */}
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "16px",
+                gap: "10px",
+                fontSize: 18,
+                fontWeight: 600,
+                color: "#71717a",
+                letterSpacing: "-0.01em",
               }}
             >
               <div
                 style={{
-                  width: "48px",
-                  height: "48px",
-                  borderRadius: "50%",
-                  background: "linear-gradient(to bottom right, #9edcff, #5cbeff, #075c96)",
-                  boxShadow: "0 0 12px rgba(92, 190, 255, 0.5)",
+                  width: 8,
+                  height: 8,
+                  borderRadius: 9999,
+                  backgroundColor: theme.primary,
                 }}
               />
-              <span
-                style={{
-                  fontSize: 32,
-                  fontWeight: 800,
-                  color: "#082d48",
-                  letterSpacing: "-0.05em",
-                }}
-              >
-                Falak<span style={{ color: "#168fdc" }}>.</span>
-              </span>
+              <span>falakgala.dev</span>
+              <span style={{ color: "#d4d4d8" }}>•</span>
+              <span>Falak Gala</span>
             </div>
-
-            {/* Date */}
-            {post.date && (
-              <span
-                style={{
-                  fontSize: 24,
-                  color: "#075c96",
-                  fontWeight: 500,
-                }}
-              >
-                {new Date(post.date).toLocaleDateString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </span>
-            )}
           </div>
 
-          {/* Main Content Area */}
-          <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, justifyContent: "center" }}>
-            <h1
-              style={{
-                fontSize: 60,
-                fontWeight: 900,
-                color: "#082d48",
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
-                margin: 0,
-                marginBottom: "20px",
-              }}
-            >
-              {post.title}
-            </h1>
-
-            <p
-              style={{
-                fontSize: 28,
-                color: "#075c96",
-                lineHeight: 1.4,
-                fontWeight: 500,
-                margin: 0,
-                paddingRight: "60px",
-              }}
-            >
-              {post.description?.length > 150 
-                ? post.description.substring(0, 150) + "..." 
-                : post.description}
-            </p>
-          </div>
-
-          {/* Footer: Tags */}
+          {/* Right Column: Visual Tech Illustration */}
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              width: "100%",
+              justifyContent: "center",
+              width: "490px",
+              height: "100%",
+              paddingRight: "40px",
             }}
           >
-            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-              {post.tags && post.tags.slice(0, 3).map((tag) => (
-                <span
-                  key={tag}
-                  style={{
-                    fontSize: 24,
-                    color: "#075c96",
-                    backgroundColor: "#eff9ff",
-                    padding: "8px 24px",
-                    borderRadius: "999px",
-                    fontWeight: 600,
-                  }}
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
+            {renderIllustration(theme.type, theme.primary, theme.secondary)}
           </div>
         </div>
       </div>
     ),
     {
       ...size,
+      fonts: [
+        {
+          name: "Geist",
+          data: geistBlack,
+          weight: 900,
+          style: "normal",
+        },
+        {
+          name: "Geist",
+          data: geistRegular,
+          weight: 400,
+          style: "normal",
+        },
+      ],
     }
   );
 }

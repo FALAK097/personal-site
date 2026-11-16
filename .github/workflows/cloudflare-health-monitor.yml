@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Run Synthetic Health & Edge-Case Checks
         id: health
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python3 - << 'EOF'
           import json
@@ -130,9 +132,17 @@ jobs:
           # Also verify Glyph macOS (.dmg) and Windows (.exe) release asset downloads
           try:
               start = time.time()
+              gh_headers = {
+                  "User-Agent": "CloudflareFleetMonitor/1.0",
+                  "Accept": "application/vnd.github+json",
+              }
+              gh_token = os.environ.get("GITHUB_TOKEN")
+              if gh_token:
+                  gh_headers["Authorization"] = f"Bearer {gh_token}"
+
               req = urllib.request.Request(
                   "https://api.github.com/repos/FALAK097/glyph/releases/latest",
-                  headers={"User-Agent": "CloudflareFleetMonitor/1.0"}
+                  headers=gh_headers
               )
               with urllib.request.urlopen(req, timeout=15) as resp:
                   rel = json.loads(resp.read().decode("utf-8"))

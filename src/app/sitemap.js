@@ -55,12 +55,6 @@ export default async function sitemap() {
       changeFrequency: "monthly",
       priority: 0.6,
     },
-    {
-      url: `${baseUrl}/rss.xml`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.3,
-    },
     ...postEntries,
   ];
 }

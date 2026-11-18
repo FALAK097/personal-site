@@ -27,6 +27,21 @@ const nextConfig = {
       { source: "/blog", destination: "/writing", permanent: true },
       { source: "/blog/:slug*", destination: "/writing/:slug*", permanent: true },
       { source: "/hire-me", destination: "/contact", permanent: true },
+      { source: "/resume", destination: "/resume.pdf", permanent: true },
+      { source: "/cv", destination: "/resume.pdf", permanent: true },
+    ];
+  },
+  async headers() {
+    return [
+      {
+        source: "/resume.pdf",
+        headers: [
+          {
+            key: "Content-Disposition",
+            value: 'inline; filename="Falak-Gala-Resume.pdf"',
+          },
+        ],
+      },
     ];
   },
 };

@@ -8,10 +8,16 @@ const SITE_IMAGE = {
   alt: "Falak Gala",
 };
 
-export function createMetadata({ title, description, path, type = "website" }) {
+export function createMetadata({ title, description, path, type = "website", keywords }) {
+  const resolvedTitle =
+    typeof title === "string"
+      ? title
+      : title?.absolute || title?.default || SITE_NAME;
+
   return {
     title,
     description,
+    ...(keywords ? { keywords } : {}),
     alternates: {
       canonical: path,
       types: {
@@ -20,7 +26,7 @@ export function createMetadata({ title, description, path, type = "website" }) {
     },
     openGraph: {
       type,
-      title,
+      title: resolvedTitle,
       description,
       url: path,
       siteName: SITE_NAME,
@@ -29,7 +35,7 @@ export function createMetadata({ title, description, path, type = "website" }) {
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: resolvedTitle,
       description,
       images: [SITE_IMAGE.url],
     },

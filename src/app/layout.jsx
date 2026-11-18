@@ -26,10 +26,16 @@ export const metadata = {
     "software engineer",
     "AI engineer",
     "full-stack developer",
+    "Next.js portfolio",
     "Next.js",
+    "UI/UX engineering",
+    "design engineering",
+    "TypeScript",
     "FastAPI",
     "RAG",
     "system design",
+    "Cloudflare Workers",
+    "Waitlyze",
   ],
   alternates: {
     types: {
@@ -65,16 +71,86 @@ export const metadata = {
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: "Falak Gala",
-  url: "https://falakgala.dev",
-  description:
-    "Software engineer building across product engineering, AI systems, infrastructure, and full-stack software.",
-  author: {
-    "@type": "Person",
-    name: "Falak Gala",
-    url: "https://falakgala.dev",
-  },
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://falakgala.dev/#person",
+      name: "Falak Gala",
+      url: "https://falakgala.dev",
+      image: "https://falakgala.dev/profile.png",
+      email: "mailto:hi@falakgala.dev",
+      jobTitle: "Software & AI Engineer",
+      description:
+        "Software engineer building production AI systems, SaaS products, and minimalist Next.js interfaces.",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Mumbai",
+        addressRegion: "Maharashtra",
+        addressCountry: "IN",
+      },
+      worksFor: {
+        "@type": "Organization",
+        name: "SSingularitee Technologies",
+      },
+      alumniOf: [
+        {
+          "@type": "CollegeOrUniversity",
+          name: "KC College of Engineering",
+        },
+        {
+          "@type": "EducationalOrganization",
+          name: "K.J Somaiya Polytechnic",
+        },
+      ],
+      knowsAbout: [
+        "Next.js",
+        "React",
+        "TypeScript",
+        "Tailwind CSS",
+        "UI/UX Design Engineering",
+        "Python",
+        "FastAPI",
+        "Graph RAG",
+        "AI Voice Agents",
+        "PostgreSQL",
+        "Cloudflare Workers",
+      ],
+      sameAs: [
+        "https://github.com/FALAK097",
+        "https://x.com/FalakGala097",
+        "https://www.linkedin.com/in/falak-gala",
+        "https://dev.to/falakgala",
+        "https://waitlyze.com",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://falakgala.dev/#website",
+      name: "Falak Gala",
+      url: "https://falakgala.dev",
+      description:
+        "Portfolio and engineering blog of Falak Gala — product engineering, AI systems, infrastructure, and minimalist Next.js design.",
+      publisher: {
+        "@id": "https://falakgala.dev/#person",
+      },
+      author: {
+        "@id": "https://falakgala.dev/#person",
+      },
+      inLanguage: "en-US",
+    },
+    {
+      "@type": "ProfilePage",
+      "@id": "https://falakgala.dev/#profilepage",
+      url: "https://falakgala.dev",
+      name: "Falak Gala — Software, AI & Next.js Product Engineer",
+      isPartOf: {
+        "@id": "https://falakgala.dev/#website",
+      },
+      mainEntity: {
+        "@id": "https://falakgala.dev/#person",
+      },
+    },
+  ],
 };
 
 export default function RootLayout({ children }) {

@@ -10,9 +10,11 @@ import { createMetadata } from "@/lib/metadata";
 // import { FootballGoalAnimation } from "@/components/custom/football-goal-animation";
 
 export const metadata = createMetadata({
-  title: "Falak Gala",
+  title: {
+    absolute: "Falak Gala — Software, AI & Next.js Product Engineer",
+  },
   description:
-    "Welcome to my personal portfolio. I'm a developer passionate about building great software and sharing my knowledge through writing.",
+    "Minimalist Next.js developer portfolio and engineering notes by Falak Gala. Shipping AI systems, Waitlyze, OutCallerAI, and high-craft web software.",
   path: "/",
 });
 

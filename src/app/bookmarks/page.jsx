@@ -7,7 +7,7 @@ import { createMetadata } from "@/lib/metadata";
 export const metadata = createMetadata({
   title: "Bookmarks",
   description:
-    "A curated collection of my favorite tools, articles, and engineering resources that inspire and support my work as a developer.",
+    "Curated UI/UX design inspiration, developer tools, AI resources, and engineering references collected by Falak Gala.",
   path: "/bookmarks",
 });
 

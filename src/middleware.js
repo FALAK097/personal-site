@@ -17,6 +17,22 @@ const SCANNER_PREFIXES = [
 ];
 
 export function middleware(request) {
+  const host = (
+    request.headers.get("x-forwarded-host") ||
+    request.headers.get("host") ||
+    ""
+  )
+    .split(":")[0]
+    .toLowerCase();
+
+  if (host === "www.falakgala.dev") {
+    const targetUrl = new URL(
+      `${request.nextUrl.pathname}${request.nextUrl.search}`,
+      "https://falakgala.dev",
+    );
+    return NextResponse.redirect(targetUrl, 308);
+  }
+
   const { pathname } = request.nextUrl;
   const lowerPath = pathname.toLowerCase();
 

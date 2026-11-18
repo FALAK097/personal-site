@@ -7,7 +7,7 @@ import { createMetadata } from "@/lib/metadata";
 export const metadata = createMetadata({
   title: "About Me",
   description:
-    "Learn more about me, my background, skills, and what drives me as a developer.",
+    "Background, production experience, education, and full-stack Next.js, FastAPI, and AI engineering stack of Falak Gala.",
   path: "/about",
 });
 

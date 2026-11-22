@@ -68,7 +68,12 @@ export function Footer() {
           </p>
           <div className="footer-socials"><SocialLinks /></div>
         </div>
-        {LAST_UPDATED ? <p className="footer-signoff">Last updated · {LAST_UPDATED}</p> : null}
+        <p className="footer-signoff">
+          {LAST_UPDATED ? <>Last updated · {LAST_UPDATED} · </> : null}
+          <a href="/llms.txt" className="underline-offset-4 hover:underline">
+            llms.txt
+          </a>
+        </p>
       </div>
       <FooterSeascape />
     </footer>

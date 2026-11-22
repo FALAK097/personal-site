@@ -19,6 +19,7 @@ function getLastCommitDate() {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  poweredByHeader: false,
   env: {
     NEXT_PUBLIC_LAST_UPDATED: getLastCommitDate(),
   },
@@ -33,6 +34,29 @@ const nextConfig = {
   },
   async headers() {
     return [
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains",
+          },
+          {
+            key: "Vary",
+            value: "Accept",
+          },
+        ],
+      },
+      {
+        source: "/",
+        headers: [
+          {
+            key: "Link",
+            value:
+              '</llms.txt>; rel="describedby"; type="text/plain", </llms-full.txt>; rel="alternate"; type="text/plain", </.well-known/ai-catalog.json>; rel="ai-catalog"; type="application/json", </rss.xml>; rel="alternate"; type="application/rss+xml", </api/md?path=%2F>; rel="alternate"; type="text/markdown"',
+          },
+        ],
+      },
       {
         source: "/resume.pdf",
         headers: [

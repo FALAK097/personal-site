@@ -25,6 +25,7 @@ export async function generateMetadata(context) {
       canonical: `/writing/${slug}`,
       types: {
         "application/rss+xml": "/rss.xml",
+        "text/markdown": `/api/md?path=${encodeURIComponent(`/writing/${slug}`)}`,
       },
     },
     openGraph: {
@@ -34,6 +35,14 @@ export async function generateMetadata(context) {
       url: `/writing/${slug}`,
       siteName: "Falak Gala",
       locale: "en_US",
+      images: [
+        {
+          url: `/writing/${slug}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
       publishedTime: new Date(post.date).toISOString(),
       modifiedTime: new Date(post.updated || post.date).toISOString(),
       tags: post.tags,

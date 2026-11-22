@@ -1,0 +1,46 @@
+name: IndexNow SEO Ping
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/app/**"
+      - "src/components/**"
+      - "src/content/**"
+      - "src/lib/**"
+      - "public/**"
+      - "scripts/indexnow.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: indexnow-main
+  cancel-in-progress: true
+
+jobs:
+  indexnow:
+    name: Submit Sitemap URLs to IndexNow
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Wait for Cloudflare production deployment on push
+        if: github.event_name == 'push'
+        run: |
+          echo "Waiting 5 minutes for Cloudflare Workers automatic deployment to finish..."
+          sleep 300
+
+      - name: Submit all live sitemap URLs to IndexNow
+        run: node scripts/indexnow.mjs

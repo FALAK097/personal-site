@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "personal-site",
-  "main": ".open-next/worker.js",
+  "main": "cloudflare-worker.js",
   "build": {
     "command": "pnpm run build:cf && npx opennextjs-cloudflare populateCache remote"
   },

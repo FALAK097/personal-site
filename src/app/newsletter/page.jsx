@@ -1,11 +1,13 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { createMetadata } from "@/lib/metadata";
 
-export const metadata = {
+export const metadata = createMetadata({
   title: "Newsletter",
   description:
     "Subscribe to my newsletter to receive updates about new blog posts, projects, and tech insights directly in your inbox.",
-};
+  path: "/newsletter",
+});
 
 export default function NewsletterPage() {
   return (

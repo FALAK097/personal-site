@@ -22,6 +22,7 @@ export function createMetadata({ title, description, path, type = "website", key
       canonical: path,
       types: {
         "application/rss+xml": "/rss.xml",
+        ...(path ? { "text/markdown": `/api/md?path=${encodeURIComponent(path)}` } : {}),
       },
     },
     openGraph: {

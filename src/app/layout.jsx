@@ -13,8 +13,8 @@ import { SITE_URL, SITE_NAME } from "@/lib/site";
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Falak Gala's Portfolio",
-    template: "%s | Falak Gala's Portfolio",
+    default: "Falak Gala — Software & AI Engineer",
+    template: "%s | Falak Gala",
   },
   description:
     "Software engineer building across product engineering, AI systems, infrastructure, and full-stack software. Writing about what I ship and how it works.",
@@ -79,6 +79,12 @@ const websiteJsonLd = {
       url: "https://falakgala.dev",
       image: "https://falakgala.dev/profile.png",
       email: "mailto:hi@falakgala.dev",
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "inquiries",
+        email: "hi@falakgala.dev",
+        url: "https://falakgala.dev/contact",
+      },
       jobTitle: "Software & AI Engineer",
       description:
         "Software engineer building production AI systems, SaaS products, and minimalist Next.js interfaces.",

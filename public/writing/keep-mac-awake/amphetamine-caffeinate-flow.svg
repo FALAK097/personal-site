@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="760" viewBox="0 0 1600 760">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#1f2937" flood-opacity=".10"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#253047" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <style>
+      .title{font:700 36px -apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;fill:#111827}
+      .sub{font:19px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;fill:#4b5563}
+      .label{font:700 18px -apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif}
+      .hdr{font:700 16px -apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;letter-spacing:0.4px}
+      .body{font:16.5px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;fill:#253047}
+      .tiny{font:14.5px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;fill:#4b5563}
+      .box{stroke-width:3;filter:url(#shadow)}
+      .arrow{fill:none;stroke:#253047;stroke-width:3;stroke-linecap:round;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="760" fill="#fffdf9"/>
+  <text x="800" y="64" text-anchor="middle" class="title">Three ways to keep your Mac &amp; display awake safely</text>
+  <text x="800" y="98" text-anchor="middle" class="sub">Skip permanent Energy Saver changes—scope wakefulness to triggers, Raycast timers, or one command</text>
+
+  <!-- Start Node -->
+  <rect class="box" x="490" y="128" width="620" height="86" rx="20" fill="#fff" stroke="#0f172a"/>
+  <text x="800" y="166" text-anchor="middle" class="label" fill="#0f172a">Long Coding Agent, Build, or Live Monitoring Session</text>
+  <text x="800" y="196" text-anchor="middle" class="tiny">Keep display and CPU responsive while working, then restore normal sleep afterward</text>
+
+  <path class="arrow" d="M610 216 C450 250 350 264 294 298"/>
+  <path class="arrow" d="M800 216 L800 298"/>
+  <path class="arrow" d="M990 216 C1150 250 1250 264 1306 298"/>
+
+  <!-- Column 1: Amphetamine -->
+  <rect x="64" y="304" width="460" height="398" rx="28" fill="#faf5ff" stroke="#8b5cf6" stroke-dasharray="12 10" stroke-width="2.5"/>
+  <text x="92" y="344" class="hdr" fill="#6d28d9">1 · AMPHETAMINE (MAC APP)</text>
+
+  <rect class="box" x="92" y="370" width="404" height="132" rx="18" fill="#fff" stroke="#7c3aed"/>
+  <text x="294" y="408" text-anchor="middle" class="label" fill="#5b21b6">Prevent Display + System Sleep</text>
+  <text x="294" y="440" text-anchor="middle" class="body">Menu bar sessions + auto Triggers</text>
+  <text x="294" y="468" text-anchor="middle" class="tiny">Apps, AC power, Wi-Fi, external monitor</text>
+
+  <path class="arrow" d="M294 504 L294 548"/>
+
+  <rect class="box" x="92" y="554" width="404" height="118" rx="18" fill="#ecfdf5" stroke="#16a34a"/>
+  <text x="294" y="596" text-anchor="middle" class="label" fill="#15803d">Set-and-Forget Desktop Control</text>
+  <text x="294" y="630" text-anchor="middle" class="body">Display stays active when needed;</text>
+  <text x="294" y="654" text-anchor="middle" class="tiny">auto-ends once the trigger clears</text>
+
+  <!-- Column 2: Raycast Coffee -->
+  <rect x="570" y="304" width="460" height="398" rx="28" fill="#eff6ff" stroke="#2563eb" stroke-dasharray="12 10" stroke-width="2.5"/>
+  <text x="598" y="344" class="hdr" fill="#1d4ed8">2 · RAYCAST COFFEE (NO NEW APP)</text>
+
+  <rect class="box" x="598" y="370" width="404" height="132" rx="18" fill="#fff" stroke="#2563eb"/>
+  <text x="800" y="408" text-anchor="middle" class="label" fill="#1e40af">Launcher Caffeinate Extension</text>
+  <text x="800" y="440" text-anchor="middle" class="body">Caffeinate for ... / Until / While App Runs</text>
+  <text x="800" y="468" text-anchor="middle" class="tiny">Prevents display &amp; system sleep by default</text>
+
+  <path class="arrow" d="M800 504 L800 548"/>
+
+  <rect class="box" x="598" y="554" width="404" height="118" rx="18" fill="#ecfdf5" stroke="#16a34a"/>
+  <text x="800" y="596" text-anchor="middle" class="label" fill="#15803d">Keyboard-First Status &amp; Schedules</text>
+  <text x="800" y="630" text-anchor="middle" class="body">Detects external caffeinate processes</text>
+  <text x="800" y="654" text-anchor="middle" class="tiny">and shows live menu-bar status</text>
+
+  <!-- Column 3: caffeinate CLI -->
+  <rect x="1076" y="304" width="460" height="398" rx="28" fill="#fff7ed" stroke="#ea580c" stroke-dasharray="12 10" stroke-width="2.5"/>
+  <text x="1104" y="344" class="hdr" fill="#c2410c">3 · BUILT-IN CAFFEINATE (CLI)</text>
+
+  <rect class="box" x="1104" y="370" width="404" height="132" rx="18" fill="#fff" stroke="#ea580c"/>
+  <text x="1306" y="408" text-anchor="middle" class="label" fill="#9a3412">caffeinate -dis pnpm build</text>
+  <text x="1306" y="440" text-anchor="middle" class="body">-d display · -i idle · -s AC power</text>
+  <text x="1306" y="468" text-anchor="middle" class="tiny">Ships inside macOS; add -t for seconds</text>
+
+  <path class="arrow" d="M1306 504 L1306 548"/>
+
+  <rect class="box" x="1104" y="554" width="404" height="118" rx="18" fill="#ecfdf5" stroke="#16a34a"/>
+  <text x="1306" y="596" text-anchor="middle" class="label" fill="#15803d">Bound Strictly to One Process</text>
+  <text x="1306" y="630" text-anchor="middle" class="body">Command finishes → assertion clears;</text>
+  <text x="1306" y="654" text-anchor="middle" class="tiny">impossible to leave on in a backpack</text>
+</svg>

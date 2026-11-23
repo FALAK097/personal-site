@@ -1,12 +1,19 @@
 ---
 title: "WhatsApp Cloud API Integration with Next.js - Part 1: Setup & Configuration"
-description: "A complete guide to integrating WhatsApp Business Cloud API with your Next.js application using OAuth. This is the guide I wish existed when I started, Meta's documentation is scattered and incomplete."
+description: "Meta's WhatsApp Cloud API docs are scattered across a dozen dashboards. Here is the exact step-by-step setup—Meta app, OAuth credentials, webhooks, and test numbers—for Next.js."
 date: "2025-11-23"
+updated: "2026-11-23"
+tags:
+  - WhatsApp Cloud API
+  - Next.js
+  - OAuth
+  - Webhooks
+image: "/writing/whatsapp-setup.png"
 ---
 
-I'm not going to lie, integrating the WhatsApp Business Cloud API can be a journey. When I first tackled it, I felt like I was piecing together a puzzle with half the pieces missing. Meta's official documentation is spread across a dozen different pages, and finding a clear, start to finish guide for a modern stack like Next.js was nearly impossible.
+Meta's official WhatsApp Cloud API documentation is split across at least four different portals—App Dashboard, Business Portfolio, Graph API docs, and Webhook guides—with half the screenshots outdated.
 
-That's why I wrote this. This is the guide I wish I had. We'll walk through every single step, from setting up your Meta Business account to handling webhooks, all using Next.js and the robust OAuth method. Let's build something cool.
+If you are building a Next.js SaaS where users connect their own WhatsApp Business accounts, piecing those screens together from scratch wastes hours. This is the exact end-to-end setup I used in production: by the end of Part 1, you will have a configured Meta App, a verified Next.js webhook endpoint, and a working test message before writing the full OAuth persistence layer in [Part 2](/writing/whatsapp-setup-guide-part-2).
 
 ## Prerequisites
 
@@ -28,7 +35,7 @@ Before we dive in, make sure you have a few things ready:
 
 ### What's the Big Deal with the Cloud API?
 
-The WhatsApp Cloud API is Meta's way of letting us programmatically send and receive WhatsApp messages without hosting the WhatsApp Business API software on our own servers. It's a game changer compared to the old on premise solution.
+The WhatsApp Cloud API lets us send and receive WhatsApp messages programmatically without self-hosting the legacy on-premise container stack.
 
 Here's why I'm a fan:
 - **It's (mostly) free to start:** You only pay for the conversations you initiate, and there's a generous free tier.
@@ -176,7 +183,7 @@ You need these values for your application:
 
 ![Access Token](/writing/access-token.png)
 
-#### Refer this docs page for more details on these values: [WhatsApp Cloud API Overview](https://developers.facebook.com/docs/whatsapp/cloud-api/get-started/)
+For more detail on these credentials, see the [WhatsApp Cloud API Get Started docs](https://developers.facebook.com/docs/whatsapp/cloud-api/get-started/).
 ---
 
 ## Webhook Configuration

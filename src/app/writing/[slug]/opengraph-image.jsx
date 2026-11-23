@@ -64,7 +64,7 @@ const POST_THEMES = {
     primary: "#10B981", // WhatsApp Emerald Green
     secondary: "#059669", // Deep Emerald
     highlights: ["WhatsApp Cloud API", "Setup Configuration"],
-    subtitle: "Meta developer setup, System User tokens & webhook verification",
+    subtitle: "Meta app setup, OAuth credentials & webhook verification",
     type: "whatsapp-api",
   },
   "whatsapp-setup-guide-part-2": {
@@ -72,15 +72,15 @@ const POST_THEMES = {
     primary: "#0D9488", // Deep Teal
     secondary: "#0284C7", // Sky Blue
     highlights: ["WhatsApp Cloud API", "Implementation"],
-    subtitle: "OAuth 2.0 flow, token exchange, and production messaging",
+    subtitle: "OAuth 2.0 exchange, 60-day token refresh & signed webhooks",
     type: "whatsapp-code",
   },
   "tracking-unique-visitors": {
-    badge: "Upstash Redis × Next.js",
+    badge: "Next.js × Redis & D1",
     primary: "#EF4444", // Upstash / Redis Crimson
     secondary: "#8B5CF6", // Violet
     highlights: ["Unique Visitors Counter", "Upstash Redis"],
-    subtitle: "Privacy-friendly real-time analytics with Server Actions",
+    subtitle: "Cookie-free visitor tracking with Server Actions, Redis & D1",
     type: "redis-analytics",
   },
   "how-i-built-nextjs-blog": {
@@ -725,7 +725,6 @@ function renderIllustration(type, primary, secondary) {
       );
 
     case "whatsapp-api":
-    case "whatsapp-code":
       return (
         <div
           style={{
@@ -852,6 +851,63 @@ function renderIllustration(type, primary, secondary) {
         </div>
       );
 
+    case "whatsapp-code":
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            width: "410px",
+            height: "350px",
+            backgroundColor: "#0F172A",
+            borderRadius: "20px",
+            border: "2px solid #1E293B",
+            padding: "24px",
+            boxShadow: "0 20px 40px rgba(13, 148, 136, 0.16)",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                padding: "6px 14px",
+                borderRadius: 9999,
+                backgroundColor: "#134E4A",
+                color: "#5EEAD4",
+                fontSize: 12,
+                fontWeight: 800,
+              }}
+            >
+              OAUTH 2.0 + WEBHOOKS
+            </div>
+            <div style={{ display: "flex", color: "#38BDF8", fontSize: 12, fontWeight: 700 }}>
+              Prisma + Next.js
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px", borderRadius: "12px", backgroundColor: "#1E293B", border: "1.5px solid #0D9488" }}>
+              <div style={{ display: "flex", fontSize: 13, fontWeight: 700, color: "#F8FAFC" }}>1. OAuth Code Exchange</div>
+              <div style={{ display: "flex", fontSize: 11, color: "#5EEAD4" }}>60-day token</div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px", borderRadius: "12px", backgroundColor: "#1E293B", border: "1.5px solid #0284C7" }}>
+              <div style={{ display: "flex", fontSize: 13, fontWeight: 700, color: "#F8FAFC" }}>2. WABA &amp; Phone ID</div>
+              <div style={{ display: "flex", fontSize: 11, color: "#7DD3FC" }}>debug_token</div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px", borderRadius: "12px", backgroundColor: "#1E293B", border: "1.5px solid #10B981" }}>
+              <div style={{ display: "flex", fontSize: 13, fontWeight: 700, color: "#F8FAFC" }}>3. Signature Check</div>
+              <div style={{ display: "flex", fontSize: 11, color: "#6EE7B7" }}>HMAC-SHA256</div>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", fontSize: 12, color: "#94A3B8", fontWeight: 600 }}>Multi-Tenant Token Store</div>
+            <div style={{ display: "flex", fontSize: 12, color: "#10B981", fontWeight: 700 }}>200 OK</div>
+          </div>
+        </div>
+      );
+
     case "redis-analytics":
       return (
         <div
@@ -864,11 +920,11 @@ function renderIllustration(type, primary, secondary) {
             backgroundColor: "#ffffff",
             borderRadius: "20px",
             border: "2px solid #E4E4E7",
-            padding: "26px",
+            padding: "24px",
             boxShadow: "0 20px 40px rgba(239, 68, 68, 0.14)",
           }}
         >
-          {/* Top Row: Badge & Live */}
+          {/* Top Row: Badge & Privacy */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div
               style={{
@@ -879,51 +935,37 @@ function renderIllustration(type, primary, secondary) {
                 borderRadius: 9999,
                 backgroundColor: "#FEE2E2",
                 color: "#DC2626",
-                fontSize: 13,
-                fontWeight: 700,
+                fontSize: 12,
+                fontWeight: 800,
               }}
             >
-              UPSTASH REDIS
+              ZERO COOKIES
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#10B981", fontSize: 13, fontWeight: 700 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#10B981", fontSize: 12, fontWeight: 700 }}>
               <div style={{ display: "flex", width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#10B981" }} />
-              LIVE
+              DEDUPLICATED
             </div>
           </div>
 
-          {/* Metric Counter */}
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", fontSize: 52, fontWeight: 900, color: "#09090b" }}>
-              14,290
+          {/* Pipeline Steps */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1.5px solid #E2E8F0" }}>
+              <div style={{ display: "flex", fontSize: 13, fontWeight: 700, color: "#09090B" }}>1. Browser UUID</div>
+              <div style={{ display: "flex", fontSize: 11, fontWeight: 600, color: "#64748B" }}>localStorage</div>
             </div>
-            <div style={{ display: "flex", fontSize: 15, color: "#71717A", fontWeight: 500 }}>
-              Unique Visitors (+18.4% this month)
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px", borderRadius: "12px", backgroundColor: "#FFF7ED", border: "1.5px solid #FDBA74" }}>
+              <div style={{ display: "flex", fontSize: 13, fontWeight: 700, color: "#9A3412" }}>2. Server Action</div>
+              <div style={{ display: "flex", fontSize: 11, fontWeight: 700, color: "#C2410C" }}>Zod validated</div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px", borderRadius: "12px", backgroundColor: "#FEF2F2", border: "1.5px solid #FCA5A5" }}>
+              <div style={{ display: "flex", fontSize: 13, fontWeight: 700, color: "#991B1B" }}>3. Redis Set / D1 Table</div>
+              <div style={{ display: "flex", fontSize: 11, fontWeight: 700, color: "#DC2626" }}>SADD / INSERT</div>
             </div>
           </div>
 
-          {/* Bar Chart & Server Action */}
-          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", height: "80px" }}>
-            <div style={{ display: "flex", width: "22px", height: "35px", borderRadius: "4px", backgroundColor: "#FCA5A5" }} />
-            <div style={{ display: "flex", width: "22px", height: "50px", borderRadius: "4px", backgroundColor: "#FCA5A5" }} />
-            <div style={{ display: "flex", width: "22px", height: "42px", borderRadius: "4px", backgroundColor: "#F87171" }} />
-            <div style={{ display: "flex", width: "22px", height: "65px", borderRadius: "4px", backgroundColor: "#F87171" }} />
-            <div style={{ display: "flex", width: "22px", height: "55px", borderRadius: "4px", backgroundColor: "#EF4444" }} />
-            <div style={{ display: "flex", width: "22px", height: "75px", borderRadius: "4px", backgroundColor: "#EF4444" }} />
-            <div style={{ display: "flex", width: "22px", height: "85px", borderRadius: "4px", backgroundColor: "#DC2626" }} />
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                padding: "8px 12px",
-                borderRadius: "8px",
-                backgroundColor: "#18181B",
-                color: "#ffffff",
-                fontSize: 13,
-                fontWeight: 700,
-              }}
-            >
-              +1 Server Action
-            </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", fontSize: 12, color: "#71717A", fontWeight: 600 }}>Upstash Redis → Cloudflare D1</div>
+            <div style={{ display: "flex", fontSize: 12, color: "#EF4444", fontWeight: 700 }}>1 Action</div>
           </div>
         </div>
       );

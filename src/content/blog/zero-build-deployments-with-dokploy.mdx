@@ -2,6 +2,14 @@
 title: "How I Deploy Production Next.js + FastAPI Apps on a VPS"
 date: "2026-08-01"
 description: "A practical look at the no-build-on-server CI/CD pipeline behind OutCallerAI: Next.js, FastAPI, Prefect, GHCR, Dokploy, Traefik, and DigitalOcean Managed PostgreSQL."
+tags:
+  - Dokploy
+  - Next.js
+  - FastAPI
+  - Docker
+  - Traefik
+  - DevOps
+image: "/writing/outcaller-dokploy-architecture.png"
 ---
 
 For OutCallerAI, I wanted the convenience of a platform like Vercel or Heroku without splitting every service across a different provider. The product is not only a Next.js application. It also has a FastAPI API, scheduled and asynchronous Prefect workloads, and PostgreSQL. I wanted one place to deploy and operate all of it, while keeping the database managed and keeping builds away from the production server.

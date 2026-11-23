@@ -123,6 +123,14 @@ const POST_THEMES = {
     subtitle: "Hybrid PR gates, Docker builds & Dokploy deploys on your own VPS",
     type: "woodpecker-ci",
   },
+  "underrated-mac-utilities-that-fix-macos-defaults": {
+    badge: "macOS Stack × Part 2",
+    primary: "#0D9488",
+    secondary: "#6366F1",
+    highlights: ["Mac", "Utilities", "Defaults"],
+    subtitle: "LinearMouse, Thock, Hand Mirror, Cap, Granola & LocalSend",
+    type: "mac-apps-polish",
+  },
 };
 
 // Generates the halftone dot pattern matching the reference cover
@@ -1216,6 +1224,53 @@ function renderIllustration(type, primary, secondary) {
             <div style={{ display: "flex", fontSize: 12, color: "#09090B", fontWeight: 700 }}>
               8 Workflows
             </div>
+          </div>
+        </div>
+      );
+
+    case "mac-apps-polish":
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            width: "410px",
+            height: "350px",
+            backgroundColor: "#ffffff",
+            borderRadius: "20px",
+            border: "2px solid #E4E4E7",
+            padding: "24px",
+            boxShadow: "0 20px 40px rgba(13, 148, 136, 0.12)",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", padding: "6px 14px", borderRadius: 9999, backgroundColor: "#CCFBF1", color: "#0F766E", fontSize: 12, fontWeight: 800 }}>
+              MACOS DEFAULTS FIXED
+            </div>
+            <div style={{ display: "flex", fontSize: 12, color: "#64748B", fontWeight: 600 }}>
+              Zero Bloat
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px", borderRadius: "12px", backgroundColor: "#F0FDFA", border: "1.5px solid #99F6E4" }}>
+              <div style={{ display: "flex", fontSize: 14, fontWeight: 800, color: "#09090B" }}>LinearMouse + Thock</div>
+              <div style={{ display: "flex", fontSize: 12, fontWeight: 700, color: "#0F766E" }}>Input &amp; Acoustics</div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px", borderRadius: "12px", backgroundColor: "#F0FDFA", border: "1.5px solid #99F6E4" }}>
+              <div style={{ display: "flex", fontSize: 14, fontWeight: 800, color: "#09090B" }}>Hand Mirror + Cap</div>
+              <div style={{ display: "flex", fontSize: 12, fontWeight: 700, color: "#0F766E" }}>Calls &amp; 4K Video</div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px", borderRadius: "12px", backgroundColor: "#F0FDFA", border: "1.5px solid #99F6E4" }}>
+              <div style={{ display: "flex", fontSize: 14, fontWeight: 800, color: "#09090B" }}>Granola + LocalSend</div>
+              <div style={{ display: "flex", fontSize: 12, fontWeight: 700, color: "#0F766E" }}>Notes &amp; LAN Share</div>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", fontSize: 12, color: "#64748B", fontWeight: 600 }}>BetterDisplay • AltTab • Wallspace</div>
+            <div style={{ display: "flex", fontSize: 12, color: "#0D9488", fontWeight: 700 }}>Part 2</div>
           </div>
         </div>
       );

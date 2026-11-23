@@ -86,14 +86,14 @@ A `2px` bar cursor using `cell-foreground` stays crisp, never blocks the charact
 Every time you highlight a URL or error message, press `Cmd+C`, and accidentally copy trailing spaces along with it, you waste keystrokes. These five lines remove the annoyance completely:
 
 ```ini
-copy-on-select = true
+copy-on-select = clipboard
 selection-clear-on-typing = true
 clipboard-trim-trailing-spaces = true
 mouse-hide-while-typing = false
 link-url = true
 ```
 
-- **`copy-on-select = true`:** Highlight text and it is already in your clipboard.
+- **`copy-on-select = clipboard`:** Highlight text and it goes straight to the macOS system clipboard (`Cmd+V` anywhere) rather than Ghostty's private selection pasteboard.
 - **`clipboard-trim-trailing-spaces = true`:** Copies the command or token without ragged right-hand padding.
 - **`selection-clear-on-typing = true`:** As soon as you start typing, stale highlights get out of your way.
 - **`link-url = true`:** Turns local dev URLs and docs links into clickable targets immediately.
@@ -125,7 +125,7 @@ A few highlights worth stealing:
 
 - **`macos-option-as-alt = true`:** Essential if you use readline shortcuts, Vim motions, or TUI tools.
 - **`macos-titlebar-style = tabs` + `window-save-state = always`:** Native macOS tabs sit right in the titlebar with zero wasted vertical chrome, and Ghostty remembers your layout across restarts.
-- **`macos-non-native-fullscreen = true`:** Instant fullscreen switching without macOS's slow Space transition animation.
+- **`macos-non-native-fullscreen = true`:** Instant fullscreen switching without macOS's slow Space transition animation. *(Tradeoff: non-native fullscreen removes the titlebar that `macos-titlebar-style = tabs` relies on, so entering fullscreen with multiple tabs open detaches the focused tab into its own window and leaves the other tabs behind. Drop `macos-non-native-fullscreen = true` if you prefer multi-tab native fullscreen.)*
 - **`confirm-close-surface = false`:** Closing a throwaway pane shouldn't require a modal dialog.
 - **`term = xterm-256color`:** Prevents SSH sessions to older Linux boxes from complaining about an unknown `xterm-ghostty` terminfo entry.
 
@@ -177,7 +177,7 @@ cursor-opacity = 0.9
 adjust-cursor-thickness = 2
 
 # Selection and clipboard
-copy-on-select = true
+copy-on-select = clipboard
 selection-clear-on-typing = true
 clipboard-trim-trailing-spaces = true
 mouse-hide-while-typing = false
@@ -199,6 +199,6 @@ keybind = ctrl+f=start_search
 keybind = super+f=toggle_fullscreen
 ```
 
-Install JetBrains Mono first if you don't already have it (`brew install --cask font-jetbrains-mono-nerd-font`), drop this config in place, and see how fast default terminals start feeling broken by comparison.
+Install JetBrains Mono first if you don't already have it (`brew install --cask font-jetbrains-mono`), drop this config in place, and see how fast default terminals start feeling broken by comparison.
 
 If you're tuning the rest of your Mac around Ghostty, pair this with [the Mac dev and AI workflow apps I run daily](/writing/mac-apps-for-developers-and-ai-workflows) and [how I keep my Mac awake during long agent runs](/writing/keep-your-mac-awake-while-ai-agents-code).

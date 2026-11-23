@@ -1,0 +1,204 @@
+---
+title: "Every Developer Should Configure Ghostty Like This"
+date: "2026-11-23"
+description: "Most developers open a new terminal, slap on a theme, and stop there. Here is the Ghostty configuration that fixes transparent-window readability, font crispness, cursor visibility, and copy-paste friction."
+tags:
+  - Ghostty
+  - Terminal
+  - macOS
+  - Developer Experience
+image: "/writing/ghostty-setup/ghostty-config-annotated.png"
+featured: true
+---
+
+Most developers treat their terminal like an airport chair. They install a theme, bump the font size once, and live with washed-out contrast, blurry thin strokes, an invisible cursor, and annoying close prompts for the next three years.
+
+You stare at your terminal for hours every day. Every tiny bit of visual mud or clipboard friction compounds across thousands of commands.
+
+After dialing in [Ghostty](https://ghostty.org/) on macOS—especially if you run multiple AI coding agents, logs, and split panes side by side—there is a specific set of settings that turns it from "pretty" into genuinely effortless to read at midnight.
+
+Here is the exact configuration I run and why every line earns its spot.
+
+<Figure
+  src="/writing/ghostty-setup/ghostty-config-annotated.png"
+  alt="Annotated Ghostty configuration showing Catppuccin Mocha with #171717 background, typography tweaks, cursor settings, and macOS keybindings"
+  caption="The four parts of my Ghostty config: blur contrast guardrails, Retina typography, cursor/clipboard hygiene, and macOS ergonomics."
+/>
+
+## 1. Stop Using Transparency Without Readability Guardrails
+
+Transparent terminals look great in screenshots and turn completely unreadable the second a white browser window sits behind them.
+
+Instead of giving up on blur and translucency, pair a dark base with three guardrails Ghostty ships natively:
+
+```ini
+theme = "Catppuccin Mocha"
+background = #171717
+foreground = #C5C8C6
+
+background-opacity = 0.9
+background-blur-radius = 12
+
+window-colorspace = display-p3
+minimum-contrast = 3
+alpha-blending = linear-corrected
+```
+
+Why each line matters:
+
+- **`background = #171717` over Catppuccin Mocha:** Catppuccin's syntax palette is gentle on the eyes, while `#171717` drops the base into a neutral charcoal that blends cleanly into dark-mode editors and macOS windows.
+- **`background-opacity = 0.9` + `background-blur-radius = 12`:** Enough translucency to preserve spatial awareness without turning code into soup.
+- **`minimum-contrast = 3`:** Ghostty automatically adjusts foreground colors when background contrast drops too low. No more dark-gray comments disappearing into your wallpaper.
+- **`alpha-blending = linear-corrected` + `window-colorspace = display-p3`:** Prevents muddy text anti-aliasing on Retina displays and keeps syntax colors accurate on Apple's P3 panels.
+
+## 2. Make Monospace Fonts Look Crisp, Not Hairline
+
+Default font rendering on macOS often makes thin monospace weights look washed out—or too heavy once you bump the font size.
+
+```ini
+font-family = JetBrains Mono Light
+font-family-bold = JetBrains Mono Bold
+font-family-italic = JetBrains Mono Italic
+font-family-bold-italic = JetBrains Mono Bold Italic
+
+font-size = 16
+font-thicken = true
+adjust-cell-width = -4%
+```
+
+Pairing **JetBrains Mono Light** with `font-thicken = true` gives you clean letterforms without the chunky feel of Medium or Regular at `16px`. Tightening `adjust-cell-width = -4%` packs slightly more code onto each line—useful when reading wide stack traces or diff output—without cramping characters together.
+
+## 3. Never Lose Your Cursor in a Wall of Logs
+
+When an agent streams 400 lines of output or you jump between six tmux splits, losing the cursor for even two seconds breaks flow.
+
+```ini
+cursor-style = bar
+cursor-color = cell-foreground
+cursor-opacity = 0.9
+adjust-cursor-thickness = 2
+```
+
+A `2px` bar cursor using `cell-foreground` stays crisp, never blocks the character underneath it, and stays visible whether you are over a comment or a bright keyword.
+
+## 4. Fix Clipboard and Mouse Micro-Frictions
+
+Every time you highlight a URL or error message, press `Cmd+C`, and accidentally copy trailing spaces along with it, you waste keystrokes. These five lines remove the annoyance completely:
+
+```ini
+copy-on-select = true
+selection-clear-on-typing = true
+clipboard-trim-trailing-spaces = true
+mouse-hide-while-typing = false
+link-url = true
+```
+
+- **`copy-on-select = true`:** Highlight text and it is already in your clipboard.
+- **`clipboard-trim-trailing-spaces = true`:** Copies the command or token without ragged right-hand padding.
+- **`selection-clear-on-typing = true`:** As soon as you start typing, stale highlights get out of your way.
+- **`link-url = true`:** Turns local dev URLs and docs links into clickable targets immediately.
+
+## 5. Tune macOS Window Ergonomics
+
+macOS defaults can fight terminal muscle memory—especially Option-key navigation (`Alt+B` / `Alt+F` to jump words) and quit confirmation dialogs.
+
+```ini
+macos-option-as-alt = true
+macos-non-native-fullscreen = true
+macos-titlebar-style = tabs
+
+window-padding-x = 12
+window-padding-y = 10
+window-width = 142
+window-height = 41
+window-save-state = always
+
+confirm-close-surface = false
+
+keybind = ctrl+f=start_search
+keybind = super+f=toggle_fullscreen
+
+term = xterm-256color
+```
+
+A few highlights worth stealing:
+
+- **`macos-option-as-alt = true`:** Essential if you use readline shortcuts, Vim motions, or TUI tools.
+- **`macos-titlebar-style = tabs` + `window-save-state = always`:** Native macOS tabs sit right in the titlebar with zero wasted vertical chrome, and Ghostty remembers your layout across restarts.
+- **`macos-non-native-fullscreen = true`:** Instant fullscreen switching without macOS's slow Space transition animation.
+- **`confirm-close-surface = false`:** Closing a throwaway pane shouldn't require a modal dialog.
+- **`term = xterm-256color`:** Prevents SSH sessions to older Linux boxes from complaining about an unknown `xterm-ghostty` terminfo entry.
+
+## The Complete Copy-Paste Config
+
+Save this to `~/.config/ghostty/config` and reload Ghostty (`Cmd+Shift+,` on macOS):
+
+```ini
+theme = "Catppuccin Mocha"
+background = #171717
+foreground = #C5C8C6
+background-opacity = 0.9
+background-blur-radius = 12
+window-colorspace = display-p3
+minimum-contrast = 3
+alpha-blending = linear-corrected
+
+# Custom ANSI palette tuned for dark backgrounds
+palette = 0=#282a2e
+palette = 1=#D74E6F
+palette = 2=#31BB71
+palette = 3=#D3E561
+palette = 4=#8056FF
+palette = 5=#ED61D7
+palette = 6=#04D7D7
+palette = 7=#C5C8C6
+palette = 8=#4B4B4B
+palette = 9=#FE5F86
+palette = 10=#00D787
+palette = 11=#EBFF71
+palette = 12=#8F69FF
+palette = 13=#FF7AEA
+palette = 14=#00FEFE
+palette = 15=#FFFFFF
+
+# Typography
+font-family = JetBrains Mono Light
+font-family-bold = JetBrains Mono Bold
+font-family-italic = JetBrains Mono Italic
+font-family-bold-italic = JetBrains Mono Bold Italic
+font-size = 16
+font-thicken = true
+adjust-cell-width = -4%
+
+# Cursor
+cursor-style = bar
+cursor-color = cell-foreground
+cursor-opacity = 0.9
+adjust-cursor-thickness = 2
+
+# Selection and clipboard
+copy-on-select = true
+selection-clear-on-typing = true
+clipboard-trim-trailing-spaces = true
+mouse-hide-while-typing = false
+link-url = true
+
+# Window, macOS behavior, and keybindings
+macos-option-as-alt = true
+macos-non-native-fullscreen = true
+macos-titlebar-style = tabs
+window-padding-x = 12
+window-padding-y = 10
+window-width = 142
+window-height = 41
+window-save-state = always
+confirm-close-surface = false
+term = xterm-256color
+
+keybind = ctrl+f=start_search
+keybind = super+f=toggle_fullscreen
+```
+
+Install JetBrains Mono first if you don't already have it (`brew install --cask font-jetbrains-mono-nerd-font`), drop this config in place, and see how fast default terminals start feeling broken by comparison.
+
+If you're tuning the rest of your Mac around Ghostty, pair this with [the Mac dev and AI workflow apps I run daily](/writing/mac-apps-for-developers-and-ai-workflows) and [how I keep my Mac awake during long agent runs](/writing/keep-your-mac-awake-while-ai-agents-code).

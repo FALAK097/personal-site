@@ -91,6 +91,14 @@ const POST_THEMES = {
     subtitle: "From a hand-rolled MDX pipeline to a typed publishing system",
     type: "nextjs-blog",
   },
+  "every-developer-should-configure-ghostty-like-this": {
+    badge: "Ghostty × Terminal Setup",
+    primary: "#7C3AED",
+    secondary: "#10B981",
+    highlights: ["Ghostty", "Configure"],
+    subtitle: "Contrast guardrails, Retina typography, cursor & macOS ergonomics",
+    type: "ghostty-terminal",
+  },
 };
 
 // Generates the halftone dot pattern matching the reference cover
@@ -923,6 +931,72 @@ function renderIllustration(type, primary, secondary) {
               }}
             >
               +1 Server Action
+            </div>
+          </div>
+        </div>
+      );
+
+    case "ghostty-terminal":
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            width: "410px",
+            height: "350px",
+            backgroundColor: "#171717",
+            borderRadius: "20px",
+            border: "2px solid #27272A",
+            padding: "24px",
+            boxShadow: "0 20px 40px rgba(124, 58, 237, 0.16)",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <div style={{ display: "flex", width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#FF5F57" }} />
+              <div style={{ display: "flex", width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#FEBC2E" }} />
+              <div style={{ display: "flex", width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#28C840" }} />
+            </div>
+            <div style={{ display: "flex", color: "#A1A1AA", fontSize: 12, fontWeight: 600 }}>
+              ~/.config/ghostty/config
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "9px", padding: "8px 0" }}>
+            <div style={{ display: "flex", fontSize: 14, color: "#A78BFA" }}>
+              theme <span style={{ color: "#34D399", marginLeft: "8px" }}>= "Catppuccin Mocha"</span>
+            </div>
+            <div style={{ display: "flex", fontSize: 14, color: "#A78BFA" }}>
+              minimum-contrast <span style={{ color: "#38BDF8", marginLeft: "8px" }}>= 3</span>
+            </div>
+            <div style={{ display: "flex", fontSize: 14, color: "#A78BFA" }}>
+              font-thicken <span style={{ color: "#F472B6", marginLeft: "8px" }}>= true</span>
+            </div>
+            <div style={{ display: "flex", fontSize: 14, color: "#A78BFA" }}>
+              adjust-cursor-thickness <span style={{ color: "#38BDF8", marginLeft: "8px" }}>= 2</span>
+            </div>
+            <div style={{ display: "flex", fontSize: 14, color: "#A78BFA" }}>
+              macos-option-as-alt <span style={{ color: "#F472B6", marginLeft: "8px" }}>= true</span>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                padding: "6px 14px",
+                borderRadius: 9999,
+                backgroundColor: "#2E1065",
+                color: "#DDD6FE",
+                fontSize: 12,
+                fontWeight: 700,
+              }}
+            >
+              Display P3 • 0.9 Blur
+            </div>
+            <div style={{ display: "flex", color: "#A1A1AA", fontSize: 12, fontWeight: 600 }}>
+              JetBrains Mono
             </div>
           </div>
         </div>

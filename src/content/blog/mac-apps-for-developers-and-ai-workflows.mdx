@@ -1,0 +1,110 @@
+---
+title: "8 Mac Apps That Make Your Dev and AI Workflow Feel Twice as Fast"
+date: "2026-11-23"
+description: "Modern Apple Silicon Macs are fast, so most slowdowns come from workflow friction: lost terminals, stalled ports, broken pastes, and juggling five AI subscriptions. These 8 Mac apps remove the drag."
+tags:
+  - macOS
+  - Productivity
+  - AI Tools
+  - Developer Tools
+image: "/writing/mac-apps-dev/dev-ai-stack-annotated.png"
+featured: true
+---
+
+Apple Silicon Macs are absurdly fast. Yet most developer workdays still feel sluggish.
+
+Not because the CPU is slow—because of death by a thousand micro-frictions. You copy a multi-line `curl` command and watch it execute halfway on paste. Port `3000` throws `EADDRINUSE` again. You hit a Claude or Codex usage cap mid-refactor because you had no idea how close the session limit was.
+
+None of these apps add flashy bloat. Each one deletes one specific daily annoyance from a developer and AI-heavy workflow.
+
+<Figure
+  src="/writing/mac-apps-dev/dev-ai-stack-annotated.png"
+  alt="Annotated overview of 8 developer and AI Mac apps including OpenUsage, Trimmy, PortKiller, Ghostty, OrbStack, Syncthing, Beekeeper Studio, and Raycast"
+  caption="My daily developer and AI workflow stack on macOS, highlighting quota tracking, clipboard hygiene, port cleanup, and peer-to-peer sync."
+/>
+
+*(If you're looking for everyday Mac utilities outside coding—like mouse fixes, meeting notes, and screen recording—check out [Part 2: 8 Underrated Mac Utilities That Quietly Fix Apple's Weirdest Defaults](/writing/underrated-mac-utilities-that-fix-macos-defaults).)*
+
+## 1. OpenUsage — Never Get Blindsided by AI Rate Limits Mid-Task
+
+**Best for:** Tracking Claude, Codex, Cursor, Copilot, OpenRouter, and Antigravity quotas in one place.
+
+If you bounce between multiple AI coding agents and subscriptions, finding out you hit your weekly or 5-hour session cap *in the middle of a refactor* is maddening.
+
+[OpenUsage](https://www.openusage.ai/) puts every provider's remaining quota, session timer, and spend right in your macOS menu bar. You can pin whichever quota is closest to running out so it stays visible without opening a browser tab, and it even exposes a local `localhost:6736/v1/limits` endpoint if you want to pipe limits into status bars or scripts.
+
+```bash
+brew install --cask openusage
+```
+
+## 2. Trimmy — "Paste Once, Run Once" for Multi-Line Shell Snippets
+
+**Best for:** Cleaning up broken multi-line terminal commands before you paste them.
+
+Docs, ChatGPT, and GitHub READMEs love formatting commands with `\` line continuations, weird indentation, and wrapped flags. Paste them straight into a terminal and half the time they fire early or break on stray newlines.
+
+[Trimmy](https://github.com/steipete/Trimmy) sits quietly in your menu bar, watches your clipboard, and flattens multi-line shell commands into a clean, single executable line automatically. It is one of those tiny utilities you forget is running until you use a Mac without it.
+
+```bash
+brew install --cask steipete/tap/trimmy
+```
+
+## 3. PortKiller — Kill Stuck Dev Servers Without Typing `lsof` Ever Again
+
+**Best for:** Fixing `Address already in use` in one click.
+
+Every web developer has typed some variation of `lsof -i :3000` followed by `kill -9 <PID>` a hundred times. When you run Next.js, FastAPI, Postgres, and three AI agent worktrees simultaneously, orphaned processes love squatting on `3000`, `5173`, and `8080`.
+
+[PortKiller](https://portkiller.app/) lists every active listening port, process, and container right from your menu bar and lets you terminate the stuck process in one click.
+
+```bash
+brew install --cask portkiller
+```
+
+## 4. Ghostty — Native Speed With Zero Visual Mud
+
+**Best for:** A GPU-accelerated macOS terminal that stays crisp and fast.
+
+If you spend half your day inside terminal splits, `tmux`, `nvim`, and coding CLIs, switching to [Ghostty](https://ghostty.org/) feels immediately snappier than Electron-based terminals—and its native macOS tabs, P3 color handling, and automatic contrast guardrails make dark-mode transparency actually readable.
+
+```bash
+brew install --cask ghostty
+```
+
+I broke down every line of my configuration in [Every Developer Should Configure Ghostty Like This](/writing/every-developer-should-configure-ghostty-like-this).
+
+## 5. OrbStack — Docker on macOS Without the Fan Spin
+
+**Best for:** Running containers and Linux VMs without sacrificing half your RAM.
+
+Docker Desktop works, until it quietly eats 8 GB of RAM and makes your laptop sound like it is preparing for takeoff. **OrbStack** starts containers in seconds, runs light on battery and memory, and handles local `.orb.local` domains cleanly—making local Postgres, Redis, and multi-service stacks painless.
+
+## 6. Syncthing — Free, Private, Peer-to-Peer Sync for Notes and Configs
+
+**Best for:** Syncing Obsidian vaults and local folders across devices with no cloud subscription.
+
+I keep 200+ Markdown notes synced across devices with [Syncthing](https://syncthing.net/)—zero Google Drive, zero Dropbox, zero monthly sync fee. Your files stay ordinary folders on disk and sync directly between approved machines over encrypted peer-to-peer connections.
+
+I wrote a full walkthrough with conflict handling and backup caveats in [How I Sync My Obsidian Notes Across Devices for Free Using Syncthing](/writing/sync-obsidian-notes-with-syncthing).
+
+## 7. Beekeeper Studio — Inspect Local and Cloud Databases Without Heavy IDE Bloat
+
+**Best for:** Fast Postgres, SQLite, MySQL, and Neon queries.
+
+Sometimes you don't want to spin up a massive Java-based database suite or fight psql wrapping just to check three rows in Neon or inspect a local SQLite database. **Beekeeper Studio** launches fast, stays clean, and gives you tabs, saved queries, and table filtering without visual clutter.
+
+## 8. Raycast — Delete Half Your Trackpad Trips
+
+**Best for:** App switching, clipboard history, window snapping, and quick scripts from the keyboard.
+
+Replacing Spotlight with [Raycast](https://www.raycast.com/) is the highest-leverage keyboard habit on macOS. Clipboard history alone saves dozens of context switches a day, and window management + quick-launch hotkeys mean your hands barely leave the home row.
+
+---
+
+### Keep Your Machine Fast Underneath
+
+Tools remove workflow friction, while good system hygiene keeps the hardware snappy. If your SSD is quietly filling up with old `node_modules` and agent worktrees—or your coding agents keep stalling when your Mac goes to sleep—read these next:
+
+- [Your Mac Is Losing Gigabytes to AI Worktrees (Mole + AlDente)](/writing/reclaim-mac-storage-and-battery-mole-aldente)
+- [Never Wake Up to a Stalled Coding Agent (Amphetamine + caffeinate)](/writing/keep-your-mac-awake-while-ai-agents-code)
+- [Part 2: 8 Underrated Mac Utilities That Quietly Fix Apple's Weirdest Defaults](/writing/underrated-mac-utilities-that-fix-macos-defaults)

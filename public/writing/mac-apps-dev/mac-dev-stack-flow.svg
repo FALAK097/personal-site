@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="740" viewBox="0 0 1600 740">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#1f2937" flood-opacity=".10"/></filter>
+    <style>
+      .title{font:700 36px -apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;fill:#111827}
+      .sub{font:19px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;fill:#4b5563}
+      .hdr{font:700 16.5px -apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;letter-spacing:0.4px}
+      .label{font:700 19px -apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif}
+      .body{font:16.5px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;fill:#253047}
+      .tiny{font:14.5px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;fill:#4b5563}
+      .box{stroke-width:2.8;filter:url(#shadow)}
+    </style>
+  </defs>
+  <rect width="1600" height="740" fill="#fffdf9"/>
+  <text x="800" y="64" text-anchor="middle" class="title">How 8 lightweight apps cover a macOS dev workday</text>
+  <text x="800" y="98" text-anchor="middle" class="sub">Split cleanly across menu bar guardrails, daily workspace runtimes, and launcher + peer sync</text>
+
+  <!-- Col 1: Menu Bar Guardrails -->
+  <rect x="64" y="138" width="460" height="538" rx="28" fill="#fff7ed" stroke="#ea580c" stroke-dasharray="12 10" stroke-width="2.5"/>
+  <text x="92" y="178" class="hdr" fill="#c2410c">1 · MENU BAR GUARDRAILS</text>
+
+  <rect class="box" x="92" y="204" width="404" height="126" rx="18" fill="#fff" stroke="#ea580c"/>
+  <text x="118" y="242" class="label" fill="#9a3412">OpenUsage</text>
+  <text x="118" y="272" class="body">5-hour &amp; weekly caps across AI tools</text>
+  <text x="118" y="300" class="tiny">Local API at localhost:6736/v1/limits</text>
+
+  <rect class="box" x="92" y="356" width="404" height="126" rx="18" fill="#fff" stroke="#ea580c"/>
+  <text x="118" y="394" class="label" fill="#9a3412">Trimmy</text>
+  <text x="118" y="424" class="body">Flattens multi-line shell pastes cleanly</text>
+  <text x="118" y="452" class="tiny">No accidental half-executed commands</text>
+
+  <rect class="box" x="92" y="508" width="404" height="126" rx="18" fill="#fff" stroke="#ea580c"/>
+  <text x="118" y="546" class="label" fill="#9a3412">PortKiller</text>
+  <text x="118" y="576" class="body">Inspect &amp; free busy dev ports (3000/5173)</text>
+  <text x="118" y="604" class="tiny">Replaces manual lsof + kill -9 loops</text>
+
+  <!-- Col 2: Core Workspace -->
+  <rect x="570" y="138" width="460" height="538" rx="28" fill="#eff6ff" stroke="#2563eb" stroke-dasharray="12 10" stroke-width="2.5"/>
+  <text x="598" y="178" class="hdr" fill="#1d4ed8">2 · CORE WORKSPACE &amp; RUNTIME</text>
+
+  <rect class="box" x="598" y="204" width="404" height="126" rx="18" fill="#fff" stroke="#2563eb"/>
+  <text x="624" y="242" class="label" fill="#1e40af">Ghostty</text>
+  <text x="624" y="272" class="body">GPU terminal, P3 colors &amp; contrast caps</text>
+  <text x="624" y="300" class="tiny">Pairs with Zsh, P10k, eza, rg, lazygit</text>
+
+  <rect class="box" x="598" y="356" width="404" height="126" rx="18" fill="#fff" stroke="#2563eb"/>
+  <text x="624" y="394" class="label" fill="#1e40af">OrbStack</text>
+  <text x="624" y="424" class="body">Fast Docker &amp; Linux VMs without 8GB tax</text>
+  <text x="624" y="452" class="tiny">Built-in .orb.local service domains</text>
+
+  <rect class="box" x="598" y="508" width="404" height="126" rx="18" fill="#fff" stroke="#2563eb"/>
+  <text x="624" y="546" class="label" fill="#1e40af">Beekeeper Studio</text>
+  <text x="624" y="576" class="body">Clean SQL tabs for Postgres, SQLite, Neon</text>
+  <text x="624" y="604" class="tiny">Fast table inspection without JVM bloat</text>
+
+  <!-- Col 3: Launcher & Sync -->
+  <rect x="1076" y="138" width="460" height="538" rx="28" fill="#ecfdf5" stroke="#059669" stroke-dasharray="12 10" stroke-width="2.5"/>
+  <text x="1104" y="178" class="hdr" fill="#047857">3 · KEYBOARD &amp; PEER SYNC</text>
+
+  <rect class="box" x="1104" y="204" width="404" height="202" rx="18" fill="#fff" stroke="#059669"/>
+  <text x="1130" y="248" class="label" fill="#065f46">Raycast</text>
+  <text x="1130" y="284" class="body">App launcher, clipboard history &amp;</text>
+  <text x="1130" y="310" class="body">window tiling from one shortcut</text>
+  <text x="1130" y="346" class="tiny">Run Coffee, script commands &amp; Dev</text>
+  <text x="1130" y="370" class="tiny">extensions without leaving home row</text>
+
+  <rect class="box" x="1104" y="432" width="404" height="202" rx="18" fill="#fff" stroke="#059669"/>
+  <text x="1130" y="476" class="label" fill="#065f46">Syncthing</text>
+  <text x="1130" y="512" class="body">Encrypted P2P folder &amp; Obsidian sync</text>
+  <text x="1130" y="538" class="body">directly across Mac, phone &amp; Linux</text>
+  <text x="1130" y="574" class="tiny">Plain Markdown files on disk; zero</text>
+  <text x="1130" y="598" class="tiny">cloud sync lock-in or monthly fees</text>
+</svg>

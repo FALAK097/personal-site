@@ -131,6 +131,14 @@ const POST_THEMES = {
     subtitle: "LinearMouse, Thock, Hand Mirror, Cap, Granola & LocalSend",
     type: "mac-apps-polish",
   },
+  "mac-apps-for-developers-and-ai-workflows": {
+    badge: "macOS Stack × Part 1",
+    primary: "#0284C7",
+    secondary: "#EA580C",
+    highlights: ["Mac", "Apps", "Dev", "Workflow", "Fast"],
+    subtitle: "OpenUsage, Trimmy, PortKiller, Ghostty, OrbStack & Syncthing",
+    type: "mac-apps-dev",
+  },
 };
 
 // Generates the halftone dot pattern matching the reference cover
@@ -1271,6 +1279,53 @@ function renderIllustration(type, primary, secondary) {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div style={{ display: "flex", fontSize: 12, color: "#64748B", fontWeight: 600 }}>BetterDisplay • AltTab • Wallspace</div>
             <div style={{ display: "flex", fontSize: 12, color: "#0D9488", fontWeight: 700 }}>Part 2</div>
+          </div>
+        </div>
+      );
+
+    case "mac-apps-dev":
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            width: "410px",
+            height: "350px",
+            backgroundColor: "#ffffff",
+            borderRadius: "20px",
+            border: "2px solid #E4E4E7",
+            padding: "24px",
+            boxShadow: "0 20px 40px rgba(2, 132, 199, 0.12)",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", padding: "6px 14px", borderRadius: 9999, backgroundColor: "#E0F2FE", color: "#0369A1", fontSize: 12, fontWeight: 800 }}>
+              DEV &amp; AI MENU BAR
+            </div>
+            <div style={{ display: "flex", fontSize: 12, color: "#64748B", fontWeight: 600 }}>
+              Apple Silicon
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1.5px solid #CBD5E1" }}>
+              <div style={{ display: "flex", fontSize: 14, fontWeight: 800, color: "#09090B" }}>OpenUsage</div>
+              <div style={{ display: "flex", fontSize: 12, fontWeight: 700, color: "#0284C7" }}>5h &amp; Weekly Quotas</div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1.5px solid #CBD5E1" }}>
+              <div style={{ display: "flex", fontSize: 14, fontWeight: 800, color: "#09090B" }}>Trimmy + PortKiller</div>
+              <div style={{ display: "flex", fontSize: 12, fontWeight: 700, color: "#EA580C" }}>Paste &amp; Port Fixes</div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1.5px solid #CBD5E1" }}>
+              <div style={{ display: "flex", fontSize: 14, fontWeight: 800, color: "#09090B" }}>Ghostty + Syncthing</div>
+              <div style={{ display: "flex", fontSize: 12, fontWeight: 700, color: "#059669" }}>Terminal &amp; P2P Sync</div>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", fontSize: 12, color: "#64748B", fontWeight: 600 }}>OrbStack • Beekeeper • Raycast</div>
+            <div style={{ display: "flex", fontSize: 12, color: "#0284C7", fontWeight: 700 }}>8 Apps</div>
           </div>
         </div>
       );

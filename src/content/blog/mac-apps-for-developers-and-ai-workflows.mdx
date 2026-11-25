@@ -1,0 +1,99 @@
+---
+title: "8 Mac Apps That Make Your Dev and AI Workflow Feel Twice as Fast"
+date: "2026-11-23"
+updated: "2026-11-25"
+description: "Most slowdowns on Apple Silicon come from everyday workflow friction: stalled ports, broken multi-line pastes, hidden AI rate limits, and heavy containers. Here are the 8 Mac apps I run daily."
+tags:
+  - macOS
+  - Productivity
+  - AI Tools
+  - Developer Tools
+image: "/writing/mac-apps-dev/dev-ai-stack-annotated.png"
+featured: true
+---
+
+Apple Silicon compiles fast. Most of the slowdown in a developer's day happens in the small gaps around the code: pasting a multi-line `curl` snippet that executes halfway, hitting `EADDRINUSE` on port `3000` again, or running out of Claude or Codex quota in the middle of a refactor because you never checked the browser dashboard.
+
+None of the apps below add visual clutter. Each one deletes a real annoyance I kept running into while building locally and running multiple coding agents.
+
+<Figure
+  src="/writing/mac-apps-dev/mac-dev-stack-flow.png"
+  alt="Overview of 8 macOS developer apps grouped into menu bar guardrails, core workspace runtimes, and keyboard plus peer sync tools"
+  caption="How the 8 apps divide the workday: menu bar checks on the left, local runtimes in the middle, and keyboard plus sync utilities on the right."
+/>
+
+*(For everyday macOS fixes outside dev tooling—mouse acceleration, camera previews, meeting transcription, and LAN file transfers—see [Part 2: 8 Underrated Mac Utilities That Quietly Fix Apple's Weirdest Defaults](/writing/underrated-mac-utilities-that-fix-macos-defaults).)*
+
+## 1. OpenUsage — Track AI Quotas Before Mid-Task Throttling
+
+If you rotate between Claude, Codex, Cursor, Copilot, OpenRouter, or Antigravity subscriptions, running into a 5-hour or weekly cap mid-branch wastes momentum fast.
+
+[OpenUsage](https://www.openusage.ai/) puts every provider's remaining percentage, reset countdown, and token totals in one menu bar popover. Pin whichever quota is tightest in **Priority** view, or query its local `localhost:6736/v1/limits` JSON endpoint from your own scripts.
+
+<Figure
+  src="/writing/mac-apps-dev/dev-ai-stack-annotated.png"
+  alt="Annotated OpenUsage menu bar popover showing Priority vs All Usage toggle, 5-hour and weekly quota bars, 30-day token rollup, and localhost endpoint"
+  caption="OpenUsage tracks 5-hour and weekly limits across AI coding tools from your menu bar and exposes a local localhost:6736/v1/limits API."
+/>
+
+```bash
+brew install --cask openusage
+```
+
+## 2. Trimmy — Clean Multi-Line Terminal Pastes Automatically
+
+Docs, LLM replies, and README files constantly wrap shell commands across multiple lines with `\` continuations and stray indentation. Pasting them raw into a shell often misfires halfway through.
+
+[Trimmy](https://github.com/steipete/Trimmy) watches your clipboard from the menu bar and flattens multi-line shell snippets into one clean single-line command before you hit `Cmd+V`. You barely notice it is installed until you switch to a machine without it.
+
+```bash
+brew install --cask steipete/tap/trimmy
+```
+
+## 3. PortKiller — Free Stuck Local Ports in One Click
+
+Running Next.js, FastAPI, Postgres, and isolated git worktrees at the same time guarantees orphaned processes squatting on `:3000`, `:5173`, or `:8080`.
+
+Instead of running `lsof -i :3000` followed by `kill -9 <PID>` ten times a day, [PortKiller](https://portkiller.app/) surfaces listening ports, owning processes, and containers straight in the menu bar so you can clear a port in one click.
+
+```bash
+brew install --cask portkiller
+```
+
+## 4. Ghostty — Native GPU Rendering Without Visual Mud
+
+Switching to [Ghostty](https://ghostty.org/) feels noticeably snappier than Electron terminals, and its P3 color handling, `minimum-contrast`, and linear-corrected alpha blending keep dark transparent panes legible next to bright browser windows.
+
+```bash
+brew install --cask ghostty
+```
+
+I documented my full config—paired with Zsh, Powerlevel10k, `eza`, `bat`, `ripgrep`, `fzf`, `zoxide`, and `lazygit`—in [Every Developer Should Set Up Their Terminal Like This](/writing/every-developer-should-set-up-their-terminal-like-this).
+
+## 5. OrbStack — Lightweight Docker and Linux VMs
+
+Docker Desktop gets the job done until it quietly claims 8 GB of RAM and spins up fans on an unplugged laptop. **OrbStack** boots containers in seconds, sips battery at idle, and gives running services automatic `.orb.local` domains—handy when jumping between local Postgres, Redis, and Docker Compose stacks.
+
+## 6. Syncthing — Peer-to-Peer Sync With Zero Cloud Lock-In
+
+I keep 200+ Obsidian Markdown notes synchronized directly across devices using [Syncthing](https://syncthing.net/). Files stay regular folders on disk and sync over encrypted device-to-device connections with no monthly storage subscription.
+
+Full setup details and conflict tips are in [How I Sync My Obsidian Notes Across Devices for Free Using Syncthing](/writing/sync-obsidian-notes-with-syncthing).
+
+## 7. Beekeeper Studio — Clean SQL Client Without Heavy Java Bloat
+
+When you just want to run a quick Postgres query, inspect a local SQLite database, or check rows in Neon without wrestling terminal column wrapping or waiting on a heavy database IDE, **Beekeeper Studio** opens quickly and keeps tabs, filters, and saved queries out of your way.
+
+## 8. Raycast — Keyboard-First Launcher, Clipboard, and Window Snapping
+
+Swapping Spotlight for [Raycast](https://www.raycast.com/) eliminates dozens of trackpad trips a day. Clipboard history, window tiling hotkeys, and extensions—including the **Coffee** extension if you want keyboard-triggered `caffeinate` rules without installing another menu bar app—keep everything one shortcut away.
+
+---
+
+### Keep Storage and Sleep Hygiene Covered Too
+
+If multi-worktree agent runs are eating disk space on Apple Silicon or putting your Mac to sleep mid-build, these two companion notes cover the system side:
+
+- [Your Mac Is Losing Gigabytes to AI Worktrees (Mole + AlDente)](/writing/reclaim-mac-storage-and-battery-mole-aldente)
+- [Never Wake Up to a Stalled Coding Agent (Amphetamine, Raycast & caffeinate)](/writing/keep-your-mac-awake-while-ai-agents-code)
+- [Part 2: 8 Underrated Mac Utilities That Quietly Fix Apple's Weirdest Defaults](/writing/underrated-mac-utilities-that-fix-macos-defaults)

@@ -91,12 +91,12 @@ const POST_THEMES = {
     subtitle: "From a hand-rolled MDX pipeline to a typed publishing system",
     type: "nextjs-blog",
   },
-  "every-developer-should-configure-ghostty-like-this": {
-    badge: "Ghostty × Terminal Setup",
+  "every-developer-should-set-up-their-terminal-like-this": {
+    badge: "Ghostty × Zsh × CLI",
     primary: "#7C3AED",
     secondary: "#10B981",
-    highlights: ["Ghostty", "Configure"],
-    subtitle: "Contrast guardrails, Retina typography, cursor & macOS ergonomics",
+    highlights: ["Terminal", "Like This"],
+    subtitle: "Ghostty, Powerlevel10k, eza, bat, ripgrep, fzf, zoxide & lazygit",
     type: "ghostty-terminal",
   },
 };
@@ -959,25 +959,25 @@ function renderIllustration(type, primary, secondary) {
               <div style={{ display: "flex", width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#28C840" }} />
             </div>
             <div style={{ display: "flex", color: "#A1A1AA", fontSize: 12, fontWeight: 600 }}>
-              ~/.config/ghostty/config
+              ghostty • ~/.zshrc • cli
             </div>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "9px", padding: "8px 0" }}>
-            <div style={{ display: "flex", fontSize: 14, color: "#A78BFA" }}>
+            <div style={{ display: "flex", fontSize: 13.5, color: "#A78BFA" }}>
               theme <span style={{ color: "#34D399", marginLeft: "8px" }}>= "Catppuccin Mocha"</span>
             </div>
-            <div style={{ display: "flex", fontSize: 14, color: "#A78BFA" }}>
+            <div style={{ display: "flex", fontSize: 13.5, color: "#A78BFA" }}>
               minimum-contrast <span style={{ color: "#38BDF8", marginLeft: "8px" }}>= 3</span>
             </div>
-            <div style={{ display: "flex", fontSize: 14, color: "#A78BFA" }}>
-              font-thicken <span style={{ color: "#F472B6", marginLeft: "8px" }}>= true</span>
+            <div style={{ display: "flex", fontSize: 13.5, color: "#34D399" }}>
+              $ ll <span style={{ color: "#D4D4D8", marginLeft: "10px" }}>eza -l --git + bat</span>
             </div>
-            <div style={{ display: "flex", fontSize: 14, color: "#A78BFA" }}>
-              adjust-cursor-thickness <span style={{ color: "#38BDF8", marginLeft: "8px" }}>= 2</span>
+            <div style={{ display: "flex", fontSize: 13.5, color: "#34D399" }}>
+              $ fzf_rg <span style={{ color: "#D4D4D8", marginLeft: "10px" }}>ripgrep + zoxide</span>
             </div>
-            <div style={{ display: "flex", fontSize: 14, color: "#A78BFA" }}>
-              macos-option-as-alt <span style={{ color: "#F472B6", marginLeft: "8px" }}>= true</span>
+            <div style={{ display: "flex", fontSize: 13.5, color: "#34D399" }}>
+              $ lg <span style={{ color: "#D4D4D8", marginLeft: "10px" }}>lazygit + git-delta</span>
             </div>
           </div>
 
@@ -993,7 +993,7 @@ function renderIllustration(type, primary, secondary) {
                 fontWeight: 700,
               }}
             >
-              Display P3 • 0.9 Blur
+              Ghostty • P10k • CLI
             </div>
             <div style={{ display: "flex", color: "#A1A1AA", fontSize: 12, fontWeight: 600 }}>
               JetBrains Mono

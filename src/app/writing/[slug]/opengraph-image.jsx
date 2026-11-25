@@ -107,6 +107,14 @@ const POST_THEMES = {
     subtitle: "Keep display & system awake with Amphetamine, Raycast Coffee, or caffeinate",
     type: "keep-mac-awake",
   },
+  "reclaim-mac-storage-and-battery-mole-aldente": {
+    badge: "Mole × AlDente",
+    primary: "#059669",
+    secondary: "#EA580C",
+    highlights: ["Gigabytes", "Worktrees", "Mole", "AlDente"],
+    subtitle: "Purge AI worktree bloat safely and cap desk charging at 80%",
+    type: "mole-aldente",
+  },
 };
 
 // Generates the halftone dot pattern matching the reference cover
@@ -1049,6 +1057,53 @@ function renderIllustration(type, primary, secondary) {
             </div>
             <div style={{ display: "flex", fontSize: 12, fontWeight: 800, color: "#FB923C" }}>
               -d -i -s
+            </div>
+          </div>
+        </div>
+      );
+
+    case "mole-aldente":
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            width: "410px",
+            height: "350px",
+            backgroundColor: "#ffffff",
+            borderRadius: "20px",
+            border: "2px solid #E4E4E7",
+            padding: "24px",
+            boxShadow: "0 20px 40px rgba(5, 150, 105, 0.12)",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", padding: "6px 14px", borderRadius: 9999, backgroundColor: "#D1FAE5", color: "#065F46", fontSize: 12, fontWeight: 800 }}>
+              MOLE + ALDENTE
+            </div>
+            <div style={{ display: "flex", fontSize: 12, color: "#059669", fontWeight: 700 }}>
+              Storage &amp; Battery
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", backgroundColor: "#18181B", borderRadius: "14px", padding: "16px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "#34D399", fontWeight: 700 }}>
+              <span>$ mo purge --dry-run</span>
+              <span>Worktrees</span>
+            </div>
+            <div style={{ display: "flex", fontSize: 12, color: "#D4D4D8" }}>
+              ~/.codex/worktrees · ~/.t3/worktrees
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px", padding: "14px", borderRadius: "14px", backgroundColor: "#ECFDF5", border: "1.5px solid #A7F3D0" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 800, color: "#065F46" }}>
+              <span>AlDente Desk Cap</span>
+              <span>80% Limit</span>
+            </div>
+            <div style={{ display: "flex", width: "100%", height: "12px", borderRadius: 9999, backgroundColor: "#D1FAE5" }}>
+              <div style={{ display: "flex", width: "80%", height: "12px", borderRadius: 9999, backgroundColor: "#059669" }} />
             </div>
           </div>
         </div>

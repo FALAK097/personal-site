@@ -1,0 +1,134 @@
+---
+title: "Your Mac Is Losing Gigabytes to AI Worktrees (Clean Storage and Protect Battery With Mole + AlDente)"
+date: "2026-11-23"
+updated: "2026-11-25"
+description: "Hidden git worktrees, duplicated node_modules, and 100% plugged-in desk charging quietly eat SSD space and wear out MacBook batteries. How I use Mole and AlDente to keep both under control."
+tags:
+  - macOS
+  - Mole
+  - AlDente
+  - Developer Tools
+image: "/writing/mole-aldente/mo-status-annotated.png"
+---
+
+Check **System Settings -> Storage** on a developer's MacBook and you will usually find the same annoyance: **100+ GB stuck under "System Data"** with zero breakdown of what is safe to delete.
+
+If you run AI coding agents every day, there is an even faster leak sitting beside Xcode caches and Docker images: **isolated worktrees**.
+
+Every time Codex, T3 Code, or a subagent spins up a fresh worktree branch, it ends up with its own `node_modules`, `.next`, `.open-next`, `.venv`, or `.wrangler` directory. On a 256 GB MacBook Air (~228 GB usable), twenty tasks a week can push disk usage past 90% before you notice. Meanwhile, leaving that same laptop plugged into your monitor all week holds the battery at **100% under heat** while containers and builds compile.
+
+I rely on two lightweight tools to stay ahead of both: **Mole** for terminal disk cleanup and diagnostics, and **AlDente** for desk charge limits.
+
+---
+
+## Part 1: Find and Purge Hidden Gigabytes With Mole
+
+[Mole](https://mole.fit/) is an open-source macOS CLI cleaner and system monitor—fast, scriptable, and completely transparent about what it touches before deleting anything.
+
+```bash
+brew install mole
+```
+
+You can invoke it as `mole` or the shorter alias `mo`. Running `mo` alone opens the main menu, or you can run each tool directly.
+
+### Check Disk and Battery Pressure First (`mo status`)
+
+Before guessing what needs cleaning, check `mo status` for a live view of disk usage, purgeable APFS space, swap pressure, and battery health/cycles:
+
+<Figure
+  src="/writing/mole-aldente/mo-status-annotated.png"
+  alt="Annotated mo status terminal dashboard showing memory swap pressure, 208G used out of 228G APFS storage, and battery health metrics"
+  caption="mo status inside Ghostty highlights APFS storage saturation (208G used / 20G free) alongside RAM swap pressure and battery cycle health."
+/>
+
+If you want to pipe telemetry into a script or quick check, `mo status --json` prints the same snapshot as JSON.
+
+### Always Dry-Run System Caches First (`mo clean`)
+
+Never let a cleanup tool delete caches blindly. Preview every category and byte total with `--dry-run`:
+
+```bash
+mo clean --dry-run
+```
+
+If you also want to inspect root-level system caches, authenticate `sudo` upfront with `sudo -v && mo clean --dry-run`.
+
+<Figure
+  src="/writing/mole-aldente/mole-clean-annotated.png"
+  alt="Annotated mo clean --dry-run Ghostty output showing dry run preview mode, 25 whitelist rules, and gigabytes in user app caches"
+  caption="mo clean --dry-run lists recoverable user caches and logs up front while keeping 25 core whitelist rules active by default."
+/>
+
+Once the dry-run looks safe, run the sweep or add exceptions with `--whitelist`:
+
+```bash
+mo clean
+mo clean --whitelist
+```
+
+### Target AI Coding Worktrees With `mo purge`
+
+`mo purge` is the command that reclaims the most space for developers. It scans configured workspace roots and removes stale build artifacts (`node_modules`, `.next`, `dist`, `target`, `.venv`) from dormant branches and repos without touching source code.
+
+Configure `~/.config/mole/purge_paths` interactively via `mo purge --paths`, or point it straight at your agent worktree folders:
+
+```text
+~/.codex/worktrees
+~/.t3/worktrees
+~/projects
+```
+
+Then preview and clean dormant build artifacts cleanly:
+
+```bash
+mo purge --dry-run
+mo purge
+```
+
+### Every Other `mo` Command Worth Keeping
+
+| Command | Purpose | Safe preview / option |
+| :--- | :--- | :--- |
+| `mo clean` | Clears user/system caches, old logs, crash reports | `mo clean --dry-run` |
+| `mo purge` | Deletes stale build artifacts across worktrees and repos | `mo purge --dry-run` |
+| `mo analyze` | Interactive TUI disk explorer (`mo analyze /Volumes` for drives) | Read-only |
+| `mo uninstall` | Removes apps along with leftover preferences and caches | `mo uninstall --dry-run` |
+| `mo installer` | Finds and removes leftover `.dmg` and `.pkg` installers | `mo installer --dry-run` |
+| `mo slim` | Strips unused Intel (`x86_64`) slices from Apple Silicon Universal binaries | `mo slim --dry-run` |
+| `mo optimize` | Refreshes system caches and background services | `mo optimize --dry-run` |
+| `mo status` | Live CPU, RAM/swap, APFS disk, and battery dashboard | `mo status --json` |
+| `mo history` | Reviews past Mole cleanup runs | `mo history --json` |
+| `mo touchid` | Enables Touch ID authentication for `sudo` prompts | `mo touchid enable --dry-run` |
+
+*(Enabling `mo touchid` is useful on its own—you can approve `sudo` in Ghostty with a fingerprint instead of retyping your password.)*
+
+---
+
+## Part 2: Cap Desk Charging at 80% With AlDente
+
+Freeing SSD space solves sluggish builds, but keeping a MacBook plugged into a charger 90% of the week wears down battery cells just as steadily.
+
+macOS's built-in **Optimized Battery Charging** tries to predict when you will unplug—so anyone working irregular hours or long overnight runs still ends up pinned at **100%** while Docker, Next.js builds, and local agents generate sustained heat.
+
+<Figure
+  src="/writing/mole-aldente/aldente-battery-annotated.png"
+  alt="Comparison diagram contrasting uncapped 100% desk charging with AlDente's 80% hardware charge ceiling and Heat Protection"
+  caption="Holding an 80% charge ceiling at your desk avoids sustained high-voltage heat stress; lift it to 100% only before traveling."
+/>
+
+[AlDente](https://apphousekitchen.com/) enforces deterministic limits straight in your menu bar:
+
+1. **Set an 80% daily cap (or 70–80%):** Once charged to your limit, external power runs the Mac directly without holding cells at 100% voltage.
+2. **Enable Heat Protection:** Pauses charging automatically whenever battery temperature climbs under heavy builds or container workloads.
+3. **Top up to 100% on travel days:** Click once to lift the cap before stepping away from your desk or heading to a flight.
+4. **Run monthly calibration:** Because staying capped at 80% for weeks can let macOS's percentage estimate drift, cycle cleanly once a month so battery reporting stays accurate.
+
+---
+
+## Weekly Maintenance Routine
+
+1. Run `mo status` and `mo clean --dry-run` whenever free disk drops below ~30 GB or builds start swapping heavily.
+2. Run `mo purge --dry-run` after wrapping multi-PR agent sprints so old `.t3/worktrees` and `.codex/worktrees` checkouts do not hoard duplicate `node_modules`.
+3. Leave AlDente capped at `80%` on desk days and pair your runs with [Amphetamine, Raycast Coffee, or `caffeinate`](/writing/keep-your-mac-awake-while-ai-agents-code) so tasks finish without mid-build sleep.
+
+If you are refining the rest of your macOS environment, check out [Every Developer Should Set Up Their Terminal Like This](/writing/every-developer-should-set-up-their-terminal-like-this) and [8 Mac Apps for Dev and AI Workflows](/writing/mac-apps-for-developers-and-ai-workflows).

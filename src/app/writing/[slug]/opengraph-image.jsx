@@ -99,6 +99,14 @@ const POST_THEMES = {
     subtitle: "Ghostty, Powerlevel10k, eza, bat, ripgrep, fzf, zoxide & lazygit",
     type: "ghostty-terminal",
   },
+  "keep-your-mac-awake-while-ai-agents-code": {
+    badge: "Amphetamine × Raycast × caffeinate",
+    primary: "#9333EA",
+    secondary: "#EA580C",
+    highlights: ["Amphetamine", "Raycast", "caffeinate"],
+    subtitle: "Keep display & system awake with Amphetamine, Raycast Coffee, or caffeinate",
+    type: "keep-mac-awake",
+  },
 };
 
 // Generates the halftone dot pattern matching the reference cover
@@ -997,6 +1005,50 @@ function renderIllustration(type, primary, secondary) {
             </div>
             <div style={{ display: "flex", color: "#A1A1AA", fontSize: 12, fontWeight: 600 }}>
               JetBrains Mono
+            </div>
+          </div>
+        </div>
+      );
+
+    case "keep-mac-awake":
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            width: "410px",
+            height: "350px",
+            backgroundColor: "#18181B",
+            borderRadius: "20px",
+            border: "2px solid #27272A",
+            padding: "24px",
+            boxShadow: "0 20px 40px rgba(147, 51, 234, 0.16)",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", padding: "6px 14px", borderRadius: 9999, backgroundColor: "#3B0764", color: "#E9D5FF", fontSize: 12, fontWeight: 800 }}>
+              DISPLAY + CPU AWAKE
+            </div>
+            <div style={{ display: "flex", color: "#34D399", fontSize: 12, fontWeight: 700 }}>
+              3 Clean Paths
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px", padding: "12px 14px", borderRadius: "12px", backgroundColor: "#27272A" }}>
+            <div style={{ display: "flex", fontSize: 12.5, color: "#A1A1AA" }}># Built-in CLI (display + idle + AC)</div>
+            <div style={{ display: "flex", fontSize: 14.5, fontWeight: 700, color: "#34D399" }}>
+              $ caffeinate -dis pnpm build
+            </div>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px", borderRadius: "12px", backgroundColor: "#2E1065", border: "1px solid #7E22CE" }}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ display: "flex", fontSize: 13, fontWeight: 700, color: "#F3E8FF" }}>Amphetamine &amp; Raycast Coffee</div>
+              <div style={{ display: "flex", fontSize: 11, color: "#D8B4FE" }}>Prevent display sleep · Triggers</div>
+            </div>
+            <div style={{ display: "flex", fontSize: 12, fontWeight: 800, color: "#FB923C" }}>
+              -d -i -s
             </div>
           </div>
         </div>

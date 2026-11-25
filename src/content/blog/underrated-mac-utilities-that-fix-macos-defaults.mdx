@@ -1,0 +1,83 @@
+---
+title: "8 Underrated Mac Utilities That Quietly Fix Apple's Weirdest Defaults"
+date: "2026-11-23"
+updated: "2026-11-25"
+description: "External mouse acceleration, fuzzy external monitor scaling, clunky window switching, and cross-device file sharing all have cleaner fixes than vendor bloatware. These 8 Mac utilities solve them cleanly."
+tags:
+  - macOS
+  - Mac Apps
+  - Productivity
+  - Workflow
+image: "/writing/mac-apps-polish/macos-fixes-annotated.png"
+---
+
+macOS gets the big architecture pieces right and still leaves annoying defaults everywhere else. Plug in a non-Apple mouse and natural scrolling fights your trackpad. Join a video call and find out after clicking *Join* that your lighting looks washed out. Try sending a 200 MB build artifact to a Linux box or Android phone and AirDrop hits a dead end.
+
+In [Part 1, I listed the 8 developer and AI workflow apps I rely on every day](/writing/mac-apps-for-developers-and-ai-workflows). This half covers the everyday utilities that smooth out input devices, acoustics, calls, external displays, and local file sharing—without bloated background suites.
+
+## 1. LinearMouse — Fix External Mouse Behavior Without 500 MB Suites
+
+macOS couples external scroll direction to trackpad settings and applies aggressive pointer acceleration that makes fine cursor movement feel floaty. Most hardware vendors ask you to install half a gigabyte of background updater software to override it.
+
+[LinearMouse](https://linearmouse.app/) is free, open-source, and handles per-device, per-app, and per-display rules cleanly. You can disable pointer acceleration and reverse scroll wheel direction on an external mouse while leaving your built-in trackpad untouched.
+
+<Figure
+  src="/writing/mac-apps-polish/macos-fixes-annotated.png"
+  alt="Annotated LinearMouse window highlighting per-device rules, disabling pointer acceleration, and independent scroll settings"
+  caption="LinearMouse isolates external mouse acceleration and scroll direction from your MacBook trackpad without installing vendor suites."
+/>
+
+## 2. Thock — Crisp Keyboard Feedback That Mutes for Music
+
+Typing eight hours a day directly on a flat MacBook keyboard can feel flat when you are away from a mechanical board. [Thock](https://thockapp.com/) adds subtle, low-latency mechanical keystroke acoustics and automatically pauses playback whenever Spotify or Apple Music is active so sound profiles never clash with audio.
+
+```bash
+brew install --cask kamillobinski/thock/thock
+```
+
+## 3. Hand Mirror — One-Click Camera Check Before Calls
+
+Opening Photo Booth or joining a Meet link early just to verify framing and lighting takes too many steps. [Hand Mirror](https://handmirror.app/) puts one small icon in your menu bar: click once for an instant camera preview, click again to close it before jumping onto a call.
+
+## 4. Cap — Open-Source Screen Recording Without Monthly Per-Seat Fees
+
+Recording bug reproductions or quick product walkthroughs shouldn't force another monthly screen-recorder subscription. [Cap](https://cap.so/) is open-source and handles both **Instant Mode** (quick shareable links) and **Studio Mode** (local 4K recordings with auto-zoom, backgrounds, and captions).
+
+## 5. Granola — Clean Call Notes Without an Awkward Meeting Bot
+
+Having *"So-and-so's AI Notetaker has joined the meeting"* pop into customer calls changes the dynamic immediately. [Granola](https://www.granola.ai/) captures system audio directly on your Mac without dialing a bot into the room, letting you jot down rough bullets during the call and merging them with the transcript afterward.
+
+## 6. LocalSend — Cross-Platform AirDrop Over Local Wi-Fi
+
+AirDrop stops helping the moment you need to hand a screen recording, APK, or log bundle to an Android phone, Linux workstation, or Windows laptop. [LocalSend](https://localsend.org/) is free, open-source, works over your local Wi-Fi network with zero cloud uploads or accounts, and even exposes a temporary local browser download link if the receiving device doesn't have the app installed.
+
+<Figure
+  src="/writing/mac-apps-polish/localsend-annotated.png"
+  alt="Annotated LocalSend window showing Receive and Send modes, ephemeral device alias, and Receive via link option"
+  caption="LocalSend discovers devices directly over LAN and provides an instant Receive via link option for machines without the app."
+/>
+
+```bash
+brew install --cask localsend
+```
+
+## 7. BetterDisplay + AltTab — Sharp External Monitors and Real Window Switching
+
+If you work docked to an external monitor, two focused utilities fix macOS's sharpest desktop rough edges:
+
+- **BetterDisplay** unlocks crisp HiDPI scaling modes and native hardware brightness (DDC) controls on external displays that macOS would otherwise treat awkwardly.
+- **AltTab** brings per-window thumbnail switching to `Alt+Tab` (or `Cmd+Tab`), so switching between two separate Ghostty, VS Code, or browser windows stops requiring extra `Cmd+~` cycles.
+
+```bash
+brew install --cask betterdisplay alt-tab
+```
+
+## 8. Wallspace — Native Animated Wallpapers Without Wasting Battery
+
+Most animated wallpaper wrappers lean on webviews or heavy background loops that wake your GPU constantly. **Wallspace** uses native Swift and AVFoundation across multiple monitors so subtle ambient loops stay gentle on fans and unplugged battery life.
+
+---
+
+### Complete Your macOS Stack
+
+If you missed the technical side—OpenUsage, Trimmy, PortKiller, Ghostty, OrbStack, Syncthing, Beekeeper Studio, and Raycast—read [Part 1: 8 Mac Apps That Make Your Dev and AI Workflow Feel Twice as Fast](/writing/mac-apps-for-developers-and-ai-workflows), or check out [Every Developer Should Set Up Their Terminal Like This](/writing/every-developer-should-set-up-their-terminal-like-this), [Reclaim Mac Storage and Battery With Mole + AlDente](/writing/reclaim-mac-storage-and-battery-mole-aldente), and [Never Wake Up to a Stalled Coding Agent](/writing/keep-your-mac-awake-while-ai-agents-code).

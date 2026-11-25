@@ -1,12 +1,19 @@
 ---
 title: "WhatsApp Cloud API Integration with Next.js - Part 2: Implementation"
-description: "Complete implementation guide for OAuth flow, token management, sending/receiving messages, and production deployment."
+description: "Complete Next.js + Prisma implementation for multi-tenant WhatsApp Cloud API OAuth, 60-day token refresh, sending messages, and HMAC-SHA256 verified webhooks."
 date: "2025-11-24"
+updated: "2026-11-23"
+tags:
+  - WhatsApp Cloud API
+  - Next.js
+  - OAuth
+  - Prisma
+image: "/writing/whatsapp-part-2/oauth-token-flow.png"
 ---
 
-Welcome back! In [Part 1](/writing/whatsapp-setup-guide-part-1), we navigated the maze of Meta's business settings and got our accounts, apps, and webhooks configured. That was the bureaucratic part. Now, we get to the fun stuff: writing the code.
+In [Part 1](/writing/whatsapp-setup-guide-part-1), we wired up Meta's Business Portfolio, created the Facebook App, verified the `GET` webhook endpoint, and sent a test message.
 
-This guide is where the rubber meets the road. We'll set up our database schema, build the entire OAuth flow from scratch in Next.js, handle token refreshes, and finally, send and receive our first messages programmatically. Let's dive in.
+Now we turn that setup into real multi-tenant application code: a Prisma schema for per-user tokens, the full OAuth 2.0 exchange, 60-day token refresh logic, message sending, and HMAC-verified incoming webhooks.
 
 ---
 
@@ -109,23 +116,13 @@ WHATSAPP_API_URL="https://graph.facebook.com/v24.0"
 
 ### Architecture Overview
 
-Here's a bird's eye view of the flow we're about to build. It's a standard OAuth 2.0 dance, but seeing the steps laid out can help clarify the process:
+Here is the end-to-end multi-tenant OAuth 2.0 flow—from consent and short-lived code exchange to 60-day token persistence and signed webhook verification:
 
-```plaintext
-User clicks "Connect WhatsApp"
-    ↓
-Redirect to Facebook OAuth Portal
-    ↓
-User authenticates and grants permissions to our app
-    ↓
-Facebook redirects back to our app with a temporary authorization `code`
-    ↓
-Our backend exchanges this `code` for a long-lived `access_token`
-    ↓
-We securely store this token in our database, linked to the user's account
-    ↓
-Redirect the user to their dashboard with a success message
-```
+<Diagram
+  src="/writing/whatsapp-part-2/oauth-token-flow.png"
+  alt="Diagram showing multi-tenant WhatsApp OAuth 2.0 consent, code exchange, 60-day token storage in Prisma, and HMAC-SHA256 webhook verification"
+  caption="Multi-tenant OAuth 2.0 token lifecycle: short-lived code exchange, 60-day long-lived token storage, and signed webhooks."
+/>
 
 ### Step 1: Create OAuth Initiation Button
 
@@ -938,12 +935,18 @@ export async function POST(req) {
 }
 
 function validateWebhookSignature(body, signature) {
-  const expectedSignature = crypto
+  const expectedSignature = `sha256=${crypto
     .createHmac("sha256", process.env.FACEBOOK_APP_SECRET)
     .update(body)
-    .digest("hex");
+    .digest("hex")}`;
 
-  return `sha256=${expectedSignature}` === signature;
+  const expectedBuf = Buffer.from(expectedSignature);
+  const signatureBuf = Buffer.from(signature);
+  if (expectedBuf.length !== signatureBuf.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(expectedBuf, signatureBuf);
 }
 
 async function processIncomingMessage(messageData) {

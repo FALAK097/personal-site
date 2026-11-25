@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="720" viewBox="0 0 1600 720">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#1f2937" flood-opacity=".10"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#253047" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <style>
+      .title{font:700 38px ui-rounded,"Comic Sans MS",sans-serif;fill:#111827}
+      .sub{font:20px ui-rounded,"Comic Sans MS",sans-serif;fill:#4b5563}
+      .label{font:700 21px ui-rounded,"Comic Sans MS",sans-serif}
+      .body{font:18px ui-rounded,"Comic Sans MS",sans-serif;fill:#253047}
+      .tiny{font:16px ui-rounded,"Comic Sans MS",sans-serif;fill:#4b5563}
+      .box{stroke-width:3;filter:url(#shadow)}
+      .arrow{fill:none;stroke:#253047;stroke-width:3;stroke-linecap:round;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="720" fill="#fffdf9"/>
+  <text x="800" y="68" text-anchor="middle" class="title">From local MDX files to a typed publishing system</text>
+  <text x="800" y="106" text-anchor="middle" class="sub">Fumadocs compiles and validates content at build time while custom Next.js routes own the UI</text>
+
+  <!-- Before -->
+  <rect x="64" y="156" width="1472" height="196" rx="28" fill="#fafafa" stroke="#94a3b8" stroke-dasharray="13 11" stroke-width="2.5"/>
+  <text x="96" y="196" class="label" fill="#475569">BEFORE · HAND-ROLLED RUNTIME PIPELINE</text>
+
+  <rect class="box" x="104" y="222" width="290" height="96" rx="18" fill="#fff" stroke="#64748b"/>
+  <text x="249" y="264" text-anchor="middle" class="label" fill="#334155">MDX on disk</text>
+  <text x="249" y="294" text-anchor="middle" class="tiny">fs.readFileSync</text>
+
+  <path class="arrow" d="M398 270 L476 270"/>
+
+  <rect class="box" x="484" y="222" width="310" height="96" rx="18" fill="#fff" stroke="#64748b"/>
+  <text x="639" y="264" text-anchor="middle" class="label" fill="#334155">gray-matter</text>
+  <text x="639" y="294" text-anchor="middle" class="tiny">unvalidated frontmatter</text>
+
+  <path class="arrow" d="M798 270 L876 270"/>
+
+  <rect class="box" x="884" y="222" width="612" height="96" rx="18" fill="#fff" stroke="#64748b"/>
+  <text x="1190" y="264" text-anchor="middle" class="label" fill="#334155">next-mdx-remote-client + manual RSS side-effect</text>
+  <text x="1190" y="294" text-anchor="middle" class="tiny">every new feature meant rebuilding TOC, validation, and heading slugs</text>
+
+  <!-- After -->
+  <rect x="64" y="394" width="1472" height="266" rx="28" fill="#eef2ff" stroke="#6366f1" stroke-dasharray="13 11" stroke-width="2.5"/>
+  <text x="96" y="436" class="label" fill="#4338ca">TODAY · HEADLESS FUMADOCS + CUSTOM NEXT.JS 16 UI</text>
+
+  <rect class="box" x="104" y="468" width="330" height="150" rx="22" fill="#fff" stroke="#6366f1"/>
+  <text x="269" y="514" text-anchor="middle" class="label" fill="#4338ca">1. Zod Content Schema</text>
+  <text x="269" y="550" text-anchor="middle" class="body">source.config.ts</text>
+  <text x="269" y="582" text-anchor="middle" class="tiny">fails build on bad date/tags</text>
+
+  <path class="arrow" d="M438 543 L516 543"/>
+
+  <rect class="box" x="524" y="468" width="390" height="150" rx="22" fill="#fff" stroke="#0284c7"/>
+  <text x="719" y="514" text-anchor="middle" class="label" fill="#0369a1">2. Fumadocs Build Layer</text>
+  <text x="719" y="550" text-anchor="middle" class="body">Shiki light/dark + TOC tree</text>
+  <text x="719" y="582" text-anchor="middle" class="tiny">single typed blogSource</text>
+
+  <path class="arrow" d="M918 543 L996 543"/>
+
+  <rect class="box" x="1004" y="468" width="492" height="150" rx="22" fill="#ecfdf5" stroke="#16a34a"/>
+  <text x="1250" y="514" text-anchor="middle" class="label" fill="#15803d">3. Static Output Everywhere</text>
+  <text x="1250" y="550" text-anchor="middle" class="body">/writing/[slug] · opengraph-image</text>
+  <text x="1250" y="582" text-anchor="middle" class="tiny">/rss.xml · /sitemap.xml · /llms-full.txt</text>
+</svg>

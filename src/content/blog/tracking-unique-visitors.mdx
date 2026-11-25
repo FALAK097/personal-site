@@ -1,10 +1,25 @@
 ---
 title: "Building a Unique Visitors Counter with Upstash Redis and Next.js Server Actions"
-description: "Learn how to implement a privacy-friendly unique visitors counter using Upstash Redis and Next.js Server Actions — perfect for personal websites and blogs."
+description: "How to build a cookie-free unique visitor counter in Next.js using Server Actions, Zod, and Upstash Redis—plus how I later migrated the same counter to Cloudflare D1."
 date: "2025-05-21"
+updated: "2026-11-23"
+tags:
+  - Next.js
+  - Upstash Redis
+  - Cloudflare D1
+  - Server Actions
+image: "/writing/unique-visitors/visitor-counter-flow.png"
 ---
 
-Tracking how many unique visitors your website receives can be both insightful and privacy-conscious — without using Google Analytics. This guide shows you how to build a unique visitor counter using Upstash Redis and Next.js Server Actions, ideal for personal sites and blogs.
+Most developers drop Google Analytics or a third-party tracking script onto a personal site just to answer one tiny question: *"How many people actually read this?"*
+
+You don't need cookies, tracking banners, or client-side analytics bloat for a unique visitor counter. A random UUID in `localStorage`, a Zod-validated Next.js Server Action, and a set-based store give you an accurate, privacy-first counter in under 50 lines of code.
+
+<Diagram
+  src="/writing/unique-visitors/visitor-counter-flow.png"
+  alt="Diagram showing browser localStorage UUID flowing through a Zod-validated Next.js Server Action into either Upstash Redis or Cloudflare D1"
+  caption="The counter generates an anonymous browser UUID once, validates it on the server, and deduplicates repeat refreshes with zero cookies."
+/>
 
 ### Installation
 
@@ -25,17 +40,17 @@ npm install @upstash/redis zod
 
 ### Architecture Overview
 
-The system has three main pieces:
+The system has three pieces:
 
-1. Redis Set – stores unique visitor IDs
-2. Server Action – handles counting and caching logic
-3. Client Component – displays the visitor count in the UI
+1. **Redis Set** — stores deduplicated anonymous visitor UUIDs (`SADD` / `SCARD`)
+2. **Server Action** — validates the ID with Zod and caches the count for 60 seconds
+3. **Client Component** — creates a one-time `crypto.randomUUID()` and displays the total in the footer
 
 ### Setting Up Upstash Redis
 
-Sign up at Upstash and create a Redis database and add the following variables to your **.env**:
+Create a Redis database at Upstash and add these variables to `.env`:
 
-```dotenv
+```bash
 UPSTASH_REDIS_REST_URL=your-redis-url
 UPSTASH_REDIS_REST_TOKEN=your-redis-token
 ```
@@ -148,9 +163,33 @@ export function MyComponent() {
 2. Random UUIDs are used for anonymity
 3. No tracking scripts, cookies, or analytics SDKs
 
-### Conclusion
+### 2026 Update: Migrating This Counter to Cloudflare D1
 
-With just a few simple components, you can add a lightweight, privacy-conscious visitor counter to your Next.js site. This method is scalable, free under Upstash’s generous limits, and doesn’t compromise user privacy.
+When I later moved this site onto Cloudflare Workers via OpenNext, I replaced Upstash Redis with **Cloudflare D1** so the visitor counter, AI cache, and contact rate limiter all stayed on Cloudflare-owned infrastructure without an extra external data dependency.
 
-[View Source](https://github.com/Falak097/Personal-Site)\
-Feel free to adapt this solution for your own projects, and let me know if you have any questions or need further assistance!
+Instead of `SADD` + `SCARD`, the production counter runs a single `batchD1` round trip against a `unique_visitors` table with a primary key on `visitor_id`:
+
+```javascript
+export async function trackUniqueVisitor(visitorId) {
+  const results = await batchD1([
+    {
+      sql: "INSERT OR IGNORE INTO unique_visitors (visitor_id) VALUES (?)",
+      params: [visitorId],
+    },
+    {
+      sql: "SELECT COUNT(*) AS count FROM unique_visitors",
+      params: [],
+    },
+  ]);
+
+  return Number(results[1]?.results?.[0]?.count ?? 0);
+}
+```
+
+The client component and Server Action signature (`uniqueVisitors(visitorId)`) stayed completely unchanged—only the backing storage swapped from Upstash Redis to SQLite in D1.
+
+### Wrap-Up
+
+Whether you back it with **Upstash Redis** on Vercel or **Cloudflare D1** on Workers, keeping visitor counting inside one Zod-validated Server Action gives you a zero-cookie counter without third-party scripts or consent banners.
+
+[View the full site source on GitHub](https://github.com/Falak097/Personal-Site)

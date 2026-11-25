@@ -1,146 +1,130 @@
 ---
 title: "How to Get a Free Custom Email for Your Domain (hi@yourdomain.com)"
-description: "A complete walkthrough on setting up a professional custom email address like hi@yourdomain.com that forwards to your Gmail for free, using Cloudflare and your domain registrar."
+description: "Stop paying monthly mailbox fees just to put hi@yourdomain.com on your resume. Here is how to receive and send from a custom domain email inside Gmail for $0 using Cloudflare Email Routing."
 date: "2026-03-03"
+updated: "2026-11-23"
+tags:
+  - Cloudflare
+  - Custom Domain
+  - Email
+  - Portfolio
+image: "/writing/free-custom-email/email-routing-flow.png"
 ---
 
-So you've got a personal domain for your portfolio, something like **yourname.dev**, and you want a professional email to go with it. Something like **hi@yourname.dev** that you can put on your resume and use for cold outreach to clients and hiring managers.
+Paying $6+ every month for a workspace mailbox just to put `hi@yourdomain.com` on a resume or cold email makes zero sense when you already own a domain.
 
-This is exactly what I set up for **hi@falakgala.dev**, and in this post I'll walk you through the entire process step by step. The best part? It's completely free.
+Yet emailing recruiters or founders from `firstname.lastname99@gmail.com` when your portfolio sits on `yourdomain.dev` feels needlessly amateur.
 
-## What We're Building
+This is the exact $0 setup I run for **hi@falakgala.dev**: incoming mail forwards straight into Gmail via Cloudflare Email Routing, and outgoing replies send from **hi@falakgala.dev** right inside the same Gmail inbox.
 
-By the end of this guide you'll have:
+<Diagram
+  src="/writing/free-custom-email/email-routing-flow.png"
+  alt="Diagram showing inbound Cloudflare Email Routing forwarding hi@yourdomain.com to Gmail and outbound Gmail Send Mail As over SMTP port 587"
+  caption="Inbound mail routes through Cloudflare at $0; outbound mail sends through Gmail's SMTP server using an App Password."
+/>
 
-- A custom email like **hi@yourdomain.com** that receives mail
-- All incoming emails forwarded directly to your personal Gmail
-- The ability to **send** emails from your custom address inside Gmail
-- Your portfolio site completely unaffected
+## What You'll Have in 15 Minutes
+
+- **hi@yourdomain.com** receiving mail and forwarding directly into your personal Gmail
+- Gmail sending new emails and replies **from** **hi@yourdomain.com**
+- Your portfolio hosting (Vercel, Cloudflare Workers, or anywhere else) left completely untouched
 
 ## Prerequisites
 
-- A domain you own (purchased on GoDaddy, Namecheap, Cloudflare, etc.)
-- A Gmail account you want to use as your personal inbox
-- A free Cloudflare account ([cloudflare.com](https://cloudflare.com))
+- A domain you own (GoDaddy, Namecheap, Cloudflare, Porkbun, etc.)
+- A Gmail account you use as your main inbox
+- A free [Cloudflare](https://cloudflare.com) account
 
-## Understanding How This Works
+## How the Pieces Fit Together
 
-Before jumping in, it helps to understand the three things involved:
+Three separate layers handle your domain:
 
-1. **Domain Registrar** - where you *bought* the domain (e.g. GoDaddy, Namecheap)
-2. **Nameservers** - who *manages* your DNS records (we'll move this to Cloudflare)
-3. **Hosting** - where your website *lives* (Vercel, stays untouched)
+1. **Domain Registrar** — where you *bought* the domain (GoDaddy, Namecheap, etc.)
+2. **Nameservers** — who *manages* your DNS records (we'll move DNS to Cloudflare)
+3. **Hosting** — where your website *lives* (stays untouched)
 
-Right now your setup is probably:
+Your domain stays registered wherever you bought it. Only DNS moves to Cloudflare, which gives you free Email Routing without breaking your site.
 
-```
-Registrar (e.g. GoDaddy) -> Nameservers -> Hosting (Vercel)
-```
+## Step 1: Add Your Domain to Cloudflare
 
-After this guide it'll be:
+1. Sign up or log in at [cloudflare.com](https://cloudflare.com).
+2. Click **Add a Site** → enter your domain → select the **Free plan**.
+3. Let Cloudflare scan your existing DNS records.
 
-```
-Registrar (e.g. GoDaddy) -> Cloudflare nameservers -> Hosting (unchanged)
-```
+**Important:** Cloudflare sometimes imports stale `A` records from your registrar instead of your actual hosting target. Remove any leftover registrar parking `A` records, and make sure your site records point to your real host (for example, on Vercel):
 
-Your domain stays with your registrar. Your site stays on Vercel. Only the DNS manager changes to Cloudflare, which is what gives us free email routing.
-
-## Step 1 - Add Your Domain to Cloudflare
-
-1. Sign up or log in at [cloudflare.com](https://cloudflare.com)
-2. Click **Add a Site** - enter your domain - select the **Free plan**
-3. Cloudflare will scan your existing DNS records
-
-This is the critical part. Cloudflare may import old A records from your registrar instead of your actual hosting records. You need to fix this before proceeding.
-
-**Delete** any A records pointing to your registrar's IP addresses.
-
-Then **Add** these two records manually:
-
-```
+```text
 Type    Name    Content                 Proxy Status
 CNAME   @       cname.vercel-dns.com    DNS only (grey cloud)
 CNAME   www     cname.vercel-dns.com    DNS only (grey cloud)
 ```
 
-Make sure proxy status is **DNS only (grey cloud)**, not orange/proxied, otherwise your Vercel site may break.
+*(If your site is hosted on Vercel, keep the proxy status as **DNS only (grey cloud)** so Vercel's TLS certificate renewal doesn't conflict. Keep any existing `CAA` or `TXT` verification records intact.)*
 
-Keep any existing CAA or TXT records as they are.
+Click **Continue to activation** and copy the **2 nameservers** Cloudflare gives you.
 
-Once your records look correct, click **Continue to activation**. Cloudflare will show you **2 nameservers**, copy these, you'll need them in the next step.
+## Step 2: Update Nameservers on Your Registrar
 
-## Step 2 - Update Nameservers on Your Registrar
+1. Log into your registrar (GoDaddy, Namecheap, etc.) → open your domain's **DNS settings**.
+2. Find the **Nameservers** section → choose **Custom / I'll use my own nameservers**.
+3. Replace the existing nameservers with the two Cloudflare nameservers.
+4. Save changes.
 
-1. Log into your domain registrar (GoDaddy, Namecheap, etc.) - find your domain - go to DNS settings
-2. Click the **Nameservers** tab
-3. Click **Change Nameservers** - select **I'll use my own nameservers**
-4. Replace the existing nameservers with the 2 Cloudflare ones (e.g. **example.ns.cloudflare.com** and **example.ns.cloudflare.com**)
-5. Save
+Propagation usually takes 5–30 minutes. Your site stays live during the switch, and Cloudflare emails you once the domain is active.
 
-Propagation usually takes 5-30 minutes. Cloudflare will email you once it's active. Your site stays live throughout this process.
+## Step 3: Set Up Cloudflare Email Routing
 
-## Step 3 - Set Up Cloudflare Email Routing
+Once Cloudflare marks your domain **Active**:
 
-Once Cloudflare confirms your domain is active:
+1. Open your domain in Cloudflare → go to **Email → Email Routing**.
+2. Click **Get Started**.
+3. Review the `MX` and `TXT` (SPF) records Cloudflare needs, then click **Add records and Enable**.
 
-1. In your Cloudflare dashboard - select your domain - go to **Email - Email Routing**
-2. Click **Get Started**
-3. Cloudflare will show you the MX and TXT records it needs to add
+Now create your custom forwarding address:
 
-4. Click **Add records and Enable** - Cloudflare adds them automatically
+1. Open the **Routing Rules** tab → click **+ Create Address**.
+2. Custom address: **`hi`** (which creates **hi@yourdomain.com**).
+3. Action: **Send to an email** → enter your personal Gmail address → **Save**.
 
-Now add your forwarding rule:
+Click the verification link Cloudflare sends to your Gmail. Any email sent to **hi@yourdomain.com** now lands straight in your Gmail inbox.
 
-1. Go to **Routing Rules** tab - click **+ Create Address (Onboard Domain)**
-2. Custom address: **hi** (this becomes **hi@yourdomain.com**)
-3. Action: Send to an email - enter your Gmail address
-4. Save
+## Step 4: Send From Your Custom Email Inside Gmail
 
-Cloudflare sends a verification email to your Gmail, click confirm and you're done. Emails sent to **hi@yourdomain.com** now land in your Gmail.
+Receiving works—now configure Gmail to send *from* **hi@yourdomain.com** too.
 
-## Step 4 - Send From Your Custom Email in Gmail
+### Generate a Gmail App Password
 
-Receiving is set up, now let's make Gmail send *from* your custom address too.
+Google blocks plain account passwords for SMTP, so create an app-specific one:
 
-### First, generate a Gmail App Password
+1. Ensure **2-Step Verification** is enabled on your Google account.
+2. Open [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords).
+3. Name it something clear like `Custom Email` → click **Create**.
+4. Copy the **16-character password** immediately (Google shows it once).
 
-You need this because Google does not allow plain passwords for SMTP.
+### Add Your Custom Address in Gmail
 
-1. Make sure **2-Step Verification** is enabled on your Google account
-2. Go to [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
-3. App name: type anything like **Custom Email** - click **Create**
-4. Copy the **16-character password** shown, you only see it once
+1. Open Gmail → click the **gear icon** → **See all settings**.
+2. Open the **Accounts and Import** tab.
+3. Under **"Send mail as"** → click **Add another email address**.
+4. Enter **Your Name** and **hi@yourdomain.com**, **uncheck "Treat as an alias"**, and click **Next Step**.
+5. Fill in the SMTP settings:
+   - **SMTP Server:** `smtp.gmail.com`
+   - **Port:** `587`
+   - **Username:** `yourname@gmail.com` (your actual Gmail address)
+   - **Password:** the 16-character App Password
+   - **Secured connection:** TLS
+6. Click **Add Account**.
+7. Gmail sends a verification email to **hi@yourdomain.com**, which forwards right into your inbox—enter the code or click the link to confirm.
 
-### Add the custom email to Gmail
+### Make It Your Default Sender
 
-1. Open Gmail - click the **gear icon** - **See all settings**
-2. Go to **Accounts and Import** tab
-3. Under **"Send mail as"** - click **Add another email address**
-4. Name: **Your Name** | Email: **hi@yourdomain.com** | uncheck "Treat as alias" - Next
+Back under **Settings → Accounts and Import → Send mail as**, click **make default** beside **hi@yourdomain.com** (or select *"Reply from the same address the message was sent to"*).
 
-5. Fill in the SMTP details:
-   - SMTP Server: ***smtp.gmail.com***
-   - Port: ***587***
-   - Username: ***yourname@gmail.com***
-   - Password: the 16-character App Password
-   - TLS selected
+## Total Cost: $0/Month
 
-6. Click **Add Account**
-7. A verification code is sent to **hi@yourdomain.com**, it lands in your Gmail - enter the code
+- **Inbound:** `hi@yourdomain.com` forwards straight to Gmail via Cloudflare Email Routing.
+- **Outbound:** Gmail sends from `hi@yourdomain.com` over TLS.
+- **Recurring bill:** **$0**.
 
-### Make it your default sender
-
-Back in **Settings - Accounts and Import - Send mail as**, click **make default** next to your custom address.
-
-Now every email you compose will automatically send from **hi@yourdomain.com**.
-
-## You are Done!
-
-Here is what you now have:
-
-- **hi@yourdomain.com** receives emails, forwarded to your Gmail
-- Gmail sends emails from **hi@yourdomain.com** when you compose new messages
-- Total cost: **$0**
-
-Put that custom email on your resume, portfolio, and LinkedIn. It is a small thing that makes a big difference in how seriously people take your outreach, especially when cold emailing hiring managers and clients.
+Put it on your resume, GitHub profile, and cold outreach—small trust signals compound quickly when you're reaching out to hiring managers and clients.
 

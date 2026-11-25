@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="720" viewBox="0 0 1600 720">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#1f2937" flood-opacity=".10"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#253047" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <style>
+      .title{font:700 38px ui-rounded,"Comic Sans MS",sans-serif;fill:#111827}
+      .sub{font:20px ui-rounded,"Comic Sans MS",sans-serif;fill:#4b5563}
+      .label{font:700 21px ui-rounded,"Comic Sans MS",sans-serif}
+      .body{font:18px ui-rounded,"Comic Sans MS",sans-serif;fill:#253047}
+      .tiny{font:16px ui-rounded,"Comic Sans MS",sans-serif;fill:#4b5563}
+      .box{stroke-width:3;filter:url(#shadow)}
+      .arrow{fill:none;stroke:#253047;stroke-width:3;stroke-linecap:round;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="720" fill="#fffdf9"/>
+  <text x="800" y="68" text-anchor="middle" class="title">Privacy-first unique visitor counting without cookies</text>
+  <text x="800" y="106" text-anchor="middle" class="sub">Client UUID + Server Action validation, backed by Upstash Redis or Cloudflare D1</text>
+
+  <rect x="64" y="156" width="1472" height="230" rx="30" fill="#f8fafc" stroke="#64748b" stroke-dasharray="13 11" stroke-width="2.5"/>
+  <text x="96" y="198" class="label" fill="#334155">REQUEST FLOW (NO COOKIES OR THIRD-PARTY TRACKERS)</text>
+
+  <rect class="box" x="104" y="230" width="330" height="120" rx="22" fill="#fff" stroke="#6366f1"/>
+  <text x="269" y="274" text-anchor="middle" class="label" fill="#4338ca">1. Browser Footer</text>
+  <text x="269" y="308" text-anchor="middle" class="body">crypto.randomUUID()</text>
+  <text x="269" y="334" text-anchor="middle" class="tiny">saved in localStorage</text>
+
+  <path class="arrow" d="M438 290 L526 290"/>
+
+  <rect class="box" x="534" y="230" width="380" height="120" rx="22" fill="#fff7ed" stroke="#ea580c"/>
+  <text x="724" y="274" text-anchor="middle" class="label" fill="#c2410c">2. Next.js Server Action</text>
+  <text x="724" y="308" text-anchor="middle" class="body">Zod validates visitorId</text>
+  <text x="724" y="334" text-anchor="middle" class="tiny">no IP or PII stored</text>
+
+  <path class="arrow" d="M918 290 L1006 290"/>
+
+  <rect class="box" x="1014" y="230" width="482" height="120" rx="22" fill="#ecfdf5" stroke="#16a34a"/>
+  <text x="1255" y="274" text-anchor="middle" class="label" fill="#15803d">3. Deduplicated Count Returned</text>
+  <text x="1255" y="308" text-anchor="middle" class="body">SCARD (Redis) or COUNT(*) (D1)</text>
+  <text x="1255" y="334" text-anchor="middle" class="tiny">repeat refreshes don't inflate count</text>
+
+  <!-- Storage Options -->
+  <rect class="box" x="104" y="444" width="650" height="206" rx="24" fill="#fef2f2" stroke="#ef4444"/>
+  <text x="429" y="492" text-anchor="middle" class="label" fill="#dc2626">Original Setup: Upstash Redis</text>
+  <text x="429" y="532" text-anchor="middle" class="body">SADD site:unique_visitors &lt;visitorId&gt;</text>
+  <text x="429" y="568" text-anchor="middle" class="body">60s cached count key for fast reads</text>
+  <text x="429" y="606" text-anchor="middle" class="tiny">Great when deploying on Vercel</text>
+
+  <rect class="box" x="846" y="444" width="650" height="206" rx="24" fill="#fff7ed" stroke="#f97316"/>
+  <text x="1171" y="492" text-anchor="middle" class="label" fill="#c2410c">2026 Production Setup: Cloudflare D1</text>
+  <text x="1171" y="532" text-anchor="middle" class="body">INSERT OR IGNORE INTO unique_visitors</text>
+  <text x="1171" y="568" text-anchor="middle" class="body">Atomic batchD1() + SELECT COUNT(*)</text>
+  <text x="1171" y="606" text-anchor="middle" class="tiny">Keeps everything inside Cloudflare Workers</text>
+</svg>

@@ -8,6 +8,7 @@ tags:
   - Fumadocs
   - MDX
   - Web Development
+image: "/writing/nextjs-blog/fumadocs-pipeline.png"
 ---
 
 When I first added writing to this portfolio, I deliberately kept the implementation small. Blog posts lived as local MDX files, a helper read them from disk, and a dynamic Next.js route compiled each article. It was a useful starting point and gave me complete control over the design.
@@ -36,19 +37,13 @@ Fumadocs is being used as a **headless content engine** here. I did not replace 
 
 ### Why I Moved Away from the Original Pipeline
 
-The first implementation looked roughly like this:
+The first implementation relied on `fs.readFileSync`, `gray-matter`, and `next-mdx-remote-client` at request/build time, with RSS written out as a side effect. As the writing system grew, I moved to a typed build-time pipeline:
 
-```text
-MDX file
-    ↓
-Node.js fs reads the file
-    ↓
-gray-matter parses frontmatter
-    ↓
-next-mdx-remote-client compiles the body
-    ↓
-Custom React components render the article
-```
+<Diagram
+  src="/writing/nextjs-blog/fumadocs-pipeline.png"
+  alt="Before-and-after diagram comparing the hand-rolled fs and gray-matter pipeline against the typed Fumadocs MDX and Next.js 16 publishing pipeline"
+  caption="Comparing the original runtime MDX loader against the typed Fumadocs + Next.js 16 build pipeline."
+/>
 
 That architecture is perfectly reasonable for a small blog. The problem was not MDX itself; the problem was the amount of publishing infrastructure I was rebuilding around it.
 

@@ -115,6 +115,14 @@ const POST_THEMES = {
     subtitle: "Purge AI worktree bloat safely and cap desk charging at 80%",
     type: "mole-aldente",
   },
+  "stop-paying-for-github-actions-self-host-woodpecker-ci": {
+    badge: "Woodpecker CI × Self-Hosting",
+    primary: "#EA580C",
+    secondary: "#0F172A",
+    highlights: ["GitHub", "Actions", "Woodpecker"],
+    subtitle: "Hybrid PR gates, Docker builds & Dokploy deploys on your own VPS",
+    type: "woodpecker-ci",
+  },
 };
 
 // Generates the halftone dot pattern matching the reference cover
@@ -1104,6 +1112,67 @@ function renderIllustration(type, primary, secondary) {
             </div>
             <div style={{ display: "flex", width: "100%", height: "12px", borderRadius: 9999, backgroundColor: "#D1FAE5" }}>
               <div style={{ display: "flex", width: "80%", height: "12px", borderRadius: 9999, backgroundColor: "#059669" }} />
+            </div>
+          </div>
+        </div>
+      );
+
+    case "woodpecker-ci":
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            width: "410px",
+            height: "350px",
+            backgroundColor: "#ffffff",
+            borderRadius: "20px",
+            border: "2px solid #E4E4E7",
+            padding: "24px",
+            boxShadow: "0 20px 40px rgba(234, 88, 12, 0.12)",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                padding: "6px 14px",
+                borderRadius: 9999,
+                backgroundColor: "#FFF7ED",
+                color: "#C2410C",
+                fontSize: 12,
+                fontWeight: 800,
+              }}
+            >
+              WOODPECKER VPS
+            </div>
+            <div style={{ display: "flex", color: "#15803D", fontSize: 12, fontWeight: 700 }}>
+              $0 Runner Minutes
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px", borderRadius: "12px", backgroundColor: "#F0FDF4", border: "1.5px solid #86EFAC" }}>
+              <div style={{ display: "flex", fontSize: 13, fontWeight: 700, color: "#166534" }}>1. PR &amp; SDK Gates</div>
+              <div style={{ display: "flex", fontSize: 11, color: "#15803D" }}>oxlint · OpenAPI</div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px", borderRadius: "12px", backgroundColor: "#FFF7ED", border: "1.5px solid #FDBA74" }}>
+              <div style={{ display: "flex", fontSize: 13, fontWeight: 700, color: "#9A3412" }}>2. Sequential Buildx</div>
+              <div style={{ display: "flex", fontSize: 11, color: "#C2410C" }}>host docker.sock</div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 14px", borderRadius: "12px", backgroundColor: "#EFF6FF", border: "1.5px solid #93C5FD" }}>
+              <div style={{ display: "flex", fontSize: 13, fontWeight: 700, color: "#1E40AF" }}>3. Dokploy Webhook</div>
+              <div style={{ display: "flex", fontSize: 11, color: "#1D4ED8" }}>Zero-Build Deploy</div>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", fontSize: 12, color: "#52525B", fontWeight: 600 }}>
+              OIDC Publish → GitHub
+            </div>
+            <div style={{ display: "flex", fontSize: 12, color: "#09090B", fontWeight: 700 }}>
+              8 Workflows
             </div>
           </div>
         </div>

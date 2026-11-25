@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#1f2937" flood-opacity=".10"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#253047" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <style>
+      .title{font:700 36px -apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;fill:#111827}
+      .sub{font:19px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;fill:#4b5563}
+      .hdr{font:700 17px -apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;letter-spacing:0.4px}
+      .label{font:700 20px -apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif}
+      .body{font:17.5px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;fill:#253047}
+      .tiny{font:15.5px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;fill:#4b5563}
+      .box{stroke-width:3;filter:url(#shadow)}
+      .arrow{fill:none;stroke:#253047;stroke-width:3;stroke-linecap:round;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="#fffdf9"/>
+  <text x="800" y="66" text-anchor="middle" class="title">Hybrid CI: self-host heavy builds, keep OIDC on GitHub</text>
+  <text x="800" y="102" text-anchor="middle" class="sub">OutCallerAI: 8 Woodpecker workflows on our VPS + release automation on GitHub Actions</text>
+
+  <!-- Top Dashed Container: Self-Hosted Woodpecker -->
+  <rect x="54" y="148" width="1492" height="432" rx="30" fill="#f7fbff" stroke="#3b82f6" stroke-dasharray="13 11" stroke-width="2.5"/>
+  <text x="86" y="190" class="hdr" fill="#1d4ed8">SELF-HOSTED WOODPECKER CI (VPS · $0 RUNNER MINUTES)</text>
+
+  <rect class="box" x="92" y="230" width="220" height="128" rx="22" fill="#fff" stroke="#6d28d9"/>
+  <text x="202" y="274" text-anchor="middle" class="label" fill="#5b21b6">GitHub Event</text>
+  <text x="202" y="310" text-anchor="middle" class="body">PR opened or</text>
+  <text x="202" y="338" text-anchor="middle" class="body">merge to main</text>
+
+  <path class="arrow" d="M315 274 C355 260 370 256 402 256"/>
+  <path class="arrow" d="M315 318 C355 338 370 430 402 430"/>
+
+  <!-- PR Gates -->
+  <rect class="box" x="408" y="216" width="320" height="140" rx="22" fill="#ecfdf5" stroke="#16a34a"/>
+  <text x="568" y="254" text-anchor="middle" class="label" fill="#15803d">PR &amp; SDK Gates</text>
+  <text x="568" y="286" text-anchor="middle" class="tiny">pr-checks · pre-commit · oxlint</text>
+  <text x="568" y="312" text-anchor="middle" class="tiny">react-doctor · OpenAPI parity</text>
+  <text x="568" y="338" text-anchor="middle" class="tiny">plugin-git (.netrc target fetch)</text>
+
+  <!-- Build Images -->
+  <rect class="box" x="408" y="388" width="320" height="156" rx="22" fill="#fff7ed" stroke="#ea580c"/>
+  <text x="568" y="426" text-anchor="middle" class="label" fill="#c2410c">Sequential Buildx</text>
+  <text x="568" y="458" text-anchor="middle" class="body">web · api · worker</text>
+  <text x="568" y="488" text-anchor="middle" class="tiny">host /var/run/docker.sock</text>
+  <text x="568" y="514" text-anchor="middle" class="tiny">concurrency: limit: 1 (no OOM)</text>
+
+  <path class="arrow" d="M730 466 C785 466 805 466 854 466"/>
+
+  <!-- GHCR -->
+  <rect class="box" x="860" y="396" width="250" height="140" rx="22" fill="#eef2ff" stroke="#6366f1"/>
+  <text x="985" y="442" text-anchor="middle" class="label" fill="#4338ca">GHCR Registry</text>
+  <text x="985" y="476" text-anchor="middle" class="body">production-&lt;sha&gt;</text>
+  <text x="985" y="504" text-anchor="middle" class="tiny">inline BuildKit cache</text>
+
+  <path class="arrow" d="M1112 466 C1162 466 1185 466 1234 466"/>
+
+  <!-- Dokploy -->
+  <rect class="box" x="1240" y="396" width="266" height="140" rx="22" fill="#fef3c7" stroke="#d97706"/>
+  <text x="1373" y="442" text-anchor="middle" class="label" fill="#b45309">Dokploy Deploy</text>
+  <text x="1373" y="476" text-anchor="middle" class="body">depends_on: build-images</text>
+  <text x="1373" y="504" text-anchor="middle" class="tiny">deploy webhooks + changelog</text>
+
+  <!-- Note pill on top right -->
+  <rect class="box" x="815" y="224" width="695" height="120" rx="22" fill="#fff" stroke="#94a3b8"/>
+  <text x="1162" y="264" text-anchor="middle" class="label" fill="#0f172a">VPS Guardrails That Prevented Every Crash</text>
+  <text x="1162" y="296" text-anchor="middle" class="tiny">MAX_WORKFLOWS=2  ·  PLUGINS_PRIVILEGED=plugin-docker-buildx:2</text>
+  <text x="1162" y="322" text-anchor="middle" class="tiny">Always cleanup builders on [success, failure]  ·  Escape $$VAR</text>
+
+  <!-- Bottom Dashed Container: Kept on GitHub Actions -->
+  <rect x="54" y="616" width="1492" height="224" rx="30" fill="#faf7ff" stroke="#8b5cf6" stroke-dasharray="13 11" stroke-width="2.5"/>
+  <text x="86" y="656" class="hdr" fill="#6d28d9">KEPT ON GITHUB ACTIONS (LOW-FREQUENCY · NATIVE OIDC)</text>
+
+  <rect class="box" x="92" y="692" width="420" height="112" rx="20" fill="#fff" stroke="#8b5cf6"/>
+  <text x="302" y="736" text-anchor="middle" class="label" fill="#5b21b6">npm &amp; PyPI Trusted Publishing</text>
+  <text x="302" y="770" text-anchor="middle" class="body">OIDC tokens—no long-lived secrets</text>
+
+  <rect class="box" x="590" y="692" width="420" height="112" rx="20" fill="#fff" stroke="#8b5cf6"/>
+  <text x="800" y="736" text-anchor="middle" class="label" fill="#5b21b6">Release Tags &amp; Changelogs</text>
+  <text x="800" y="770" text-anchor="middle" class="body">Automated release notes &amp; PRs</text>
+
+  <rect class="box" x="1088" y="692" width="418" height="112" rx="20" fill="#fff" stroke="#8b5cf6"/>
+  <text x="1297" y="736" text-anchor="middle" class="label" fill="#5b21b6">Repo Triage</text>
+  <text x="1297" y="770" text-anchor="middle" class="body">auto-assignee &amp; issue helpers</text>
+</svg>

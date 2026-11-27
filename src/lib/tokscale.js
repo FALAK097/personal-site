@@ -282,6 +282,10 @@ function toInsights(data) {
     tokenShare: ((entry.tokens ?? 0) / totalModelTokens) * 100,
   }));
 
+  const zeroCostModels = rankedModels.filter((entry) => (entry.cost ?? 0) === 0);
+  const zeroCostTokens = zeroCostModels.reduce((sum, entry) => sum + (entry.tokens ?? 0), 0);
+  const pricedCost = rankedModels.reduce((sum, entry) => sum + (entry.cost ?? 0), 0);
+
   const series = buildSeries(data.contributions ?? []);
 
   const usedKeys = new Set([OTHER_KEY]);
@@ -335,26 +339,52 @@ function toInsights(data) {
     biggestDay: findBiggestDay(series),
     dateRange: data.dateRange ?? null,
     updatedAt: data.updatedAt ?? null,
+    submissionFreshness: data.submissionFreshness ?? null,
+    clients: data.clients ?? [],
+    modelCount: rankedModels.length,
+    zeroCostTokens,
+    zeroCostModelCount: zeroCostModels.length,
+    pricedCost,
+    isStale: Boolean(data.submissionFreshness?.isStale),
   };
 }
 
 export const getTokscaleInsights = unstable_cache(
   async () => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10_000);
+
     try {
       const response = await fetch(TOKSCALE_DATA_URL, {
         headers: {
           "User-Agent": "falakgala.dev (+https://falakgala.dev)",
           Accept: "text/html",
         },
+        signal: controller.signal,
+        next: { revalidate: REVALIDATE_SECONDS },
       });
 
-      if (!response.ok) return null;
+      if (!response.ok) {
+        // Preserve cache on transient server errors instead of caching null for 3h.
+        if (response.status >= 500) throw new Error(`Tokscale fetch failed: ${response.status}`);
+        return null;
+      }
 
-      return toInsights(extractInitialData(await response.text()));
-    } catch {
-      return null;
+      const html = await response.text();
+      const initialData = extractInitialData(html);
+      if (!initialData) throw new Error("Tokscale parse failed: initialData not found");
+      const insights = toInsights(initialData);
+      if (!insights) throw new Error("Tokscale insights transform failed");
+      return insights;
+    } catch (error) {
+      if (error?.name === "AbortError") throw new Error("Tokscale fetch timed out");
+      // Re-throw so unstable_cache does not overwrite last good value with null.
+      // The UI layer will show its own fallback if no cached value exists.
+      throw error;
+    } finally {
+      clearTimeout(timeout);
     }
   },
-  ["tokscale-insights-v2"],
-  { revalidate: REVALIDATE_SECONDS, tags: ["tokscale-insights-v2"] },
+  ["tokscale-insights-v3"],
+  { revalidate: REVALIDATE_SECONDS, tags: ["tokscale-insights-v3"] },
 );

@@ -14,12 +14,15 @@ export const metadata = createMetadata({
   path: "/stats",
 });
 
-// Page refreshes hourly so site traffic stays current; the Tokscale payload
-// keeps its own 24h cache, so the heavier scrape is not repeated.
+// Page refreshes hourly so site traffic stays current; Tokscale insights
+// are cached for 3h with a 10s fetch timeout and stale-preservation on errors.
 export const revalidate = 3600;
 
 export default async function StatsPage() {
-  const [insights, traffic] = await Promise.all([getTokscaleInsights(), getSiteTraffic()]);
+  const [insights, traffic] = await Promise.all([
+    getTokscaleInsights().catch(() => null),
+    getSiteTraffic(),
+  ]);
 
   return (
     <div className="page-shell">

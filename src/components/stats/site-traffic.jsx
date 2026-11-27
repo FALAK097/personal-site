@@ -428,29 +428,6 @@ function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, 
   );
 }
 
-function NetworkSection({ colos, metric, activeTotal }) {
-  if (!colos?.length) return null;
-
-  return (
-    <div className="space-y-2.5">
-      <h3 className="text-sm font-medium text-foreground">Traffic &amp; network</h3>
-
-      <div className="rounded-xl border border-border/75 bg-card p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <h4 className="text-xs font-medium text-foreground">Top edge data centers</h4>
-          <span className="font-mono text-[11px] text-muted-foreground">Cloudflare PoPs</span>
-        </div>
-        <ProportionalRows
-          rows={colos}
-          metric={metric}
-          totalForShare={activeTotal}
-          iconKind="colo"
-        />
-      </div>
-    </div>
-  );
-}
-
 export function SiteTraffic({ traffic }) {
   const [metric, setMetric] = useState("pageviews");
 
@@ -477,7 +454,6 @@ export function SiteTraffic({ traffic }) {
     referrers,
     operatingSystems,
     browsers,
-    colos,
     days,
   } = traffic;
 
@@ -557,8 +533,6 @@ export function SiteTraffic({ traffic }) {
         metric={metric}
         activeTotal={activeTotal}
       />
-
-      <NetworkSection colos={colos} metric={metric} activeTotal={activeTotal} />
     </section>
   );
 }

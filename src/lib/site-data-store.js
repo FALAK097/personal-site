@@ -65,21 +65,6 @@ export async function setCacheValue(key, value, ttlSeconds) {
   );
 }
 
-export async function trackUniqueVisitor(visitorId) {
-  const results = await batchD1([
-    {
-      sql: "INSERT OR IGNORE INTO unique_visitors (visitor_id) VALUES (?)",
-      params: [visitorId],
-    },
-    {
-      sql: "SELECT COUNT(*) AS count FROM unique_visitors",
-      params: [],
-    },
-  ]);
-
-  return Number(results[1]?.results?.[0]?.count ?? 0);
-}
-
 export async function incrementRateLimit(key, windowSeconds) {
   assertCacheKey(key);
 

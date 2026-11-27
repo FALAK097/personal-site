@@ -1,7 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { unstable_cache } from "next/cache";
 import snapshot from "@/data/cloudflare-analytics-snapshot.json";
-import colos from "@/data/cloudflare-colos.json";
 
 const CF_GRAPHQL_URL = "https://api.cloudflare.com/client/v4/graphql";
 const DEFAULT_ACCOUNT_ID = "598a393819cd44e21ef2145dabea9a2f";
@@ -57,27 +56,6 @@ function formatCountryName(code) {
   } catch {
     return upper;
   }
-}
-
-function formatColo(iataRaw) {
-  const iata = String(iataRaw || "").trim().toUpperCase();
-  if (!iata) {
-    return { key: "UNK", code: null, city: "Unknown", country: null, label: "Unknown" };
-  }
-  const entry = colos[iata];
-  if (!entry) {
-    return { key: iata, code: null, city: iata, country: null, label: iata };
-  }
-  const [city, countryCode] = entry;
-  const country = countryCode ? formatCountryName(countryCode) : null;
-  const label = country ? `${city}, ${country} (${iata})` : `${city} (${iata})`;
-  return {
-    key: iata,
-    code: countryCode || null,
-    city,
-    country,
-    label,
-  };
 }
 
 function buildUtcDateRange(sinceIso, untilIso) {
@@ -239,20 +217,6 @@ export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilI
     formatLabel: (key) => BROWSER_LABELS[key] || key,
   });
 
-  // Top edge data centers (Cloudflare colos)
-  const colosFormatted = (zone?.colos || [])
-    .map((item) => {
-      const meta = formatColo(item?.dimensions?.coloCode);
-      return {
-        ...meta,
-        pageviews: asNumber(item?.count),
-        visitors: asNumber(item?.sum?.visits),
-      };
-    })
-    .filter((row) => row.pageviews > 0)
-    .sort((a, b) => b.pageviews - a.pageviews || b.visitors - a.visitors)
-    .slice(0, 9);
-
   // External Web Analytics referrers (when available)
   const externalReferrers = (referrers || [])
     .map((item) => {
@@ -289,7 +253,6 @@ export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilI
     referrers: externalReferrers,
     operatingSystems,
     browsers,
-    colos: colosFormatted,
   };
 }
 
@@ -369,11 +332,6 @@ const ZONE_TRAFFIC_QUERY = `
           count
           sum { visits }
           dimensions { userAgentBrowser }
-        }
-        colos: httpRequestsAdaptiveGroups(limit: 12, filter: $filter, orderBy: [count_DESC]) {
-          count
-          sum { visits }
-          dimensions { coloCode }
         }
       }
     }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { uniqueVisitors } from "@/actions/unique-visitors";
+import { siteVisitors } from "@/actions/site-visitors";
 import { SocialLinks } from "@/components/social-links";
 import { FooterSeascape } from "@/components/footer-seascape";
 
@@ -21,27 +21,16 @@ const LAST_UPDATED = process.env.NEXT_PUBLIC_LAST_UPDATED
     }).format(new Date(process.env.NEXT_PUBLIC_LAST_UPDATED))
   : null;
 
-function getVisitorId() {
-  const key = "visitorId";
-  let id = localStorage.getItem(key);
-  if (!id) {
-    id = crypto.randomUUID();
-    localStorage.setItem(key, id);
-  }
-  return id;
-}
-
 export function Footer() {
   const [visitorCount, setVisitorCount] = useState(null);
   const [mumbaiTime, setMumbaiTime] = useState("--:--");
 
   useEffect(() => {
-    // Storage can be unavailable in private or restricted browsing contexts.
     Promise.resolve()
-      .then(() => uniqueVisitors(getVisitorId()))
+      .then(() => siteVisitors())
       .then((result) => {
-        if (typeof result?.uniqueVisitors === "number") {
-          setVisitorCount(result.uniqueVisitors);
+        if (typeof result?.visitors === "number") {
+          setVisitorCount(result.visitors);
         }
       })
       .catch(() => undefined);

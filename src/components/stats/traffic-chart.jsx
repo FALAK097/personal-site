@@ -36,9 +36,7 @@ export function TrafficLineChartSlot(props) {
 
 export function DeviceStackedChartSlot(props) {
   return <LazyDeviceStackedChart {...props} />;
-}
-
-export function TrafficWorldMapSlot(props) {
+}export function TrafficWorldMapSlot(props) {
   return <LazyTrafficWorldMap {...props} />;
 }
 

@@ -235,6 +235,7 @@ function ProportionalRows({
   iconKind,
   linkInternalPaths = false,
   monoLabel = false,
+  limit,
 }) {
   if (!rows?.length) {
     return (
@@ -247,12 +248,13 @@ function ProportionalRows({
   const sorted = [...rows].sort(
     (a, b) => rowMetricValue(b, metric) - rowMetricValue(a, metric) || b.pageviews - a.pageviews,
   );
-  const maxVal = Math.max(...sorted.map((row) => rowMetricValue(row, metric)), 1);
+  const ranked = typeof limit === "number" ? sorted.slice(0, limit) : sorted;
+  const maxVal = Math.max(...ranked.map((row) => rowMetricValue(row, metric)), 1);
   const denominator = totalForShare > 0 ? totalForShare : maxVal;
 
   return (
     <div className="divide-y divide-border/60">
-      {sorted.map((row) => (
+      {ranked.map((row) => (
         <ProportionalRowItem
           key={`${row.key ?? row.label}-${row.label}`}
           row={row}
@@ -304,6 +306,7 @@ function GeographySection({ countryCount, mapCountries, countries, metric, activ
               metric={metric}
               totalForShare={activeTotal}
               iconKind="country"
+              limit={10}
             />
           </div>
         ) : null}
@@ -394,7 +397,7 @@ function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, 
       <h3 className="text-sm font-medium text-foreground">Technology</h3>
 
       {deviceSeries?.length > 1 ? (
-        <DeviceStackedChartSlot data={deviceSeries} devices={devices} />
+        <DeviceStackedChartSlot data={deviceSeries} devices={devices} metric={metric} />
       ) : null}
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

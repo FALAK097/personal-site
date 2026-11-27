@@ -152,6 +152,9 @@ export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilI
         desktop: 0,
         mobile: 0,
         tablet: 0,
+        desktopVisitors: 0,
+        mobileVisitors: 0,
+        tabletVisitors: 0,
         isPartial: dates.length > 2 && (index === 0 || index === dates.length - 1),
       },
     ]),
@@ -163,9 +166,17 @@ export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilI
     const bucket = deviceByDate.get(date);
     if (!bucket) continue;
     const pv = asNumber(item?.count);
-    if (rawDevice === "mobile") bucket.mobile += pv;
-    else if (rawDevice === "tablet") bucket.tablet += pv;
-    else bucket.desktop += pv;
+    const visits = asNumber(item?.sum?.visits);
+    if (rawDevice === "mobile") {
+      bucket.mobile += pv;
+      bucket.mobileVisitors += visits;
+    } else if (rawDevice === "tablet") {
+      bucket.tablet += pv;
+      bucket.tabletVisitors += visits;
+    } else {
+      bucket.desktop += pv;
+      bucket.desktopVisitors += visits;
+    }
   }
 
   const deviceSeries = Array.from(deviceByDate.values());
@@ -203,7 +214,9 @@ export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilI
     .sort((a, b) => b.pageviews - a.pageviews || b.visitors - a.visitors);
 
   const mapCountries = allCountries.filter((row) => Boolean(row.code));
-  const countries = allCountries.slice(0, 10);
+  // Full candidate list — the UI ranks by the selected metric (requests or
+  // visits) before applying its display limit, so leaders per metric survive.
+  const countries = allCountries;
 
   // Top paths
   const pages = normalizeRows(zone?.pages, "clientRequestPath", 10);
@@ -307,8 +320,7 @@ const ZONE_TRAFFIC_QUERY = `
           count
           sum { visits }
           dimensions { date clientDeviceType }
-        }
-        devices: httpRequestsAdaptiveGroups(limit: 10, filter: $filter, orderBy: [count_DESC]) {
+        }        devices: httpRequestsAdaptiveGroups(limit: 10, filter: $filter, orderBy: [count_DESC]) {
           count
           sum { visits }
           dimensions { clientDeviceType }
@@ -397,6 +409,9 @@ async function fetchLiveCloudflareTraffic() {
     datetime_geq: sinceIso,
     datetime_lt: untilIso,
     clientRequestHTTPHost: DEFAULT_HOST,
+    // Mirror the dashboard's Traffic panel: only end-user requests, excluding
+    // health checks and Worker/subrequest traffic.
+    requestSource: "eyeball",
   };
 
   const [zoneResult, rumResult] = await Promise.allSettled([

@@ -65,7 +65,7 @@ export function TokscaleLink({ children = "Tokscale" }) {
 
 function Metric({ label, value, hint }) {
   return (
-    <div className="rounded-lg border border-border/70 p-4">
+    <div className="rounded-xl border border-border/75 bg-card p-4">
       <p className="font-mono text-lg font-medium tabular-nums tracking-tight">{value}</p>
       <p className="mt-1 text-xs text-muted-foreground">{label}</p>
       {hint ? <p className="mt-0.5 font-mono text-[11px] text-muted-foreground/80">{hint}</p> : null}
@@ -77,26 +77,44 @@ function ModelList({ models }) {
   if (!models.length) return null;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2.5">
       <h3 className="text-sm font-medium">Models</h3>
-      <div>
-        {models.map((model) => (
-          <div
-            key={model.name}
-            className="flex items-center justify-between gap-4 border-b border-border/70 py-3 first:pt-0 last:border-0"
-          >
-            <div className="flex min-w-0 items-center gap-2.5">
-              <BrandMark brand={brandForModel(model.name)} />
-              <span className="truncate font-mono text-xs">{model.name}</span>
-              <span className="shrink-0 font-mono text-[11px] text-muted-foreground/70 tabular-nums">
-                {(model.share ?? model.tokenShare ?? 0).toFixed(1)}%
-              </span>
-            </div>
-            <span className="shrink-0 font-mono text-xs text-muted-foreground tabular-nums">
-              {formatTokens(model.tokens)} · {formatCost(model.cost)}
-            </span>
-          </div>
-        ))}
+      <div className="rounded-xl border border-border/75 bg-card p-4">
+        <div className="divide-y divide-border/60">
+          {models.map((model) => {
+            const share = Math.min(Math.max(model.share ?? model.tokenShare ?? 0, 0), 100);
+            return (
+              <div
+                key={model.name}
+                className="flex items-center justify-between gap-3 py-2.5 first:pt-0.5 last:pb-0.5"
+              >
+                <div className="flex min-w-0 flex-1 items-center gap-2.5">
+                  <BrandMark brand={brandForModel(model.name)} />
+                  <span className="truncate font-mono text-xs text-foreground">{model.name}</span>
+                  <span className="shrink-0 font-mono text-[11px] text-muted-foreground/75 tabular-nums">
+                    {share.toFixed(1)}%
+                  </span>
+                </div>
+                <div className="flex shrink-0 items-center gap-3">
+                  <div
+                    className="hidden h-1.5 w-20 overflow-hidden rounded-full bg-muted sm:block"
+                    aria-hidden="true"
+                  >
+                    {share > 0 ? (
+                      <span
+                        className="block h-full min-w-[4px] rounded-full bg-[#2563eb] dark:bg-clay-500"
+                        style={{ width: `${share}%` }}
+                      />
+                    ) : null}
+                  </div>
+                  <span className="shrink-0 font-mono text-xs text-muted-foreground tabular-nums">
+                    {formatTokens(model.tokens)} · {formatCost(model.cost)}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

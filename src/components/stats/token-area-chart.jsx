@@ -5,11 +5,11 @@ import { brandForClient, brandForModel, brandSrc } from "@/lib/ai-brand";
 import { useEffect, useState } from "react";
 
 const PALETTE = [
-  { light: "#2f7fb8", dark: "#5cbeff" },
-  { light: "#6d4fc4", dark: "#c4a4ff" },
-  { light: "#0f766e", dark: "#5eead4" },
-  { light: "#b45309", dark: "#fbbf24" },
-  { light: "#9f1239", dark: "#fb7185" },
+  { light: "#2563eb", dark: "#5cbeff" },
+  { light: "#0d9488", dark: "#2dd4bf" },
+  { light: "#d97706", dark: "#fbbf24" },
+  { light: "#0284c7", dark: "#38bdf8" },
+  { light: "#e11d48", dark: "#fb7185" },
   { light: "#4d7c0f", dark: "#a3e635" },
   { light: "#64748b", dark: "#94a3b8" },
 ];
@@ -237,7 +237,14 @@ export function TokenAreaChart({
       <EChartsAreaChart.YAxis tickFormatter={tickFormatter} />
       <EChartsAreaChart.Legend variant="rounded-square" align="right" verticalAlign="top" isClickable />
       {keys.map((key) => (
-        <EChartsAreaChart.Area key={key} dataKey={key} variant="solid" strokeVariant="solid" strokeWidth={1.5}>
+        <EChartsAreaChart.Area
+          key={key}
+          dataKey={key}
+          variant="solid"
+          strokeVariant="solid"
+          strokeWidth={1.5}
+          enableBufferLine
+        >
           <EChartsAreaChart.ActiveDot variant="ping" />
         </EChartsAreaChart.Area>
       ))}

@@ -507,6 +507,10 @@ export function resolveTrafficRange(value) {
   return [7, 14, 30].includes(parsed) ? parsed : DEFAULT_DAYS;
 }
 
+export function resolveTrafficMetric(value) {
+  return String(value) === "visitors" ? "visitors" : "pageviews";
+}
+
 export async function getSiteTraffic(days = DEFAULT_DAYS) {
   try {
     const cached = await getCachedLiveTraffic(days)();

@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/custom/page-header";
 import { TokenUsage } from "@/components/stats/token-usage";
 import { SiteTraffic } from "@/components/stats/site-traffic";
 import { getTokscaleInsights } from "@/lib/tokscale";
-import { getSiteTraffic, resolveTrafficRange } from "@/lib/cloudflare-analytics";
+import { getSiteTraffic, resolveTrafficMetric, resolveTrafficRange } from "@/lib/cloudflare-analytics";
 import { createMetadata } from "@/lib/metadata";
 
 export const metadata = createMetadata({
@@ -21,6 +21,7 @@ export const revalidate = 3600;
 export default async function StatsPage({ searchParams }) {
   const params = await searchParams;
   const days = resolveTrafficRange(params?.range);
+  const metric = resolveTrafficMetric(params?.metric);
   const [insights, traffic] = await Promise.all([
     getTokscaleInsights().catch(() => null),
     getSiteTraffic(days),
@@ -36,7 +37,7 @@ export default async function StatsPage({ searchParams }) {
             intro="A running snapshot of my AI token usage and this site's traffic."
           />
           <TokenUsage insights={insights} />
-          <SiteTraffic traffic={traffic} />
+          <SiteTraffic traffic={traffic} metric={metric} />
         </div>
       </main>
       <Footer />

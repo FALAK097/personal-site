@@ -3,8 +3,7 @@
 import { ArrowUpRight, Check, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import {
+import { useEffect, useRef, useState } from "react";import {
   DeviceStackedChartSlot,
   TrafficLineChartSlot,
   TrafficWorldMapSlot,
@@ -285,7 +284,7 @@ function GeographySection({ countryCount, mapCountries, countries, metric, activ
       <TrafficWorldMapSlot countries={mapCountries} metric={metric} total={activeTotal} />
 
       {countries?.length ? (
-        <div>
+        <div className="pt-6">
           <div className="mb-1 flex items-center justify-between">
             <h4 className="text-xs font-medium text-muted-foreground">Top countries</h4>
           </div>
@@ -361,7 +360,7 @@ function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, 
         <DeviceStackedChartSlot data={deviceSeries} devices={devices} metric={metric} />
       ) : null}
 
-      <div className="grid grid-cols-1 gap-x-10 gap-y-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-x-10 gap-y-4 pt-6 sm:grid-cols-2">
         <div>
           <div className="mb-1 flex items-center justify-between">
             <h4 className="text-xs font-medium text-muted-foreground">Top browsers</h4>
@@ -380,8 +379,8 @@ function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, 
   );
 }
 
-export function SiteTraffic({ traffic }) {
-  const [metric, setMetric] = useState("pageviews");
+export function SiteTraffic({ traffic, metric = "pageviews" }) {
+  const router = useRouter();
 
   if (!traffic?.totals) {
     return (
@@ -408,6 +407,12 @@ export function SiteTraffic({ traffic }) {
     browsers,
     days,
   } = traffic;
+
+  // Metric lives in the URL (?metric=visits) just like the range (?range=),
+  // so both controls compose and the view is shareable.
+  const setMetric = (value) => {
+    router.push(`/stats?range=${days}&metric=${value}`, { scroll: false });
+  };
 
   const activeTotal = metric === "visitors" ? totals.visitors : totals.pageviews;
 

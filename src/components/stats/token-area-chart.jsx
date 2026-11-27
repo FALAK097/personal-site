@@ -5,11 +5,11 @@ import { brandForClient, brandForModel, brandSrc } from "@/lib/ai-brand";
 import { useEffect, useState } from "react";
 
 const PALETTE = [
-  { light: "#2f7fb8", dark: "#5cbeff" },
-  { light: "#6d4fc4", dark: "#c4a4ff" },
-  { light: "#0f766e", dark: "#5eead4" },
-  { light: "#b45309", dark: "#fbbf24" },
-  { light: "#9f1239", dark: "#fb7185" },
+  { light: "#2563eb", dark: "#5cbeff" },
+  { light: "#0d9488", dark: "#2dd4bf" },
+  { light: "#d97706", dark: "#fbbf24" },
+  { light: "#0284c7", dark: "#38bdf8" },
+  { light: "#e11d48", dark: "#fb7185" },
   { light: "#4d7c0f", dark: "#a3e635" },
   { light: "#64748b", dark: "#94a3b8" },
 ];
@@ -198,6 +198,17 @@ export function TokenAreaChart({
     return () => query.removeEventListener("change", sync);
   }, []);
 
+  // On phones ~375px wide, showing a label every 3 weeks (interval=2) renders
+  // ~18 labels that collide and ECharts hides them, so early dates like Nov
+  // get dropped. Pick an interval that keeps ~6-8 labels visible.
+  const xInterval = isNarrow ? Math.max(3, Math.ceil((data?.length ?? 36) / 6)) : 2;
+  // Tighten horizontal gaps (ECharts category axis already has boundaryGap:false)
+  // and give the x labels room: bottom 22 on mobile prevents Nov clipping,
+  // left/right 4 keep the first/last ticks inside the card.
+  const gridForWidth = isNarrow
+    ? { left: 4, right: 4, top: 88, bottom: 22, containLabel: false }
+    : { left: 0, right: 0, top: 68, bottom: 0, containLabel: false };
+
   return (
     <EChartsAreaChart
       data={data}
@@ -208,7 +219,7 @@ export function TokenAreaChart({
       stackType="stacked"
       enableHoverHighlight
       chartOptions={{
-        grid: { left: 0, right: 0, top: isNarrow ? 88 : 68, bottom: 0 },
+        grid: gridForWidth,
         tooltip: {
           show: true,
           trigger: "axis",
@@ -233,11 +244,18 @@ export function TokenAreaChart({
       }}
     >
       <EChartsAreaChart.Grid />
-      <EChartsAreaChart.XAxis dataKey="date" tickFormatter={dateTickFormatter} interval={2} />
+      <EChartsAreaChart.XAxis dataKey="date" tickFormatter={dateTickFormatter} interval={xInterval} />
       <EChartsAreaChart.YAxis tickFormatter={tickFormatter} />
       <EChartsAreaChart.Legend variant="rounded-square" align="right" verticalAlign="top" isClickable />
       {keys.map((key) => (
-        <EChartsAreaChart.Area key={key} dataKey={key} variant="solid" strokeVariant="solid" strokeWidth={1.5}>
+        <EChartsAreaChart.Area
+          key={key}
+          dataKey={key}
+          variant="solid"
+          strokeVariant="solid"
+          strokeWidth={1.5}
+          enableBufferLine
+        >
           <EChartsAreaChart.ActiveDot variant="ping" />
         </EChartsAreaChart.Area>
       ))}

@@ -4,22 +4,25 @@ import { PageHeader } from "@/components/custom/page-header";
 import { TokenUsage } from "@/components/stats/token-usage";
 import { SiteTraffic } from "@/components/stats/site-traffic";
 import { getTokscaleInsights } from "@/lib/tokscale";
-import { getSiteTraffic } from "@/lib/vercel-analytics";
+import { getSiteTraffic } from "@/lib/cloudflare-analytics";
 import { createMetadata } from "@/lib/metadata";
 
 export const metadata = createMetadata({
   title: "Stats",
   description:
-    "Metrics behind my work: AI token usage and build activity, synced from Tokscale.",
+    "Live engineering metrics: AI token usage from Tokscale and edge visitor analytics for falakgala.dev synced from Cloudflare.",
   path: "/stats",
 });
 
-// Page refreshes hourly so site traffic stays current; the Tokscale payload
-// keeps its own 24h cache, so the heavier scrape is not repeated.
+// Page refreshes hourly so site traffic stays current; Tokscale insights
+// are cached for 3h with a 10s fetch timeout and stale-preservation on errors.
 export const revalidate = 3600;
 
 export default async function StatsPage() {
-  const [insights, traffic] = await Promise.all([getTokscaleInsights(), getSiteTraffic()]);
+  const [insights, traffic] = await Promise.all([
+    getTokscaleInsights().catch(() => null),
+    getSiteTraffic(),
+  ]);
 
   return (
     <div className="page-shell">

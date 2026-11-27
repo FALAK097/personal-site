@@ -1,0 +1,2032 @@
+{
+  "generatedAt": "2026-11-27T07:37:56.138Z",
+  "since": "2026-10-28T07:37:56.138Z",
+  "until": "2026-11-27T07:37:56.138Z",
+  "zone": {
+    "browsers": [
+      {
+        "count": 3610,
+        "dimensions": {
+          "userAgentBrowser": "Chrome"
+        },
+        "sum": {
+          "visits": 3210
+        }
+      },
+      {
+        "count": 2810,
+        "dimensions": {
+          "userAgentBrowser": "Unknown"
+        },
+        "sum": {
+          "visits": 2600
+        }
+      },
+      {
+        "count": 1090,
+        "dimensions": {
+          "userAgentBrowser": "ChromeMobile"
+        },
+        "sum": {
+          "visits": 870
+        }
+      },
+      {
+        "count": 800,
+        "dimensions": {
+          "userAgentBrowser": "MobileSafari"
+        },
+        "sum": {
+          "visits": 790
+        }
+      },
+      {
+        "count": 500,
+        "dimensions": {
+          "userAgentBrowser": "Firefox"
+        },
+        "sum": {
+          "visits": 350
+        }
+      },
+      {
+        "count": 340,
+        "dimensions": {
+          "userAgentBrowser": "Edge"
+        },
+        "sum": {
+          "visits": 190
+        }
+      },
+      {
+        "count": 290,
+        "dimensions": {
+          "userAgentBrowser": "Curl"
+        },
+        "sum": {
+          "visits": 290
+        }
+      },
+      {
+        "count": 200,
+        "dimensions": {
+          "userAgentBrowser": "Safari"
+        },
+        "sum": {
+          "visits": 150
+        }
+      },
+      {
+        "count": 90,
+        "dimensions": {
+          "userAgentBrowser": "GoogleBot"
+        },
+        "sum": {
+          "visits": 90
+        }
+      },
+      {
+        "count": 70,
+        "dimensions": {
+          "userAgentBrowser": "ChromeHeadless"
+        },
+        "sum": {
+          "visits": 70
+        }
+      },
+      {
+        "count": 60,
+        "dimensions": {
+          "userAgentBrowser": "YandexBot"
+        },
+        "sum": {
+          "visits": 60
+        }
+      },
+      {
+        "count": 60,
+        "dimensions": {
+          "userAgentBrowser": "Opera"
+        },
+        "sum": {
+          "visits": 50
+        }
+      }
+    ],
+    "colos": [
+      {
+        "count": 1810,
+        "dimensions": {
+          "coloCode": "AMS"
+        },
+        "sum": {
+          "visits": 1380
+        }
+      },
+      {
+        "count": 850,
+        "dimensions": {
+          "coloCode": "FRA"
+        },
+        "sum": {
+          "visits": 790
+        }
+      },
+      {
+        "count": 840,
+        "dimensions": {
+          "coloCode": "SIN"
+        },
+        "sum": {
+          "visits": 790
+        }
+      },
+      {
+        "count": 610,
+        "dimensions": {
+          "coloCode": "CDG"
+        },
+        "sum": {
+          "visits": 530
+        }
+      },
+      {
+        "count": 550,
+        "dimensions": {
+          "coloCode": "SJC"
+        },
+        "sum": {
+          "visits": 540
+        }
+      },
+      {
+        "count": 540,
+        "dimensions": {
+          "coloCode": "IAD"
+        },
+        "sum": {
+          "visits": 520
+        }
+      },
+      {
+        "count": 460,
+        "dimensions": {
+          "coloCode": "WAW"
+        },
+        "sum": {
+          "visits": 350
+        }
+      },
+      {
+        "count": 410,
+        "dimensions": {
+          "coloCode": "LHR"
+        },
+        "sum": {
+          "visits": 390
+        }
+      },
+      {
+        "count": 380,
+        "dimensions": {
+          "coloCode": "DFW"
+        },
+        "sum": {
+          "visits": 360
+        }
+      },
+      {
+        "count": 340,
+        "dimensions": {
+          "coloCode": "EWR"
+        },
+        "sum": {
+          "visits": 340
+        }
+      },
+      {
+        "count": 290,
+        "dimensions": {
+          "coloCode": "ORD"
+        },
+        "sum": {
+          "visits": 230
+        }
+      },
+      {
+        "count": 290,
+        "dimensions": {
+          "coloCode": "GRU"
+        },
+        "sum": {
+          "visits": 250
+        }
+      }
+    ],
+    "countries": [
+      {
+        "count": 2840,
+        "dimensions": {
+          "clientCountryName": "US"
+        },
+        "sum": {
+          "visits": 2730
+        }
+      },
+      {
+        "count": 1330,
+        "dimensions": {
+          "clientCountryName": "NL"
+        },
+        "sum": {
+          "visits": 1280
+        }
+      },
+      {
+        "count": 620,
+        "dimensions": {
+          "clientCountryName": "DE"
+        },
+        "sum": {
+          "visits": 600
+        }
+      },
+      {
+        "count": 590,
+        "dimensions": {
+          "clientCountryName": "T1"
+        },
+        "sum": {
+          "visits": 0
+        }
+      },
+      {
+        "count": 570,
+        "dimensions": {
+          "clientCountryName": "FR"
+        },
+        "sum": {
+          "visits": 530
+        }
+      },
+      {
+        "count": 460,
+        "dimensions": {
+          "clientCountryName": "IN"
+        },
+        "sum": {
+          "visits": 460
+        }
+      },
+      {
+        "count": 350,
+        "dimensions": {
+          "clientCountryName": "BR"
+        },
+        "sum": {
+          "visits": 290
+        }
+      },
+      {
+        "count": 340,
+        "dimensions": {
+          "clientCountryName": "SG"
+        },
+        "sum": {
+          "visits": 320
+        }
+      },
+      {
+        "count": 320,
+        "dimensions": {
+          "clientCountryName": "PL"
+        },
+        "sum": {
+          "visits": 240
+        }
+      },
+      {
+        "count": 260,
+        "dimensions": {
+          "clientCountryName": "GB"
+        },
+        "sum": {
+          "visits": 260
+        }
+      },
+      {
+        "count": 200,
+        "dimensions": {
+          "clientCountryName": "CN"
+        },
+        "sum": {
+          "visits": 200
+        }
+      },
+      {
+        "count": 190,
+        "dimensions": {
+          "clientCountryName": "ID"
+        },
+        "sum": {
+          "visits": 190
+        }
+      },
+      {
+        "count": 150,
+        "dimensions": {
+          "clientCountryName": "BE"
+        },
+        "sum": {
+          "visits": 150
+        }
+      },
+      {
+        "count": 130,
+        "dimensions": {
+          "clientCountryName": "RU"
+        },
+        "sum": {
+          "visits": 130
+        }
+      },
+      {
+        "count": 120,
+        "dimensions": {
+          "clientCountryName": "HK"
+        },
+        "sum": {
+          "visits": 120
+        }
+      },
+      {
+        "count": 120,
+        "dimensions": {
+          "clientCountryName": "VN"
+        },
+        "sum": {
+          "visits": 110
+        }
+      },
+      {
+        "count": 90,
+        "dimensions": {
+          "clientCountryName": "JP"
+        },
+        "sum": {
+          "visits": 90
+        }
+      },
+      {
+        "count": 90,
+        "dimensions": {
+          "clientCountryName": "KR"
+        },
+        "sum": {
+          "visits": 90
+        }
+      },
+      {
+        "count": 80,
+        "dimensions": {
+          "clientCountryName": "CA"
+        },
+        "sum": {
+          "visits": 80
+        }
+      },
+      {
+        "count": 80,
+        "dimensions": {
+          "clientCountryName": "FI"
+        },
+        "sum": {
+          "visits": 80
+        }
+      },
+      {
+        "count": 70,
+        "dimensions": {
+          "clientCountryName": "NG"
+        },
+        "sum": {
+          "visits": 60
+        }
+      },
+      {
+        "count": 70,
+        "dimensions": {
+          "clientCountryName": "AR"
+        },
+        "sum": {
+          "visits": 40
+        }
+      },
+      {
+        "count": 70,
+        "dimensions": {
+          "clientCountryName": "EC"
+        },
+        "sum": {
+          "visits": 30
+        }
+      },
+      {
+        "count": 60,
+        "dimensions": {
+          "clientCountryName": "CZ"
+        },
+        "sum": {
+          "visits": 40
+        }
+      },
+      {
+        "count": 60,
+        "dimensions": {
+          "clientCountryName": "UA"
+        },
+        "sum": {
+          "visits": 40
+        }
+      },
+      {
+        "count": 60,
+        "dimensions": {
+          "clientCountryName": "AU"
+        },
+        "sum": {
+          "visits": 60
+        }
+      },
+      {
+        "count": 60,
+        "dimensions": {
+          "clientCountryName": "ZA"
+        },
+        "sum": {
+          "visits": 30
+        }
+      },
+      {
+        "count": 50,
+        "dimensions": {
+          "clientCountryName": "TW"
+        },
+        "sum": {
+          "visits": 50
+        }
+      },
+      {
+        "count": 50,
+        "dimensions": {
+          "clientCountryName": "TR"
+        },
+        "sum": {
+          "visits": 40
+        }
+      },
+      {
+        "count": 50,
+        "dimensions": {
+          "clientCountryName": "PK"
+        },
+        "sum": {
+          "visits": 40
+        }
+      },
+      {
+        "count": 50,
+        "dimensions": {
+          "clientCountryName": "BD"
+        },
+        "sum": {
+          "visits": 20
+        }
+      },
+      {
+        "count": 40,
+        "dimensions": {
+          "clientCountryName": "VE"
+        },
+        "sum": {
+          "visits": 20
+        }
+      },
+      {
+        "count": 40,
+        "dimensions": {
+          "clientCountryName": "ES"
+        },
+        "sum": {
+          "visits": 20
+        }
+      },
+      {
+        "count": 40,
+        "dimensions": {
+          "clientCountryName": "CL"
+        },
+        "sum": {
+          "visits": 40
+        }
+      },
+      {
+        "count": 30,
+        "dimensions": {
+          "clientCountryName": "UZ"
+        },
+        "sum": {
+          "visits": 30
+        }
+      },
+      {
+        "count": 30,
+        "dimensions": {
+          "clientCountryName": "IE"
+        },
+        "sum": {
+          "visits": 30
+        }
+      },
+      {
+        "count": 30,
+        "dimensions": {
+          "clientCountryName": "CO"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 30,
+        "dimensions": {
+          "clientCountryName": "MX"
+        },
+        "sum": {
+          "visits": 20
+        }
+      },
+      {
+        "count": 30,
+        "dimensions": {
+          "clientCountryName": "EG"
+        },
+        "sum": {
+          "visits": 30
+        }
+      },
+      {
+        "count": 20,
+        "dimensions": {
+          "clientCountryName": "MY"
+        },
+        "sum": {
+          "visits": 20
+        }
+      },
+      {
+        "count": 20,
+        "dimensions": {
+          "clientCountryName": "MA"
+        },
+        "sum": {
+          "visits": 0
+        }
+      },
+      {
+        "count": 20,
+        "dimensions": {
+          "clientCountryName": "SE"
+        },
+        "sum": {
+          "visits": 20
+        }
+      },
+      {
+        "count": 20,
+        "dimensions": {
+          "clientCountryName": "GH"
+        },
+        "sum": {
+          "visits": 20
+        }
+      },
+      {
+        "count": 20,
+        "dimensions": {
+          "clientCountryName": "LT"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "BH"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "DO"
+        },
+        "sum": {
+          "visits": 0
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "GE"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "PT"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "SA"
+        },
+        "sum": {
+          "visits": 0
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "PE"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "QA"
+        },
+        "sum": {
+          "visits": 0
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "BY"
+        },
+        "sum": {
+          "visits": 0
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "PH"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "AE"
+        },
+        "sum": {
+          "visits": 0
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "KE"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "EE"
+        },
+        "sum": {
+          "visits": 0
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "DK"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "KH"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "KZ"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "TN"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "BG"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "HR"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "CH"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "SI"
+        },
+        "sum": {
+          "visits": 10
+        }
+      }
+    ],
+    "daily": [
+      {
+        "count": 160,
+        "dimensions": {
+          "date": "2026-10-28"
+        },
+        "sum": {
+          "visits": 130
+        }
+      },
+      {
+        "count": 410,
+        "dimensions": {
+          "date": "2026-10-29"
+        },
+        "sum": {
+          "visits": 350
+        }
+      },
+      {
+        "count": 230,
+        "dimensions": {
+          "date": "2026-10-30"
+        },
+        "sum": {
+          "visits": 210
+        }
+      },
+      {
+        "count": 120,
+        "dimensions": {
+          "date": "2026-10-31"
+        },
+        "sum": {
+          "visits": 100
+        }
+      },
+      {
+        "count": 390,
+        "dimensions": {
+          "date": "2026-11-01"
+        },
+        "sum": {
+          "visits": 320
+        }
+      },
+      {
+        "count": 200,
+        "dimensions": {
+          "date": "2026-11-02"
+        },
+        "sum": {
+          "visits": 190
+        }
+      },
+      {
+        "count": 290,
+        "dimensions": {
+          "date": "2026-11-03"
+        },
+        "sum": {
+          "visits": 240
+        }
+      },
+      {
+        "count": 210,
+        "dimensions": {
+          "date": "2026-11-04"
+        },
+        "sum": {
+          "visits": 170
+        }
+      },
+      {
+        "count": 300,
+        "dimensions": {
+          "date": "2026-11-05"
+        },
+        "sum": {
+          "visits": 160
+        }
+      },
+      {
+        "count": 250,
+        "dimensions": {
+          "date": "2026-11-06"
+        },
+        "sum": {
+          "visits": 220
+        }
+      },
+      {
+        "count": 240,
+        "dimensions": {
+          "date": "2026-11-07"
+        },
+        "sum": {
+          "visits": 180
+        }
+      },
+      {
+        "count": 290,
+        "dimensions": {
+          "date": "2026-11-08"
+        },
+        "sum": {
+          "visits": 220
+        }
+      },
+      {
+        "count": 250,
+        "dimensions": {
+          "date": "2026-11-09"
+        },
+        "sum": {
+          "visits": 210
+        }
+      },
+      {
+        "count": 490,
+        "dimensions": {
+          "date": "2026-11-10"
+        },
+        "sum": {
+          "visits": 450
+        }
+      },
+      {
+        "count": 460,
+        "dimensions": {
+          "date": "2026-11-11"
+        },
+        "sum": {
+          "visits": 420
+        }
+      },
+      {
+        "count": 450,
+        "dimensions": {
+          "date": "2026-11-12"
+        },
+        "sum": {
+          "visits": 400
+        }
+      },
+      {
+        "count": 260,
+        "dimensions": {
+          "date": "2026-11-13"
+        },
+        "sum": {
+          "visits": 230
+        }
+      },
+      {
+        "count": 320,
+        "dimensions": {
+          "date": "2026-11-14"
+        },
+        "sum": {
+          "visits": 230
+        }
+      },
+      {
+        "count": 350,
+        "dimensions": {
+          "date": "2026-11-15"
+        },
+        "sum": {
+          "visits": 320
+        }
+      },
+      {
+        "count": 320,
+        "dimensions": {
+          "date": "2026-11-16"
+        },
+        "sum": {
+          "visits": 280
+        }
+      },
+      {
+        "count": 410,
+        "dimensions": {
+          "date": "2026-11-17"
+        },
+        "sum": {
+          "visits": 290
+        }
+      },
+      {
+        "count": 360,
+        "dimensions": {
+          "date": "2026-11-18"
+        },
+        "sum": {
+          "visits": 330
+        }
+      },
+      {
+        "count": 230,
+        "dimensions": {
+          "date": "2026-11-19"
+        },
+        "sum": {
+          "visits": 230
+        }
+      },
+      {
+        "count": 440,
+        "dimensions": {
+          "date": "2026-11-20"
+        },
+        "sum": {
+          "visits": 420
+        }
+      },
+      {
+        "count": 100,
+        "dimensions": {
+          "date": "2026-11-21"
+        },
+        "sum": {
+          "visits": 90
+        }
+      },
+      {
+        "count": 390,
+        "dimensions": {
+          "date": "2026-11-22"
+        },
+        "sum": {
+          "visits": 380
+        }
+      },
+      {
+        "count": 360,
+        "dimensions": {
+          "date": "2026-11-23"
+        },
+        "sum": {
+          "visits": 340
+        }
+      },
+      {
+        "count": 420,
+        "dimensions": {
+          "date": "2026-11-24"
+        },
+        "sum": {
+          "visits": 390
+        }
+      },
+      {
+        "count": 490,
+        "dimensions": {
+          "date": "2026-11-25"
+        },
+        "sum": {
+          "visits": 460
+        }
+      },
+      {
+        "count": 780,
+        "dimensions": {
+          "date": "2026-11-26"
+        },
+        "sum": {
+          "visits": 690
+        }
+      },
+      {
+        "count": 180,
+        "dimensions": {
+          "date": "2026-11-27"
+        },
+        "sum": {
+          "visits": 160
+        }
+      }
+    ],
+    "dailyDevices": [
+      {
+        "count": 10,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-10-28"
+        },
+        "sum": {
+          "visits": 0
+        }
+      },
+      {
+        "count": 150,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-10-28"
+        },
+        "sum": {
+          "visits": 130
+        }
+      },
+      {
+        "count": 20,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-10-29"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 390,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-10-29"
+        },
+        "sum": {
+          "visits": 340
+        }
+      },
+      {
+        "count": 20,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-10-30"
+        },
+        "sum": {
+          "visits": 20
+        }
+      },
+      {
+        "count": 210,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-10-30"
+        },
+        "sum": {
+          "visits": 190
+        }
+      },
+      {
+        "count": 90,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-10-31"
+        },
+        "sum": {
+          "visits": 90
+        }
+      },
+      {
+        "count": 30,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-10-31"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 110,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-01"
+        },
+        "sum": {
+          "visits": 110
+        }
+      },
+      {
+        "count": 270,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-01"
+        },
+        "sum": {
+          "visits": 210
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientDeviceType": "tablet",
+          "date": "2026-11-01"
+        },
+        "sum": {
+          "visits": 0
+        }
+      },
+      {
+        "count": 40,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-02"
+        },
+        "sum": {
+          "visits": 30
+        }
+      },
+      {
+        "count": 160,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-02"
+        },
+        "sum": {
+          "visits": 160
+        }
+      },
+      {
+        "count": 240,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-03"
+        },
+        "sum": {
+          "visits": 190
+        }
+      },
+      {
+        "count": 50,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-03"
+        },
+        "sum": {
+          "visits": 50
+        }
+      },
+      {
+        "count": 160,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-04"
+        },
+        "sum": {
+          "visits": 160
+        }
+      },
+      {
+        "count": 50,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-04"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 260,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-05"
+        },
+        "sum": {
+          "visits": 140
+        }
+      },
+      {
+        "count": 40,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-05"
+        },
+        "sum": {
+          "visits": 20
+        }
+      },
+      {
+        "count": 30,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-06"
+        },
+        "sum": {
+          "visits": 20
+        }
+      },
+      {
+        "count": 220,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-06"
+        },
+        "sum": {
+          "visits": 200
+        }
+      },
+      {
+        "count": 50,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-07"
+        },
+        "sum": {
+          "visits": 20
+        }
+      },
+      {
+        "count": 190,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-07"
+        },
+        "sum": {
+          "visits": 160
+        }
+      },
+      {
+        "count": 260,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-08"
+        },
+        "sum": {
+          "visits": 200
+        }
+      },
+      {
+        "count": 30,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-08"
+        },
+        "sum": {
+          "visits": 20
+        }
+      },
+      {
+        "count": 30,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-09"
+        },
+        "sum": {
+          "visits": 30
+        }
+      },
+      {
+        "count": 220,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-09"
+        },
+        "sum": {
+          "visits": 180
+        }
+      },
+      {
+        "count": 250,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-10"
+        },
+        "sum": {
+          "visits": 210
+        }
+      },
+      {
+        "count": 240,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-10"
+        },
+        "sum": {
+          "visits": 240
+        }
+      },
+      {
+        "count": 260,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-11"
+        },
+        "sum": {
+          "visits": 250
+        }
+      },
+      {
+        "count": 200,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-11"
+        },
+        "sum": {
+          "visits": 170
+        }
+      },
+      {
+        "count": 390,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-12"
+        },
+        "sum": {
+          "visits": 380
+        }
+      },
+      {
+        "count": 50,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-12"
+        },
+        "sum": {
+          "visits": 20
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientDeviceType": "tablet",
+          "date": "2026-11-12"
+        },
+        "sum": {
+          "visits": 0
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-13"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 250,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-13"
+        },
+        "sum": {
+          "visits": 220
+        }
+      },
+      {
+        "count": 100,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-14"
+        },
+        "sum": {
+          "visits": 30
+        }
+      },
+      {
+        "count": 220,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-14"
+        },
+        "sum": {
+          "visits": 200
+        }
+      },
+      {
+        "count": 100,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-15"
+        },
+        "sum": {
+          "visits": 100
+        }
+      },
+      {
+        "count": 250,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-15"
+        },
+        "sum": {
+          "visits": 220
+        }
+      },
+      {
+        "count": 260,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-16"
+        },
+        "sum": {
+          "visits": 240
+        }
+      },
+      {
+        "count": 60,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-16"
+        },
+        "sum": {
+          "visits": 40
+        }
+      },
+      {
+        "count": 310,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-17"
+        },
+        "sum": {
+          "visits": 250
+        }
+      },
+      {
+        "count": 100,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-17"
+        },
+        "sum": {
+          "visits": 40
+        }
+      },
+      {
+        "count": 60,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-18"
+        },
+        "sum": {
+          "visits": 50
+        }
+      },
+      {
+        "count": 300,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-18"
+        },
+        "sum": {
+          "visits": 280
+        }
+      },
+      {
+        "count": 50,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-19"
+        },
+        "sum": {
+          "visits": 50
+        }
+      },
+      {
+        "count": 180,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-19"
+        },
+        "sum": {
+          "visits": 180
+        }
+      },
+      {
+        "count": 190,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-20"
+        },
+        "sum": {
+          "visits": 190
+        }
+      },
+      {
+        "count": 250,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-20"
+        },
+        "sum": {
+          "visits": 230
+        }
+      },
+      {
+        "count": 80,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-21"
+        },
+        "sum": {
+          "visits": 80
+        }
+      },
+      {
+        "count": 20,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-21"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 50,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-22"
+        },
+        "sum": {
+          "visits": 40
+        }
+      },
+      {
+        "count": 340,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-22"
+        },
+        "sum": {
+          "visits": 340
+        }
+      },
+      {
+        "count": 280,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-23"
+        },
+        "sum": {
+          "visits": 260
+        }
+      },
+      {
+        "count": 80,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-23"
+        },
+        "sum": {
+          "visits": 80
+        }
+      },
+      {
+        "count": 350,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-24"
+        },
+        "sum": {
+          "visits": 320
+        }
+      },
+      {
+        "count": 70,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-24"
+        },
+        "sum": {
+          "visits": 70
+        }
+      },
+      {
+        "count": 370,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-25"
+        },
+        "sum": {
+          "visits": 350
+        }
+      },
+      {
+        "count": 120,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-25"
+        },
+        "sum": {
+          "visits": 110
+        }
+      },
+      {
+        "count": 530,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-26"
+        },
+        "sum": {
+          "visits": 440
+        }
+      },
+      {
+        "count": 250,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-26"
+        },
+        "sum": {
+          "visits": 250
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientDeviceType": "mobile",
+          "date": "2026-11-27"
+        },
+        "sum": {
+          "visits": 10
+        }
+      },
+      {
+        "count": 170,
+        "dimensions": {
+          "clientDeviceType": "desktop",
+          "date": "2026-11-27"
+        },
+        "sum": {
+          "visits": 150
+        }
+      }
+    ],
+    "devices": [
+      {
+        "count": 7850,
+        "dimensions": {
+          "clientDeviceType": "desktop"
+        },
+        "sum": {
+          "visits": 6980
+        }
+      },
+      {
+        "count": 2280,
+        "dimensions": {
+          "clientDeviceType": "mobile"
+        },
+        "sum": {
+          "visits": 1830
+        }
+      },
+      {
+        "count": 20,
+        "dimensions": {
+          "clientDeviceType": "tablet"
+        },
+        "sum": {
+          "visits": 0
+        }
+      }
+    ],
+    "operatingSystems": [
+      {
+        "count": 3240,
+        "dimensions": {
+          "userAgentOS": "Unknown"
+        },
+        "sum": {
+          "visits": 3030
+        }
+      },
+      {
+        "count": 2570,
+        "dimensions": {
+          "userAgentOS": "Windows"
+        },
+        "sum": {
+          "visits": 2130
+        }
+      },
+      {
+        "count": 1580,
+        "dimensions": {
+          "userAgentOS": "MacOSX"
+        },
+        "sum": {
+          "visits": 1390
+        }
+      },
+      {
+        "count": 1280,
+        "dimensions": {
+          "userAgentOS": "Android"
+        },
+        "sum": {
+          "visits": 950
+        }
+      },
+      {
+        "count": 830,
+        "dimensions": {
+          "userAgentOS": "iOS"
+        },
+        "sum": {
+          "visits": 800
+        }
+      },
+      {
+        "count": 640,
+        "dimensions": {
+          "userAgentOS": "Linux"
+        },
+        "sum": {
+          "visits": 510
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "userAgentOS": "ChromeOS"
+        },
+        "sum": {
+          "visits": 0
+        }
+      }
+    ],
+    "pages": [
+      {
+        "count": 4460,
+        "dimensions": {
+          "clientRequestPath": "/"
+        },
+        "sum": {
+          "visits": 4160
+        }
+      },
+      {
+        "count": 690,
+        "dimensions": {
+          "clientRequestPath": "/writing/zero-build-deployments-with-dokploy"
+        },
+        "sum": {
+          "visits": 650
+        }
+      },
+      {
+        "count": 550,
+        "dimensions": {
+          "clientRequestPath": "/contact"
+        },
+        "sum": {
+          "visits": 330
+        }
+      },
+      {
+        "count": 430,
+        "dimensions": {
+          "clientRequestPath": "/stats"
+        },
+        "sum": {
+          "visits": 290
+        }
+      },
+      {
+        "count": 430,
+        "dimensions": {
+          "clientRequestPath": "/writing/whatsapp-setup-guide-part-1"
+        },
+        "sum": {
+          "visits": 420
+        }
+      },
+      {
+        "count": 410,
+        "dimensions": {
+          "clientRequestPath": "/writing/sync-obsidian-notes-with-syncthing"
+        },
+        "sum": {
+          "visits": 410
+        }
+      },
+      {
+        "count": 400,
+        "dimensions": {
+          "clientRequestPath": "/about"
+        },
+        "sum": {
+          "visits": 280
+        }
+      },
+      {
+        "count": 390,
+        "dimensions": {
+          "clientRequestPath": "/writing/whatsapp-setup-guide-part-2"
+        },
+        "sum": {
+          "visits": 380
+        }
+      },
+      {
+        "count": 380,
+        "dimensions": {
+          "clientRequestPath": "/writing/production-graph-rag-22000-multilingual-pdfs"
+        },
+        "sum": {
+          "visits": 370
+        }
+      },
+      {
+        "count": 380,
+        "dimensions": {
+          "clientRequestPath": "/writing"
+        },
+        "sum": {
+          "visits": 200
+        }
+      },
+      {
+        "count": 380,
+        "dimensions": {
+          "clientRequestPath": "/bookmarks"
+        },
+        "sum": {
+          "visits": 200
+        }
+      },
+      {
+        "count": 280,
+        "dimensions": {
+          "clientRequestPath": "/writing/tracking-unique-visitors"
+        },
+        "sum": {
+          "visits": 280
+        }
+      },
+      {
+        "count": 270,
+        "dimensions": {
+          "clientRequestPath": "/writing/how-i-built-nextjs-blog"
+        },
+        "sum": {
+          "visits": 270
+        }
+      },
+      {
+        "count": 260,
+        "dimensions": {
+          "clientRequestPath": "/projects"
+        },
+        "sum": {
+          "visits": 190
+        }
+      },
+      {
+        "count": 220,
+        "dimensions": {
+          "clientRequestPath": "/writing/free-custom-email-domain"
+        },
+        "sum": {
+          "visits": 200
+        }
+      }
+    ],
+    "totals": [
+      {
+        "count": 10150,
+        "sum": {
+          "visits": 8810
+        }
+      }
+    ]
+  },
+  "referrers": [
+    {
+      "count": 340,
+      "dimensions": {
+        "refererHost": ""
+      },
+      "sum": {
+        "visits": 340
+      }
+    },
+    {
+      "count": 160,
+      "dimensions": {
+        "refererHost": "api.daily.dev"
+      },
+      "sum": {
+        "visits": 160
+      }
+    },
+    {
+      "count": 150,
+      "dimensions": {
+        "refererHost": "falakgala.dev"
+      },
+      "sum": {
+        "visits": 0
+      }
+    },
+    {
+      "count": 10,
+      "dimensions": {
+        "refererHost": "github.com"
+      },
+      "sum": {
+        "visits": 10
+      }
+    },
+    {
+      "count": 10,
+      "dimensions": {
+        "refererHost": "www.aocr.org"
+      },
+      "sum": {
+        "visits": 10
+      }
+    },
+    {
+      "count": 10,
+      "dimensions": {
+        "refererHost": "t.co"
+      },
+      "sum": {
+        "visits": 10
+      }
+    },
+    {
+      "count": 10,
+      "dimensions": {
+        "refererHost": "scriblihelp.com"
+      },
+      "sum": {
+        "visits": 10
+      }
+    }
+  ]
+}

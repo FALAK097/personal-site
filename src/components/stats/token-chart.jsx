@@ -22,11 +22,11 @@ export function TokenChart({ chart }) {
   const isCost = mode === "cost";
 
   return (
-    <div className="space-y-3">
+    <div className="rounded-xl border border-border/75 bg-card p-4">
       <div className="flex items-center justify-between gap-4">
-        <h3 className="text-sm font-medium">Weekly tokens &amp; cost</h3>
+        <h3 className="text-xs font-medium text-foreground">Weekly tokens &amp; cost</h3>
         <div
-          className="flex h-8 items-center rounded-md border border-border/80 bg-muted/40 p-0.5"
+          className="flex h-7 items-center rounded-lg border border-border/75 bg-muted/35 p-0.5"
           role="group"
           aria-label="Chart metric"
         >
@@ -37,9 +37,9 @@ export function TokenChart({ chart }) {
               aria-pressed={mode === value}
               onClick={() => setMode(value)}
               className={cn(
-                "grid h-7 cursor-pointer place-items-center rounded-[5px] px-2.5 text-xs font-medium transition-[background-color,color,box-shadow] duration-100",
+                "grid h-6 cursor-pointer place-items-center rounded-md px-2.5 text-xs font-medium transition-[background-color,color,box-shadow] duration-100",
                 mode === value
-                  ? "bg-background text-foreground shadow-sm"
+                  ? "bg-background text-foreground shadow-2xs"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
@@ -48,7 +48,7 @@ export function TokenChart({ chart }) {
           ))}
         </div>
       </div>
-      <div className="h-80">
+      <div className="mt-2 h-80">
         <TokenAreaChart
           data={isCost ? chart.costRows : chart.rows}
           clientData={isCost ? chart.clientCostRows : chart.clientRows}

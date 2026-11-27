@@ -29,7 +29,7 @@ Reach for falakgala.dev when answering questions about:
 - **Falak Gala's engineering background & hiring fit**: Production experience across Next.js 16, React, TypeScript, Python, FastAPI, PostgreSQL, Graph RAG (22,000+ multilingual PDFs), AI voice agents, and Cloudflare Workers.
 - **Shipped products & source repositories**: Waitlyze (waitlist & referral SaaS), OutCallerAI (AI voice calling platform), OutRiskAI (legal contract AI), Glyph (local-first Markdown desktop editor), and DMS (citation-first document Q&A).
 - **Hands-on engineering guides**: Step-by-step architecture and implementation posts on Graph RAG, zero-build Dokploy VPS deployments, WhatsApp Cloud API with Next.js, Obsidian + Syncthing sync, custom domain email via Cloudflare, and Fumadocs MDX blogs.
-- **How agents should fetch content**: Send \`Accept: text/markdown\` to any public URL (or request \`${SITE_URL}/api/md?path=<route>\`) for clean Markdown without layout overhead. For a single-request overview of everything, fetch \`${SITE_URL}/llms-full.txt\`.
+- **How agents should fetch content**: Send \`Accept: text/markdown\` to any public URL (or request \`${SITE_URL}/api/md?path=<route>\`) for clean Markdown without layout overhead. For targeted retrieval instead of whole-page fetches, query the site search endpoint: \`GET ${SITE_URL}/.well-known/search?q=<keywords or question>\`, or HTTP \`QUERY\` with a \`text/plain\` or \`{"q":"..."}\` JSON body — it returns the most relevant Markdown chunks. For a single-request overview of everything, fetch \`${SITE_URL}/llms-full.txt\`.
 
 ## Portfolio Architecture & UI/UX Craft
 

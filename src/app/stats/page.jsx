@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/custom/page-header";
 import { TokenUsage } from "@/components/stats/token-usage";
 import { SiteTraffic } from "@/components/stats/site-traffic";
 import { getTokscaleInsights } from "@/lib/tokscale";
-import { getSiteTraffic } from "@/lib/cloudflare-analytics";
+import { getSiteTraffic, resolveTrafficRange } from "@/lib/cloudflare-analytics";
 import { createMetadata } from "@/lib/metadata";
 
 export const metadata = createMetadata({
@@ -18,10 +18,12 @@ export const metadata = createMetadata({
 // are cached for 3h with a 10s fetch timeout and stale-preservation on errors.
 export const revalidate = 3600;
 
-export default async function StatsPage() {
+export default async function StatsPage({ searchParams }) {
+  const params = await searchParams;
+  const days = resolveTrafficRange(params?.range);
   const [insights, traffic] = await Promise.all([
     getTokscaleInsights().catch(() => null),
-    getSiteTraffic(),
+    getSiteTraffic(days),
   ]);
 
   return (

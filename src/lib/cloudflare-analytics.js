@@ -7,7 +7,9 @@ const DEFAULT_ACCOUNT_ID = "598a393819cd44e21ef2145dabea9a2f";
 const DEFAULT_ZONE_ID = "392b18ac72b7006984d7f9931fd31a04";
 const DEFAULT_HOST = "falakgala.dev";
 
-const WINDOW_DAYS = 30;
+// Cloudflare rejects zone analytics ranges wider than 4w2d on this plan,
+// so 30 days is the maximum window, not just a default.
+const DEFAULT_DAYS = 30;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const REVALIDATE_SECONDS = 60 * 60;
 
@@ -105,7 +107,7 @@ function normalizeRows(items, dimensionKey, limit, { formatLabel, filterRow } = 
     .slice(0, limit);
 }
 
-export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilIso }) {
+export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilIso, days = DEFAULT_DAYS }) {
   const dates = buildUtcDateRange(sinceIso, untilIso);
 
   const dailyByDate = new Map();
@@ -250,7 +252,7 @@ export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilI
     .slice(0, 8);
 
   return {
-    days: WINDOW_DAYS,
+    days,
     range: {
       since: sinceIso,
       until: untilIso,
@@ -269,12 +271,13 @@ export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilI
   };
 }
 
-export function getSnapshotTraffic() {
+export function getSnapshotTraffic(days = DEFAULT_DAYS) {
   return normalizeTrafficPayload({
     zone: snapshot.zone,
     referrers: snapshot.referrers,
     sinceIso: snapshot.since,
     untilIso: snapshot.until,
+    days,
   });
 }
 
@@ -394,14 +397,14 @@ async function postGraphql(token, query, variables) {
   return payload?.data;
 }
 
-async function fetchLiveCloudflareTraffic() {
+async function fetchLiveCloudflareTraffic(days = DEFAULT_DAYS) {
   const { token, zoneId, accountId } = await resolveCloudflareCredentials();
   if (!token) {
     throw new Error("Missing CF_ANALYTICS_TOKEN or CLOUDFLARE_API_TOKEN");
   }
 
   const until = new Date();
-  const since = new Date(until.getTime() - WINDOW_DAYS * DAY_MS);
+  const since = new Date(until.getTime() - days * DAY_MS);
   const sinceIso = since.toISOString();
   const untilIso = until.toISOString();
 
@@ -437,19 +440,26 @@ async function fetchLiveCloudflareTraffic() {
       ? rumResult.value?.viewer?.accounts?.[0]?.referrers ?? []
       : [];
 
-  return normalizeTrafficPayload({ zone, referrers, sinceIso, untilIso });
+  return normalizeTrafficPayload({ zone, referrers, sinceIso, untilIso, days });
 }
 
-const getCachedLiveTraffic = unstable_cache(
-  async () => fetchLiveCloudflareTraffic(),
-  ["cloudflare-zone-traffic-v3"],
-  { revalidate: REVALIDATE_SECONDS, tags: ["cloudflare-site-traffic"] },
-);
+function getCachedLiveTraffic(days) {
+  return unstable_cache(
+    async () => fetchLiveCloudflareTraffic(days),
+    ["cloudflare-zone-traffic-v4", `days-${days}`],
+    { revalidate: REVALIDATE_SECONDS, tags: ["cloudflare-site-traffic"] },
+  );
+}
 
-export async function getSiteTraffic() {
+export function resolveTrafficRange(value) {
+  const parsed = Number.parseInt(String(value), 10);
+  return [7, 14, 30].includes(parsed) ? parsed : DEFAULT_DAYS;
+}
+
+export async function getSiteTraffic(days = DEFAULT_DAYS) {
   try {
-    return await getCachedLiveTraffic();
+    return await getCachedLiveTraffic(days)();
   } catch {
-    return getSnapshotTraffic();
+    return getSnapshotTraffic(days);
   }
 }

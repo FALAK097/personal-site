@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ChevronDown } from "lucide-react";
 import Link from "next/link";
-import { useId, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import {
   DeviceStackedChartSlot,
   TrafficLineChartSlot,
@@ -11,6 +12,7 @@ import {
 import { DimensionIcon } from "@/components/stats/traffic-icons";
 import {
   CLOUDFLARE_ANALYTICS_URL,
+  TRAFFIC_RANGES,
   formatCompact,
   formatExact,
 } from "@/lib/traffic-formatters";
@@ -35,146 +37,51 @@ function CloudflareLogo({ className }) {
   );
 }
 
-function buildSparklineGeometry(series, dataKey, width = 320, height = 44) {
-  if (!series || series.length < 2) return null;
-  const values = series.map((item) => Number(item[dataKey]) || 0);
-  const max = Math.max(...values, 1);
-  const topPad = 6;
-  const usableH = height - topPad - 2;
-  const n = values.length;
-
-  const points = values.map((val, idx) => ({
-    x: (idx / (n - 1)) * width,
-    y: topPad + usableH * (1 - val / max),
-  }));
-
-  const hasPartial = n >= 4 && Boolean(series[0]?.isPartial || series[n - 1]?.isPartial);
-  const fullAreaPath = [
-    `M ${points[0].x.toFixed(1)} ${height}`,
-    ...points.map((pt) => `L ${pt.x.toFixed(1)} ${pt.y.toFixed(1)}`),
-    `L ${points[n - 1].x.toFixed(1)} ${height}`,
-    "Z",
-  ].join(" ");
-
-  const toLine = (pts) =>
-    pts.map((pt, i) => `${i === 0 ? "M" : "L"} ${pt.x.toFixed(1)} ${pt.y.toFixed(1)}`).join(" ");
-
-  if (!hasPartial) {
-    return { fullAreaPath, solidPath: toLine(points), startDashPath: null, endDashPath: null };
-  }
-
-  return {
-    fullAreaPath,
-    solidPath: toLine(points.slice(1, n - 1)),
-    startDashPath: toLine([points[0], points[1]]),
-    endDashPath: toLine([points[n - 2], points[n - 1]]),
-  };
-}
-
-function SparklineMetricCard({ label, value, subtitle, series, dataKey, strokeClass, stopColor }) {
-  const rawId = useId();
-  const gradientId = `spark-${rawId.replace(/:/g, "")}`;
-  const geom = buildSparklineGeometry(series, dataKey);
+function RangeSelect({ days }) {
+  const router = useRouter();
 
   return (
-    <div className="relative overflow-hidden rounded-xl border border-border/75 bg-card pt-4">
-      <div className="px-4">
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <div className="mt-1 flex items-baseline justify-between gap-2">
-          <p className="font-mono text-2xl font-semibold tracking-tight text-foreground tabular-nums">
-            {formatCompact(value)}
-          </p>
-          {subtitle ? (
-            <p className="font-mono text-[11px] text-muted-foreground tabular-nums">{subtitle}</p>
-          ) : null}
-        </div>
-      </div>
+    <span className="relative inline-flex items-center">
+      <select
+        value={String(days)}
+        onChange={(event) => router.push(`/stats?range=${event.target.value}`, { scroll: false })}
+        aria-label="Traffic time range"
+        className="h-7 cursor-pointer appearance-none rounded-lg border border-border/75 bg-muted/35 pl-2.5 pr-7 text-xs font-medium text-foreground outline-none transition-colors duration-100 hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-clay-500/40"
+      >
+        {TRAFFIC_RANGES.map((value) => (
+          <option key={value} value={value}>
+            Last {value} days
+          </option>
+        ))}
+      </select>
+      <ChevronDown
+        className="pointer-events-none absolute right-2 size-3.5 text-muted-foreground"
+        aria-hidden="true"
+      />
+    </span>
+  );
+}
 
-      {geom ? (
-        <div className="mt-2 h-11 w-full" aria-hidden="true">
-          <svg viewBox="0 0 320 44" preserveAspectRatio="none" className="block h-full w-full">
-            <defs>
-              <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={stopColor} stopOpacity="0.2" />
-                <stop offset="100%" stopColor={stopColor} stopOpacity="0.01" />
-              </linearGradient>
-            </defs>
-            <path d={geom.fullAreaPath} fill={`url(#${gradientId})`} />
-            <path
-              d={geom.solidPath}
-              fill="none"
-              strokeWidth="1.75"
-              vectorEffect="non-scaling-stroke"
-              className={strokeClass}
-            />
-            {geom.startDashPath ? (
-              <path
-                d={geom.startDashPath}
-                fill="none"
-                strokeWidth="1.75"
-                strokeDasharray="3 3"
-                vectorEffect="non-scaling-stroke"
-                className={strokeClass}
-              />
-            ) : null}
-            {geom.endDashPath ? (
-              <path
-                d={geom.endDashPath}
-                fill="none"
-                strokeWidth="1.75"
-                strokeDasharray="3 3"
-                vectorEffect="non-scaling-stroke"
-                className={strokeClass}
-              />
-            ) : null}
-          </svg>
-        </div>
-      ) : (
-        <div className="h-4" />
+function MetricTab({ active, onClick, children }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      className={cn(
+        "h-7 cursor-pointer rounded-lg px-3 text-xs font-medium transition-colors duration-100",
+        active
+          ? "bg-background text-foreground shadow-2xs"
+          : "text-muted-foreground hover:text-foreground",
       )}
-    </div>
-  );
-}
-
-function MetricModeToggle({ metric, onChange }) {
-  return (
-    <div
-      className="inline-flex h-7 items-center rounded-lg border border-border/75 bg-muted/35 p-0.5"
-      role="group"
-      aria-label="Breakdown metric"
     >
-      {[
-        { id: "pageviews", label: "Requests" },
-        { id: "visitors", label: "Visits" },
-      ].map((option) => {
-        const active = metric === option.id;
-        return (
-          <button
-            key={option.id}
-            type="button"
-            aria-pressed={active}
-            onClick={() => onChange(option.id)}
-            className={cn(
-              "h-6 cursor-pointer rounded-md px-2.5 text-xs font-medium transition-colors duration-100",
-              active
-                ? "bg-background text-foreground shadow-2xs"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {option.label}
-          </button>
-        );
-      })}
-    </div>
+      {children}
+    </button>
   );
 }
 
-function rowMetricValue(row, metric) {
-  return (metric === "visitors" ? row.visitors : row.pageviews) ?? 0;
-}
-
-function ProportionalRowItem({ row, metric, denominator, iconKind, linkInternalPaths, monoLabel }) {
-  const val = rowMetricValue(row, metric);
+function ProportionalRowItem({ row, denominator, iconKind, linkInternalPaths, monoLabel }) {
+  const val = row.pageviews ?? 0;
   const pct = denominator > 0 ? Math.min((val / denominator) * 100, 100) : 0;
   const isInternalLink =
     linkInternalPaths &&
@@ -185,7 +92,7 @@ function ProportionalRowItem({ row, metric, denominator, iconKind, linkInternalP
   const labelSpan = (
     <span
       className={cn(
-        "truncate text-xs text-foreground",
+        "truncate text-[13px] text-foreground",
         monoLabel && "font-mono",
         isInternalLink && "transition-colors group-hover:text-[#2563eb] dark:group-hover:text-clay-500",
       )}
@@ -197,9 +104,9 @@ function ProportionalRowItem({ row, metric, denominator, iconKind, linkInternalP
   return (
     <div
       title={`${row.label} — ${formatExact(row.pageviews)} requests · ${formatExact(row.visitors)} visits`}
-      className="flex items-center justify-between gap-3 py-2.5 first:pt-1 last:pb-0.5"
+      className="group flex items-center gap-4 py-3 first:pt-1 last:pb-1"
     >
-      <div className="flex min-w-0 flex-1 items-center gap-2">
+      <div className="flex min-w-0 flex-1 items-center gap-2.5">
         {iconKind ? <DimensionIcon kind={iconKind} item={row} /> : null}
         {isInternalLink ? (
           <Link href={row.label} className="group flex min-w-0 items-center gap-1 truncate">
@@ -210,32 +117,33 @@ function ProportionalRowItem({ row, metric, denominator, iconKind, linkInternalP
         )}
       </div>
 
-      <div className="flex shrink-0 items-center gap-3">
-        <div className="h-1.5 w-20 overflow-hidden rounded-full bg-muted sm:w-28" aria-hidden="true">
-          {val > 0 ? (
-            <span
-              className="block h-full min-w-[5px] rounded-full bg-[#2563eb] transition-[width] duration-300 dark:bg-clay-500"
-              style={{ width: `${pct}%` }}
-            />
-          ) : null}
-        </div>
-
-        <span className="w-11 text-right font-mono text-xs font-medium text-foreground tabular-nums">
-          {formatCompact(val)}
-        </span>
+      <div
+        className="h-1.5 w-[26%] min-w-16 max-w-56 shrink-0 overflow-hidden rounded-full bg-muted"
+        aria-hidden="true"
+      >
+        {val > 0 ? (
+          <span
+            className="block h-full min-w-[5px] rounded-full bg-[#2563eb] transition-[width] duration-300 dark:bg-clay-500"
+            style={{ width: `${pct}%` }}
+          />
+        ) : null}
       </div>
+
+      <span className="w-14 shrink-0 text-right font-mono text-[13px] font-medium text-foreground tabular-nums">
+        {formatCompact(val)}
+      </span>
     </div>
   );
 }
 
 function ProportionalRows({
   rows,
-  metric = "pageviews",
   totalForShare = 0,
   iconKind,
   linkInternalPaths = false,
   monoLabel = false,
   limit,
+  minHeight,
 }) {
   if (!rows?.length) {
     return (
@@ -246,19 +154,18 @@ function ProportionalRows({
   }
 
   const sorted = [...rows].sort(
-    (a, b) => rowMetricValue(b, metric) - rowMetricValue(a, metric) || b.pageviews - a.pageviews,
+    (a, b) => (b.pageviews ?? 0) - (a.pageviews ?? 0) || (b.visitors ?? 0) - (a.visitors ?? 0),
   );
   const ranked = typeof limit === "number" ? sorted.slice(0, limit) : sorted;
-  const maxVal = Math.max(...ranked.map((row) => rowMetricValue(row, metric)), 1);
+  const maxVal = Math.max(...ranked.map((row) => row.pageviews ?? 0), 1);
   const denominator = totalForShare > 0 ? totalForShare : maxVal;
 
   return (
-    <div className="divide-y divide-border/60">
+    <div className="divide-y divide-border/60" style={minHeight ? { minHeight } : undefined}>
       {ranked.map((row) => (
         <ProportionalRowItem
           key={`${row.key ?? row.label}-${row.label}`}
           row={row}
-          metric={metric}
           denominator={denominator}
           iconKind={iconKind}
           linkInternalPaths={linkInternalPaths}
@@ -269,9 +176,7 @@ function ProportionalRows({
   );
 }
 
-function GeographySection({ countryCount, mapCountries, countries, metric, activeTotal }) {
-  const isVisits = metric === "visitors";
-
+function GeographySection({ countryCount, mapCountries, countries, total }) {
   return (
     <div className="space-y-2.5">
       <div className="flex items-baseline justify-between gap-3">
@@ -284,27 +189,17 @@ function GeographySection({ countryCount, mapCountries, countries, metric, activ
       </div>
 
       <div className="overflow-visible rounded-xl border border-border/75 bg-card">
-        <div className="flex items-center justify-between border-b border-border/60 px-4 py-3">
-          <span className="text-xs font-medium text-foreground">
-            {isVisits ? "Visits by country" : "Requests by country"}
-          </span>
-          <span className="font-mono text-[11px] text-muted-foreground">Explore by country</span>
-        </div>
-
-        <TrafficWorldMapSlot countries={mapCountries} metric={metric} total={activeTotal} />
+        <TrafficWorldMapSlot countries={mapCountries} total={total} />
 
         {countries?.length ? (
           <div className="border-t border-border/60 p-4">
-            <div className="mb-2 flex items-center justify-between">
+            <div className="mb-1 flex items-center justify-between">
               <h4 className="text-xs font-medium text-muted-foreground">Top countries</h4>
-              <span className="font-mono text-[11px] text-muted-foreground">
-                {isVisits ? "visits" : "requests"}
-              </span>
+              <span className="font-mono text-[11px] text-muted-foreground">requests</span>
             </div>
             <ProportionalRows
               rows={countries}
-              metric={metric}
-              totalForShare={activeTotal}
+              totalForShare={total}
               iconKind="country"
               limit={10}
             />
@@ -315,73 +210,50 @@ function GeographySection({ countryCount, mapCountries, countries, metric, activ
   );
 }
 
-function ContentSection({ pages, referrers, metric, activeTotal }) {
+function ContentSection({ pages, referrers, total }) {
   const [tab, setTab] = useState("pages");
   const hasReferrers = Array.isArray(referrers) && referrers.length > 0;
   const showingReferrers = tab === "referrers" && hasReferrers;
-  const referrerTotal = showingReferrers
-    ? referrers.reduce((sum, r) => sum + rowMetricValue(r, metric), 0)
-    : 0;
+  // The paths tab is the tallest variant; reserving its height keeps the
+  // layout from jumping when switching between tabs.
+  const listMinHeight = pages?.length >= 10 ? "460px" : undefined;
 
   return (
     <div className="space-y-2.5">
-      <h3 className="text-sm font-medium text-foreground">Content</h3>
+      <div className="flex items-baseline justify-between gap-3">
+        <h3 className="text-sm font-medium text-foreground">Content</h3>
+        <span className="font-mono text-[11px] text-muted-foreground">
+          {showingReferrers ? "beacon referrals" : "requests"}
+        </span>
+      </div>
 
-      <div className="rounded-xl border border-border/75 bg-card p-4">
-        <div className="mb-2.5 flex flex-wrap items-center justify-between gap-2">
-          {hasReferrers ? (
-            <div
-              className="inline-flex h-7 items-center rounded-lg border border-border/75 bg-muted/35 p-0.5"
-              role="group"
-              aria-label="Content breakdown"
-            >
-              {[
-                { id: "pages", label: "Top paths" },
-                { id: "referrers", label: "Referrers" },
-              ].map((option) => {
-                const active = tab === option.id;
-                return (
-                  <button
-                    key={option.id}
-                    type="button"
-                    aria-pressed={active}
-                    onClick={() => setTab(option.id)}
-                    className={cn(
-                      "h-6 cursor-pointer rounded-md px-2.5 text-xs font-medium transition-colors duration-100",
-                      active
-                        ? "bg-background text-foreground shadow-2xs"
-                        : "text-muted-foreground hover:text-foreground",
-                    )}
-                  >
-                    {option.label}
-                  </button>
-                );
-              })}
-            </div>
-          ) : (
-            <h4 className="text-xs font-medium text-foreground">Top paths</h4>
-          )}
-
-          <span className="font-mono text-[11px] text-muted-foreground">
-            {showingReferrers ? "beacon referrals" : metric === "visitors" ? "visits" : "requests"}
-          </span>
-        </div>
+      <div>
+        {hasReferrers ? (
+          <div className="mb-1.5 inline-flex h-8 items-center rounded-lg border border-border/75 bg-muted/35 p-0.5">
+            <MetricTab active={tab === "pages"} onClick={() => setTab("pages")}>
+              Top paths
+            </MetricTab>
+            <MetricTab active={tab === "referrers"} onClick={() => setTab("referrers")}>
+              Referrers
+            </MetricTab>
+          </div>
+        ) : null}
 
         {showingReferrers ? (
           <ProportionalRows
             rows={referrers}
-            metric={metric}
-            totalForShare={referrerTotal}
+            totalForShare={referrers.reduce((sum, r) => sum + (r.pageviews ?? 0), 0)}
             iconKind="referrer"
             monoLabel
+            minHeight={listMinHeight}
           />
         ) : (
           <ProportionalRows
             rows={pages}
-            metric={metric}
-            totalForShare={activeTotal}
+            totalForShare={total}
             linkInternalPaths
             monoLabel
+            minHeight={listMinHeight}
           />
         )}
       </div>
@@ -389,42 +261,31 @@ function ContentSection({ pages, referrers, metric, activeTotal }) {
   );
 }
 
-function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, metric, activeTotal }) {
-  const unitLabel = metric === "visitors" ? "visits" : "requests";
-
+function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, total }) {
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-medium text-foreground">Technology</h3>
+      <div className="flex items-baseline justify-between gap-3">
+        <h3 className="text-sm font-medium text-foreground">Technology</h3>
+        <span className="font-mono text-[11px] text-muted-foreground">requests</span>
+      </div>
 
       {deviceSeries?.length > 1 ? (
-        <DeviceStackedChartSlot data={deviceSeries} devices={devices} metric={metric} />
+        <DeviceStackedChartSlot data={deviceSeries} devices={devices} />
       ) : null}
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="rounded-xl border border-border/75 bg-card p-4">
-          <div className="mb-2 flex items-center justify-between">
-            <h4 className="text-xs font-medium text-foreground">Top browsers</h4>
-            <span className="font-mono text-[11px] text-muted-foreground">{unitLabel}</span>
+      <div className="grid grid-cols-1 gap-x-10 gap-y-4 sm:grid-cols-2">
+        <div>
+          <div className="mb-1 flex items-center justify-between">
+            <h4 className="text-xs font-medium text-muted-foreground">Top browsers</h4>
           </div>
-          <ProportionalRows
-            rows={browsers}
-            metric={metric}
-            totalForShare={activeTotal}
-            iconKind="browser"
-          />
+          <ProportionalRows rows={browsers} totalForShare={total} iconKind="browser" />
         </div>
 
-        <div className="rounded-xl border border-border/75 bg-card p-4">
-          <div className="mb-2 flex items-center justify-between">
-            <h4 className="text-xs font-medium text-foreground">Top operating systems</h4>
-            <span className="font-mono text-[11px] text-muted-foreground">{unitLabel}</span>
+        <div>
+          <div className="mb-1 flex items-center justify-between">
+            <h4 className="text-xs font-medium text-muted-foreground">Top operating systems</h4>
           </div>
-          <ProportionalRows
-            rows={operatingSystems}
-            metric={metric}
-            totalForShare={activeTotal}
-            iconKind="os"
-          />
+          <ProportionalRows rows={operatingSystems} totalForShare={total} iconKind="os" />
         </div>
       </div>
     </div>
@@ -432,8 +293,6 @@ function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, 
 }
 
 export function SiteTraffic({ traffic }) {
-  const [metric, setMetric] = useState("pageviews");
-
   if (!traffic?.totals) {
     return (
       <section className="space-y-3">
@@ -460,22 +319,19 @@ export function SiteTraffic({ traffic }) {
     days,
   } = traffic;
 
-  const activeTotal = metric === "visitors" ? totals.visitors : totals.pageviews;
-
   return (
-    <section className="space-y-7">
+    <section className="space-y-8">
       <div className="space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-baseline gap-3">
             <h2 className="section-heading">Site traffic</h2>
             <span className="font-mono text-xs text-muted-foreground">last {days} days</span>
           </div>
-          <MetricModeToggle metric={metric} onChange={setMetric} />
+          <RangeSelect days={days} />
         </div>
 
         <p className="text-sm text-muted-foreground">
-          Requests and visits for{" "}
-          <span className="font-mono text-xs text-foreground">falakgala.dev</span>, synced from{" "}
+          Requests and visits synced from{" "}
           <a
             href={CLOUDFLARE_ANALYTICS_URL}
             target="_blank"
@@ -486,29 +342,8 @@ export function SiteTraffic({ traffic }) {
             Cloudflare Web Analytics
             <ArrowUpRight className="size-3.5" aria-hidden="true" />
           </a>
-          .
+          . Hover any breakdown for visits alongside requests.
         </p>
-      </div>
-
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <SparklineMetricCard
-          label="Total requests"
-          value={totals.pageviews}
-          subtitle={`${formatExact(totals.pageviews)} requests`}
-          series={series}
-          dataKey="pageviews"
-          strokeClass="stroke-[#2563eb] dark:stroke-[#5cbeff]"
-          stopColor="#3b82f6"
-        />
-        <SparklineMetricCard
-          label="Total visits"
-          value={totals.visitors}
-          subtitle={`${formatExact(totals.visitors)} visits`}
-          series={series}
-          dataKey="visitors"
-          strokeClass="stroke-[#0d9488] dark:stroke-[#2dd4bf]"
-          stopColor="#14b8a6"
-        />
       </div>
 
       {series?.length > 1 ? <TrafficLineChartSlot data={series} totals={totals} /> : null}
@@ -517,24 +352,17 @@ export function SiteTraffic({ traffic }) {
         countryCount={countryCount}
         mapCountries={mapCountries}
         countries={countries}
-        metric={metric}
-        activeTotal={activeTotal}
+        total={totals.pageviews}
       />
 
-      <ContentSection
-        pages={pages}
-        referrers={referrers}
-        metric={metric}
-        activeTotal={activeTotal}
-      />
+      <ContentSection pages={pages} referrers={referrers} total={totals.pageviews} />
 
       <TechnologySection
         deviceSeries={deviceSeries}
         devices={devices}
         browsers={browsers}
         operatingSystems={operatingSystems}
-        metric={metric}
-        activeTotal={activeTotal}
+        total={totals.pageviews}
       />
     </section>
   );

@@ -7,6 +7,10 @@ const compactFormatter = new Intl.NumberFormat("en-US", {
 export const CLOUDFLARE_ANALYTICS_URL =
   "https://www.cloudflare.com/application-services/products/analytics/?utm_source=falakgala.dev&utm_medium=referral";
 
+// Selectable windows for the traffic section. 30 days is the maximum the
+// zone's analytics API serves on this plan.
+export const TRAFFIC_RANGES = [7, 14, 30];
+
 export function formatCompact(value) {
   const num = Number(value) || 0;
   if (num < 1_000) return exactFormatter.format(num);

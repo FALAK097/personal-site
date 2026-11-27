@@ -198,6 +198,17 @@ export function TokenAreaChart({
     return () => query.removeEventListener("change", sync);
   }, []);
 
+  // On phones ~375px wide, showing a label every 3 weeks (interval=2) renders
+  // ~18 labels that collide and ECharts hides them, so early dates like Nov
+  // get dropped. Pick an interval that keeps ~6-8 labels visible.
+  const xInterval = isNarrow ? Math.max(3, Math.ceil((data?.length ?? 36) / 6)) : 2;
+  // Tighten horizontal gaps (ECharts category axis already has boundaryGap:false)
+  // and give the x labels room: bottom 22 on mobile prevents Nov clipping,
+  // left/right 4 keep the first/last ticks inside the card.
+  const gridForWidth = isNarrow
+    ? { left: 4, right: 4, top: 88, bottom: 22, containLabel: false }
+    : { left: 0, right: 0, top: 68, bottom: 0, containLabel: false };
+
   return (
     <EChartsAreaChart
       data={data}
@@ -208,7 +219,7 @@ export function TokenAreaChart({
       stackType="stacked"
       enableHoverHighlight
       chartOptions={{
-        grid: { left: 0, right: 0, top: isNarrow ? 88 : 68, bottom: 0 },
+        grid: gridForWidth,
         tooltip: {
           show: true,
           trigger: "axis",
@@ -233,7 +244,7 @@ export function TokenAreaChart({
       }}
     >
       <EChartsAreaChart.Grid />
-      <EChartsAreaChart.XAxis dataKey="date" tickFormatter={dateTickFormatter} interval={2} />
+      <EChartsAreaChart.XAxis dataKey="date" tickFormatter={dateTickFormatter} interval={xInterval} />
       <EChartsAreaChart.YAxis tickFormatter={tickFormatter} />
       <EChartsAreaChart.Legend variant="rounded-square" align="right" verticalAlign="top" isClickable />
       {keys.map((key) => (

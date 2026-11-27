@@ -456,6 +456,12 @@ function buildZoneFilter(sinceIso, untilIso) {
 }
 
 async function fetchLiveCloudflareTraffic(days = DEFAULT_DAYS) {
+  // Local dev uses the bundled snapshot: no token usage, and no risk of
+  // polluting production analytics from test page loads.
+  if (process.env.NODE_ENV !== "production") {
+    throw new Error("Live analytics disabled outside production");
+  }
+
   const { token, zoneId, accountId } = await resolveCloudflareCredentials();
   if (!token) {
     throw new Error("Missing CF_ANALYTICS_TOKEN or CLOUDFLARE_API_TOKEN");

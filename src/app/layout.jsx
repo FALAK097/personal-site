@@ -179,12 +179,14 @@ export default function RootLayout({ children }) {
             <Toaster />
           </MotionProvider>
         </ThemeProvider>
-        <Script
-          defer
-          src="https://static.cloudflareinsights.com/beacon.min.js"
-          data-cf-beacon='{"token": "29336135db17443cb968a165382e8a84"}'
-          strategy="afterInteractive"
-        />
+        {process.env.NODE_ENV === "production" ? (
+          <Script
+            defer
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon='{"token": "29336135db17443cb968a165382e8a84"}'
+            strategy="afterInteractive"
+          />
+        ) : null}
       </body>
     </html>
   );

@@ -17,6 +17,10 @@ const GEO_ALIASES = {
   "bosnia and herz": "BA",
   brunei: "BN",
   "central african rep": "CF",
+  // world-atlas 110m uses names that differ from English CLDR labels; these
+  // atlas names resolve unambiguously to a single ISO-2 code ("Dem. Rep.
+  // Congo" is aliased separately, preserving the two-Congo distinction).
+  congo: "CG",
   "cote d ivoire": "CI",
   czechia: "CZ",
   "dem rep congo": "CD",
@@ -29,6 +33,7 @@ const GEO_ALIASES = {
   laos: "LA",
   macedonia: "MK",
   moldova: "MD",
+  myanmar: "MM",
   "n cyprus": "CY",
   "north korea": "KP",
   palestine: "PS",
@@ -42,6 +47,8 @@ const GEO_ALIASES = {
   taiwan: "TW",
   tanzania: "TZ",
   "the bahamas": "BS",
+  "trinidad and tobago": "TT",
+  turkey: "TR",
   "united states of america": "US",
   venezuela: "VE",
   vietnam: "VN",
@@ -117,7 +124,7 @@ function MapTooltip({ active, metric, total }) {
 
   return (
     <div
-      className="pointer-events-none absolute z-30 min-w-42 -translate-x-1/2 rounded-lg border border-white/12 bg-[#141418]/95 px-3 py-2 text-xs text-[#fafafa] shadow-xl backdrop-blur-md"
+      className="pointer-events-none absolute z-30 min-w-42 -translate-x-1/2 animate-in fade-in-0 zoom-in-95 rounded-lg border border-white/12 bg-[#141418]/95 px-3 py-2 text-xs text-[#fafafa] shadow-xl backdrop-blur-md duration-100"
       style={{ left: `${active.x}px`, top: `${active.y}px` }}
     >
       <div className="mb-1.5 flex items-center justify-between gap-3 border-b border-white/10 pb-1 font-medium">

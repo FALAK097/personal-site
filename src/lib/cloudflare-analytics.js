@@ -1,7 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { unstable_cache } from "next/cache";
 import snapshot from "@/data/cloudflare-analytics-snapshot.json";
-import colos from "@/data/cloudflare-colos.json";
 
 const CF_GRAPHQL_URL = "https://api.cloudflare.com/client/v4/graphql";
 const DEFAULT_ACCOUNT_ID = "598a393819cd44e21ef2145dabea9a2f";
@@ -57,27 +56,6 @@ function formatCountryName(code) {
   } catch {
     return upper;
   }
-}
-
-function formatColo(iataRaw) {
-  const iata = String(iataRaw || "").trim().toUpperCase();
-  if (!iata) {
-    return { key: "UNK", code: null, city: "Unknown", country: null, label: "Unknown" };
-  }
-  const entry = colos[iata];
-  if (!entry) {
-    return { key: iata, code: null, city: iata, country: null, label: iata };
-  }
-  const [city, countryCode] = entry;
-  const country = countryCode ? formatCountryName(countryCode) : null;
-  const label = country ? `${city}, ${country} (${iata})` : `${city} (${iata})`;
-  return {
-    key: iata,
-    code: countryCode || null,
-    city,
-    country,
-    label,
-  };
 }
 
 function buildUtcDateRange(sinceIso, untilIso) {
@@ -174,6 +152,9 @@ export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilI
         desktop: 0,
         mobile: 0,
         tablet: 0,
+        desktopVisitors: 0,
+        mobileVisitors: 0,
+        tabletVisitors: 0,
         isPartial: dates.length > 2 && (index === 0 || index === dates.length - 1),
       },
     ]),
@@ -185,9 +166,17 @@ export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilI
     const bucket = deviceByDate.get(date);
     if (!bucket) continue;
     const pv = asNumber(item?.count);
-    if (rawDevice === "mobile") bucket.mobile += pv;
-    else if (rawDevice === "tablet") bucket.tablet += pv;
-    else bucket.desktop += pv;
+    const visits = asNumber(item?.sum?.visits);
+    if (rawDevice === "mobile") {
+      bucket.mobile += pv;
+      bucket.mobileVisitors += visits;
+    } else if (rawDevice === "tablet") {
+      bucket.tablet += pv;
+      bucket.tabletVisitors += visits;
+    } else {
+      bucket.desktop += pv;
+      bucket.desktopVisitors += visits;
+    }
   }
 
   const deviceSeries = Array.from(deviceByDate.values());
@@ -225,7 +214,9 @@ export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilI
     .sort((a, b) => b.pageviews - a.pageviews || b.visitors - a.visitors);
 
   const mapCountries = allCountries.filter((row) => Boolean(row.code));
-  const countries = allCountries.slice(0, 10);
+  // Full candidate list — the UI ranks by the selected metric (requests or
+  // visits) before applying its display limit, so leaders per metric survive.
+  const countries = allCountries;
 
   // Top paths
   const pages = normalizeRows(zone?.pages, "clientRequestPath", 10);
@@ -238,20 +229,6 @@ export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilI
   const browsers = normalizeRows(zone?.browsers, "userAgentBrowser", 9, {
     formatLabel: (key) => BROWSER_LABELS[key] || key,
   });
-
-  // Top edge data centers (Cloudflare colos)
-  const colosFormatted = (zone?.colos || [])
-    .map((item) => {
-      const meta = formatColo(item?.dimensions?.coloCode);
-      return {
-        ...meta,
-        pageviews: asNumber(item?.count),
-        visitors: asNumber(item?.sum?.visits),
-      };
-    })
-    .filter((row) => row.pageviews > 0)
-    .sort((a, b) => b.pageviews - a.pageviews || b.visitors - a.visitors)
-    .slice(0, 9);
 
   // External Web Analytics referrers (when available)
   const externalReferrers = (referrers || [])
@@ -289,7 +266,6 @@ export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilI
     referrers: externalReferrers,
     operatingSystems,
     browsers,
-    colos: colosFormatted,
   };
 }
 
@@ -344,8 +320,7 @@ const ZONE_TRAFFIC_QUERY = `
           count
           sum { visits }
           dimensions { date clientDeviceType }
-        }
-        devices: httpRequestsAdaptiveGroups(limit: 10, filter: $filter, orderBy: [count_DESC]) {
+        }        devices: httpRequestsAdaptiveGroups(limit: 10, filter: $filter, orderBy: [count_DESC]) {
           count
           sum { visits }
           dimensions { clientDeviceType }
@@ -369,11 +344,6 @@ const ZONE_TRAFFIC_QUERY = `
           count
           sum { visits }
           dimensions { userAgentBrowser }
-        }
-        colos: httpRequestsAdaptiveGroups(limit: 12, filter: $filter, orderBy: [count_DESC]) {
-          count
-          sum { visits }
-          dimensions { coloCode }
         }
       }
     }
@@ -439,6 +409,9 @@ async function fetchLiveCloudflareTraffic() {
     datetime_geq: sinceIso,
     datetime_lt: untilIso,
     clientRequestHTTPHost: DEFAULT_HOST,
+    // Mirror the dashboard's Traffic panel: only end-user requests, excluding
+    // health checks and Worker/subrequest traffic.
+    requestSource: "eyeball",
   };
 
   const [zoneResult, rumResult] = await Promise.allSettled([

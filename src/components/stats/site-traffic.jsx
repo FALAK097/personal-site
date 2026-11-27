@@ -235,6 +235,7 @@ function ProportionalRows({
   iconKind,
   linkInternalPaths = false,
   monoLabel = false,
+  limit,
 }) {
   if (!rows?.length) {
     return (
@@ -247,12 +248,13 @@ function ProportionalRows({
   const sorted = [...rows].sort(
     (a, b) => rowMetricValue(b, metric) - rowMetricValue(a, metric) || b.pageviews - a.pageviews,
   );
-  const maxVal = Math.max(...sorted.map((row) => rowMetricValue(row, metric)), 1);
+  const ranked = typeof limit === "number" ? sorted.slice(0, limit) : sorted;
+  const maxVal = Math.max(...ranked.map((row) => rowMetricValue(row, metric)), 1);
   const denominator = totalForShare > 0 ? totalForShare : maxVal;
 
   return (
     <div className="divide-y divide-border/60">
-      {sorted.map((row) => (
+      {ranked.map((row) => (
         <ProportionalRowItem
           key={`${row.key ?? row.label}-${row.label}`}
           row={row}
@@ -304,6 +306,7 @@ function GeographySection({ countryCount, mapCountries, countries, metric, activ
               metric={metric}
               totalForShare={activeTotal}
               iconKind="country"
+              limit={10}
             />
           </div>
         ) : null}
@@ -394,7 +397,7 @@ function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, 
       <h3 className="text-sm font-medium text-foreground">Technology</h3>
 
       {deviceSeries?.length > 1 ? (
-        <DeviceStackedChartSlot data={deviceSeries} devices={devices} />
+        <DeviceStackedChartSlot data={deviceSeries} devices={devices} metric={metric} />
       ) : null}
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -428,29 +431,6 @@ function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, 
   );
 }
 
-function NetworkSection({ colos, metric, activeTotal }) {
-  if (!colos?.length) return null;
-
-  return (
-    <div className="space-y-2.5">
-      <h3 className="text-sm font-medium text-foreground">Traffic &amp; network</h3>
-
-      <div className="rounded-xl border border-border/75 bg-card p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <h4 className="text-xs font-medium text-foreground">Top edge data centers</h4>
-          <span className="font-mono text-[11px] text-muted-foreground">Cloudflare PoPs</span>
-        </div>
-        <ProportionalRows
-          rows={colos}
-          metric={metric}
-          totalForShare={activeTotal}
-          iconKind="colo"
-        />
-      </div>
-    </div>
-  );
-}
-
 export function SiteTraffic({ traffic }) {
   const [metric, setMetric] = useState("pageviews");
 
@@ -477,7 +457,6 @@ export function SiteTraffic({ traffic }) {
     referrers,
     operatingSystems,
     browsers,
-    colos,
     days,
   } = traffic;
 
@@ -557,8 +536,6 @@ export function SiteTraffic({ traffic }) {
         metric={metric}
         activeTotal={activeTotal}
       />
-
-      <NetworkSection colos={colos} metric={metric} activeTotal={activeTotal} />
     </section>
   );
 }

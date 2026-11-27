@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PageHeader } from "@/components/custom/page-header";
-import { BlogList } from "@/components/blog/blog-list";
+import { BlogSearch } from "@/components/blog/blog-search";
 import { getAllPosts } from "@/lib/blog-source";
 import { createMetadata } from "@/lib/metadata";
 
@@ -12,7 +12,9 @@ export const metadata = createMetadata({
   path: "/writing",
 });
 
-export default async function WritingPage() {
+export default async function WritingPage({ searchParams }) {
+  const params = await searchParams;
+  const initialQuery = typeof params?.q === "string" ? params.q.slice(0, 80) : "";
   const posts = await getAllPosts();
 
   const jsonLd = {
@@ -51,7 +53,7 @@ export default async function WritingPage() {
             title="writing"
             intro="Notes from building frontend systems, AI products, and production infrastructure."
           />
-          <BlogList posts={posts} />
+          <BlogSearch posts={posts} initialQuery={initialQuery} />
         </div>
       </main>
       <Footer />

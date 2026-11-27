@@ -161,7 +161,7 @@ const websiteJsonLd = {
 
 export default function RootLayout({ children }) {
   return (
-    <html suppressHydrationWarning lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+    <html suppressHydrationWarning lang="en" data-scroll-behavior="smooth" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body suppressHydrationWarning>
         <script
           type="application/ld+json"

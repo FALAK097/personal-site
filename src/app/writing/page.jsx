@@ -1,6 +1,5 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { PageHeader } from "@/components/custom/page-header";
 import { BlogSearch } from "@/components/blog/blog-search";
 import { getAllPosts } from "@/lib/blog-source";
 import { createMetadata } from "@/lib/metadata";
@@ -49,11 +48,12 @@ export default async function WritingPage({ searchParams }) {
       <Navbar />
       <main className="page-main">
         <div className="space-y-10">
-          <PageHeader
+          <BlogSearch
+            posts={posts}
+            initialQuery={initialQuery}
             title="writing"
             intro="Notes from building frontend systems, AI products, and production infrastructure."
           />
-          <BlogSearch posts={posts} initialQuery={initialQuery} />
         </div>
       </main>
       <Footer />

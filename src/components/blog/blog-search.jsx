@@ -211,7 +211,7 @@ function SearchRow({ post, query }) {
   );
 }
 
-export function BlogSearch({ posts, initialQuery = "" }) {
+export function BlogSearch({ posts, initialQuery = "", title, intro }) {
   // `q` (committed query) drives results; `input` tracks the field so typing
   // stays instant and the debounce only affects filtering.
   const [q, setQ] = useState(normalizeText(initialQuery));
@@ -286,47 +286,53 @@ export function BlogSearch({ posts, initialQuery = "" }) {
 
   return (
     <div className="space-y-8">
-      <div className="relative">
-        <Search
-          className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-          aria-hidden="true"
-        />
-        <input
-          ref={inputRef}
-          type="search"
-          aria-label="Search writing"
-          placeholder="Search..."
-          value={input}
-          maxLength={MAX_QUERY_LENGTH + 20}
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
-          spellCheck={false}
-          onChange={(event) => {
-            if (composing) return;
-            onInput(event.target.value);
-          }}
-          onCompositionStart={() => setComposing(true)}
-          onCompositionEnd={(event) => {
-            setComposing(false);
-            onInput(event.target.value);
-          }}
-          onKeyDown={(event) => {
-            if (event.key === "Escape") clear();
-          }}
-          className={cnInput(!!input)}
-        />
-        {input ? (
-          <button
-            type="button"
-            aria-label="Clear search"
-            onClick={clear}
-            className="absolute right-2 top-1/2 grid size-6 -translate-y-1/2 cursor-pointer place-items-center rounded-md text-muted-foreground transition-colors duration-100 hover:bg-muted/60 hover:text-foreground"
-          >
-            <X className="size-3.5" aria-hidden="true" />
-          </button>
-        ) : null}
-      </div>
+      <header className="space-y-2">
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="page-heading">{title}</h1>
+          <div className="relative w-44 sm:w-56">
+            <Search
+              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <input
+              ref={inputRef}
+              type="search"
+              aria-label="Search writing"
+              placeholder="Search..."
+              value={input}
+              maxLength={MAX_QUERY_LENGTH + 20}
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              onChange={(event) => {
+                if (composing) return;
+                onInput(event.target.value);
+              }}
+              onCompositionStart={() => setComposing(true)}
+              onCompositionEnd={(event) => {
+                setComposing(false);
+                onInput(event.target.value);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") clear();
+              }}
+              className={cnInput(!!input)}
+            />
+            {input ? (
+              <button
+                type="button"
+                aria-label="Clear search"
+                onClick={clear}
+                className="absolute right-2 top-1/2 grid size-6 -translate-y-1/2 cursor-pointer place-items-center rounded-md text-muted-foreground transition-colors duration-100 hover:bg-muted/60 hover:text-foreground"
+              >
+                <X className="size-3.5" aria-hidden="true" />
+              </button>
+            ) : null}
+          </div>
+        </div>
+        {intro ? <p className="page-intro">{intro}</p> : null}
+      </header>
 
       {!hasQuery ? (
         <BlogList posts={posts} />

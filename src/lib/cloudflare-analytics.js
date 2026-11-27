@@ -518,6 +518,11 @@ export function resolveTrafficMetric(value) {
 }
 
 export async function getSiteTraffic(days = DEFAULT_DAYS) {
+  // Dev always serves the bundled snapshot — before the cache lookup, since
+  // the persistent cache may hold live payloads from earlier runs.
+  if (process.env.NODE_ENV !== "production") {
+    return getSnapshotTraffic(days);
+  }
   try {
     const cached = await getCachedLiveTraffic(days)();
     return filterRealPages(cached);

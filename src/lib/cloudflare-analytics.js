@@ -107,6 +107,29 @@ function normalizeRows(items, dimensionKey, limit, { formatLabel, filterRow } = 
     .slice(0, limit);
 }
 
+// Only actual site pages belong in the Content breakdown — exclude internal
+// Next.js routes (/_next/image, /_next/static/…), Cloudflare infrastructure
+// paths (/cdn-cgi/rum, challenges) and asset/file extensions.
+const INTERNAL_PATH_RE = /^\/(_next|cdn-cgi)\b/;
+const FILE_EXT_RE = /\.[a-z0-9]{1,8}$/i;
+
+function isRealPagePath(label) {
+  return (
+    typeof label === "string" &&
+    label.startsWith("/") &&
+    !label.startsWith("//") &&
+    !INTERNAL_PATH_RE.test(label) &&
+    !FILE_EXT_RE.test(label)
+  );
+}
+
+// Applied outside the cached producer so the Content list never shows
+// non-page paths even when a cache layer serves a pre-filter payload.
+function filterRealPages(traffic) {
+  if (!traffic?.pages) return traffic;
+  return { ...traffic, pages: traffic.pages.filter((row) => isRealPagePath(row.label)) };
+}
+
 export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilIso, days = DEFAULT_DAYS }) {
   const dates = buildUtcDateRange(sinceIso, untilIso);
 
@@ -220,8 +243,11 @@ export function normalizeTrafficPayload({ zone, referrers = [], sinceIso, untilI
   // visits) before applying its display limit, so leaders per metric survive.
   const countries = allCountries;
 
-  // Top paths
-  const pages = normalizeRows(zone?.pages, "clientRequestPath", 10);
+  // Top paths — real pages only (see isRealPagePath); query fetches extra
+  // candidates so filtering down to 10 pages still leaves a full list.
+  const pages = normalizeRows(zone?.pages, "clientRequestPath", 10, {
+    filterRow: ({ label }) => isRealPagePath(label),
+  });
 
   // Top operating systems & browsers
   const operatingSystems = normalizeRows(zone?.operatingSystems, "userAgentOS", 8, {
@@ -333,7 +359,7 @@ const ZONE_TRAFFIC_QUERY = `
           sum { visits }
           dimensions { clientCountryName }
         }
-        pages: httpRequestsAdaptiveGroups(limit: 15, filter: $filter, orderBy: [count_DESC]) {
+        pages: httpRequestsAdaptiveGroups(limit: 40, filter: $filter, orderBy: [count_DESC]) {
           count
           sum { visits }
           dimensions { clientRequestPath }
@@ -446,7 +472,7 @@ async function fetchLiveCloudflareTraffic(days = DEFAULT_DAYS) {
 function getCachedLiveTraffic(days) {
   return unstable_cache(
     async () => fetchLiveCloudflareTraffic(days),
-    ["cloudflare-zone-traffic-v4", `days-${days}`],
+    ["cloudflare-zone-traffic-v5", `days-${days}`],
     { revalidate: REVALIDATE_SECONDS, tags: ["cloudflare-site-traffic"] },
   );
 }
@@ -458,8 +484,9 @@ export function resolveTrafficRange(value) {
 
 export async function getSiteTraffic(days = DEFAULT_DAYS) {
   try {
-    return await getCachedLiveTraffic(days)();
+    const cached = await getCachedLiveTraffic(days)();
+    return filterRealPages(cached);
   } catch {
-    return getSnapshotTraffic(days);
+    return filterRealPages(getSnapshotTraffic(days));
   }
 }

@@ -90,6 +90,11 @@ function fillForValue(value, max, palette) {
   return palette[level];
 }
 
+function metricValueOf(row, metric) {
+  if (!row) return 0;
+  return (metric === "visitors" ? row.visitors : row.pageviews) || 0;
+}
+
 function MapScaleLegend({ palette, max }) {
   return (
     <div
@@ -111,9 +116,9 @@ function MapScaleLegend({ palette, max }) {
   );
 }
 
-function MapTooltip({ active, total }) {
+function MapTooltip({ active, metric, total }) {
   if (!active) return null;
-  const activeValue = active.pageviews;
+  const activeValue = metricValueOf(active, metric);
   const share = total > 0 && activeValue > 0 ? ((activeValue / total) * 100).toFixed(1) : null;
   const flag = countryFlag(active.code);
 
@@ -172,7 +177,7 @@ function resolvePointerTooltip(event, wrapNode, byCode) {
   };
 }
 
-export function TrafficWorldMap({ countries = [], total = 0 }) {
+export function TrafficWorldMap({ countries = [], metric = "pageviews", total = 0 }) {
   const wrapRef = useRef(null);
   const { resolvedTheme } = useTheme();
   const [active, setActive] = useState(null);
@@ -193,8 +198,8 @@ export function TrafficWorldMap({ countries = [], total = 0 }) {
   );
 
   const max = useMemo(
-    () => countries.reduce((current, row) => Math.max(current, row.pageviews ?? 0), 0),
-    [countries],
+    () => countries.reduce((current, row) => Math.max(current, metricValueOf(row, metric)), 0),
+    [countries, metric],
   );
 
   if (!max) {
@@ -241,7 +246,7 @@ export function TrafficWorldMap({ countries = [], total = 0 }) {
                   <Geography
                     key={geography.rsmKey}
                     geography={geography}
-                    fill={fillForValue(row?.pageviews ?? 0, max, palette)}
+                    fill={fillForValue(metricValueOf(row, metric), max, palette)}
                     stroke={borderStroke}
                     strokeWidth={0.6}
                     data-map-code={code}
@@ -255,7 +260,7 @@ export function TrafficWorldMap({ countries = [], total = 0 }) {
       </ComposableMap>
 
       <MapScaleLegend palette={palette} max={max} />
-      <MapTooltip active={active} total={total} />
+      <MapTooltip active={active} metric={metric} total={total} />
     </div>
   );
 }

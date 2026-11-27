@@ -1,9 +1,9 @@
 "use client";
 
-import { ArrowUpRight, ChevronDown } from "lucide-react";
+import { ArrowUpRight, Check, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   DeviceStackedChartSlot,
   TrafficLineChartSlot,
@@ -37,29 +37,121 @@ function CloudflareLogo({ className }) {
   );
 }
 
-function RangeSelect({ days }) {
+function MetricModeToggle({ metric, onChange }) {
+  return (
+    <div
+      className="inline-flex h-7 items-center rounded-lg border border-border/75 bg-muted/35 p-0.5"
+      role="group"
+      aria-label="Breakdown metric"
+    >
+      {[
+        { id: "pageviews", label: "Requests" },
+        { id: "visitors", label: "Visits" },
+      ].map((option) => {
+        const active = metric === option.id;
+        return (
+          <button
+            key={option.id}
+            type="button"
+            aria-pressed={active}
+            onClick={() => onChange(option.id)}
+            className={cn(
+              "h-6 cursor-pointer rounded-md px-2.5 text-xs font-medium transition-colors duration-100",
+              active
+                ? "bg-background text-foreground shadow-2xs"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function RangeDropdown({ days }) {
   const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef(null);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const onPointerDown = (event) => {
+      if (!rootRef.current?.contains(event.target)) setOpen(false);
+    };
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
 
   return (
-    <span className="relative inline-flex items-center">
-      <select
-        value={String(days)}
-        onChange={(event) => router.push(`/stats?range=${event.target.value}`, { scroll: false })}
-        aria-label="Traffic time range"
-        className="h-7 cursor-pointer appearance-none rounded-lg border border-border/75 bg-muted/35 pl-2.5 pr-7 text-xs font-medium text-foreground outline-none transition-colors duration-100 hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-clay-500/40"
+    <div className="relative" ref={rootRef}>
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => setOpen((value) => !value)}
+        className={cn(
+          "inline-flex h-7 cursor-pointer items-center gap-1.5 rounded-lg border border-border/75 bg-muted/35 pl-2.5 pr-2 text-xs font-medium text-foreground transition-colors duration-100 hover:bg-muted/60",
+          open && "bg-muted/60",
+        )}
       >
-        {TRAFFIC_RANGES.map((value) => (
-          <option key={value} value={value}>
-            Last {value} days
-          </option>
-        ))}
-      </select>
-      <ChevronDown
-        className="pointer-events-none absolute right-2 size-3.5 text-muted-foreground"
-        aria-hidden="true"
-      />
-    </span>
+        Last {days} days
+        <ChevronDown
+          className={cn(
+            "size-3.5 text-muted-foreground transition-transform duration-150",
+            open && "rotate-180",
+          )}
+          aria-hidden="true"
+        />
+      </button>
+
+      {open ? (
+        <div
+          role="listbox"
+          aria-label="Traffic time range"
+          className="absolute right-0 top-8 z-40 w-36 animate-in fade-in-0 zoom-in-95 overflow-hidden rounded-lg border border-border/75 bg-background p-1 shadow-xl duration-100"
+        >
+          {TRAFFIC_RANGES.map((value) => (
+            <button
+              key={value}
+              type="button"
+              role="option"
+              aria-selected={value === days}
+              onClick={() => {
+                setOpen(false);
+                if (value !== days) {
+                  router.push(`/stats?range=${value}`, { scroll: false });
+                }
+              }}
+              className={cn(
+                "flex h-8 w-full cursor-pointer items-center justify-between rounded-md px-2.5 text-xs transition-colors duration-100",
+                value === days
+                  ? "bg-muted/60 font-medium text-foreground"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+              )}
+            >
+              Last {value} days
+              {value === days ? (
+                <Check className="size-3.5 text-clay-500 dark:text-clay-400" aria-hidden="true" />
+              ) : null}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
   );
+}
+
+function rowMetricValue(row, metric) {
+  return (metric === "visitors" ? row.visitors : row.pageviews) ?? 0;
 }
 
 function MetricTab({ active, onClick, children }) {
@@ -80,8 +172,8 @@ function MetricTab({ active, onClick, children }) {
   );
 }
 
-function ProportionalRowItem({ row, denominator, iconKind, linkInternalPaths, monoLabel }) {
-  const val = row.pageviews ?? 0;
+function ProportionalRowItem({ row, metric, denominator, iconKind, linkInternalPaths, monoLabel }) {
+  const val = rowMetricValue(row, metric);
   const pct = denominator > 0 ? Math.min((val / denominator) * 100, 100) : 0;
   const isInternalLink =
     linkInternalPaths &&
@@ -138,6 +230,7 @@ function ProportionalRowItem({ row, denominator, iconKind, linkInternalPaths, mo
 
 function ProportionalRows({
   rows,
+  metric = "pageviews",
   totalForShare = 0,
   iconKind,
   linkInternalPaths = false,
@@ -154,10 +247,10 @@ function ProportionalRows({
   }
 
   const sorted = [...rows].sort(
-    (a, b) => (b.pageviews ?? 0) - (a.pageviews ?? 0) || (b.visitors ?? 0) - (a.visitors ?? 0),
+    (a, b) => rowMetricValue(b, metric) - rowMetricValue(a, metric) || b.pageviews - a.pageviews,
   );
   const ranked = typeof limit === "number" ? sorted.slice(0, limit) : sorted;
-  const maxVal = Math.max(...ranked.map((row) => row.pageviews ?? 0), 1);
+  const maxVal = Math.max(...ranked.map((row) => rowMetricValue(row, metric)), 1);
   const denominator = totalForShare > 0 ? totalForShare : maxVal;
 
   return (
@@ -166,6 +259,7 @@ function ProportionalRows({
         <ProportionalRowItem
           key={`${row.key ?? row.label}-${row.label}`}
           row={row}
+          metric={metric}
           denominator={denominator}
           iconKind={iconKind}
           linkInternalPaths={linkInternalPaths}
@@ -176,7 +270,7 @@ function ProportionalRows({
   );
 }
 
-function GeographySection({ countryCount, mapCountries, countries, total }) {
+function GeographySection({ countryCount, mapCountries, countries, metric, activeTotal }) {
   return (
     <div className="space-y-2.5">
       <div className="flex items-baseline justify-between gap-3">
@@ -189,17 +283,17 @@ function GeographySection({ countryCount, mapCountries, countries, total }) {
       </div>
 
       <div className="overflow-visible rounded-xl border border-border/75 bg-card">
-        <TrafficWorldMapSlot countries={mapCountries} total={total} />
+        <TrafficWorldMapSlot countries={mapCountries} metric={metric} total={activeTotal} />
 
         {countries?.length ? (
           <div className="border-t border-border/60 p-4">
             <div className="mb-1 flex items-center justify-between">
               <h4 className="text-xs font-medium text-muted-foreground">Top countries</h4>
-              <span className="font-mono text-[11px] text-muted-foreground">requests</span>
             </div>
             <ProportionalRows
               rows={countries}
-              totalForShare={total}
+              metric={metric}
+              totalForShare={activeTotal}
               iconKind="country"
               limit={10}
             />
@@ -210,7 +304,7 @@ function GeographySection({ countryCount, mapCountries, countries, total }) {
   );
 }
 
-function ContentSection({ pages, referrers, total }) {
+function ContentSection({ pages, referrers, metric, activeTotal }) {
   const [tab, setTab] = useState("pages");
   const hasReferrers = Array.isArray(referrers) && referrers.length > 0;
   const showingReferrers = tab === "referrers" && hasReferrers;
@@ -222,9 +316,6 @@ function ContentSection({ pages, referrers, total }) {
     <div className="space-y-2.5">
       <div className="flex items-baseline justify-between gap-3">
         <h3 className="text-sm font-medium text-foreground">Content</h3>
-        <span className="font-mono text-[11px] text-muted-foreground">
-          {showingReferrers ? "beacon referrals" : "requests"}
-        </span>
       </div>
 
       <div>
@@ -242,7 +333,8 @@ function ContentSection({ pages, referrers, total }) {
         {showingReferrers ? (
           <ProportionalRows
             rows={referrers}
-            totalForShare={referrers.reduce((sum, r) => sum + (r.pageviews ?? 0), 0)}
+            metric={metric}
+            totalForShare={referrers.reduce((sum, r) => sum + rowMetricValue(r, metric), 0)}
             iconKind="referrer"
             monoLabel
             minHeight={listMinHeight}
@@ -250,7 +342,8 @@ function ContentSection({ pages, referrers, total }) {
         ) : (
           <ProportionalRows
             rows={pages}
-            totalForShare={total}
+            metric={metric}
+            totalForShare={activeTotal}
             linkInternalPaths
             monoLabel
             minHeight={listMinHeight}
@@ -261,16 +354,13 @@ function ContentSection({ pages, referrers, total }) {
   );
 }
 
-function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, total }) {
+function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, metric, activeTotal }) {
   return (
-    <div className="space-y-3">
-      <div className="flex items-baseline justify-between gap-3">
-        <h3 className="text-sm font-medium text-foreground">Technology</h3>
-        <span className="font-mono text-[11px] text-muted-foreground">requests</span>
-      </div>
+    <div className="space-y-4">
+      <h3 className="text-sm font-medium text-foreground">Technology</h3>
 
       {deviceSeries?.length > 1 ? (
-        <DeviceStackedChartSlot data={deviceSeries} devices={devices} />
+        <DeviceStackedChartSlot data={deviceSeries} devices={devices} metric={metric} />
       ) : null}
 
       <div className="grid grid-cols-1 gap-x-10 gap-y-4 sm:grid-cols-2">
@@ -278,14 +368,14 @@ function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, 
           <div className="mb-1 flex items-center justify-between">
             <h4 className="text-xs font-medium text-muted-foreground">Top browsers</h4>
           </div>
-          <ProportionalRows rows={browsers} totalForShare={total} iconKind="browser" />
+          <ProportionalRows rows={browsers} metric={metric} totalForShare={activeTotal} iconKind="browser" />
         </div>
 
         <div>
           <div className="mb-1 flex items-center justify-between">
             <h4 className="text-xs font-medium text-muted-foreground">Top operating systems</h4>
           </div>
-          <ProportionalRows rows={operatingSystems} totalForShare={total} iconKind="os" />
+          <ProportionalRows rows={operatingSystems} metric={metric} totalForShare={activeTotal} iconKind="os" />
         </div>
       </div>
     </div>
@@ -293,6 +383,8 @@ function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, 
 }
 
 export function SiteTraffic({ traffic }) {
+  const [metric, setMetric] = useState("pageviews");
+
   if (!traffic?.totals) {
     return (
       <section className="space-y-3">
@@ -319,6 +411,8 @@ export function SiteTraffic({ traffic }) {
     days,
   } = traffic;
 
+  const activeTotal = metric === "visitors" ? totals.visitors : totals.pageviews;
+
   return (
     <section className="space-y-8">
       <div className="space-y-2">
@@ -327,7 +421,10 @@ export function SiteTraffic({ traffic }) {
             <h2 className="section-heading">Site traffic</h2>
             <span className="font-mono text-xs text-muted-foreground">last {days} days</span>
           </div>
-          <RangeSelect days={days} />
+          <div className="flex items-center gap-2">
+            <MetricModeToggle metric={metric} onChange={setMetric} />
+            <RangeDropdown days={days} />
+          </div>
         </div>
 
         <p className="text-sm text-muted-foreground">
@@ -342,7 +439,7 @@ export function SiteTraffic({ traffic }) {
             Cloudflare Web Analytics
             <ArrowUpRight className="size-3.5" aria-hidden="true" />
           </a>
-          . Hover any breakdown for visits alongside requests.
+          .
         </p>
       </div>
 
@@ -352,17 +449,19 @@ export function SiteTraffic({ traffic }) {
         countryCount={countryCount}
         mapCountries={mapCountries}
         countries={countries}
-        total={totals.pageviews}
+        metric={metric}
+        activeTotal={activeTotal}
       />
 
-      <ContentSection pages={pages} referrers={referrers} total={totals.pageviews} />
+      <ContentSection pages={pages} referrers={referrers} metric={metric} activeTotal={activeTotal} />
 
       <TechnologySection
         deviceSeries={deviceSeries}
         devices={devices}
         browsers={browsers}
         operatingSystems={operatingSystems}
-        total={totals.pageviews}
+        metric={metric}
+        activeTotal={activeTotal}
       />
     </section>
   );

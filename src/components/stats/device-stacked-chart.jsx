@@ -45,19 +45,25 @@ function formatFullDate(isoDate) {
   }).format(date);
 }
 
-function formatDeviceTooltip(params, data, visibleDevices, selectedDevice, isDark) {
+function rowMetricOf(row, metric) {
+  return (metric === "visitors" ? row.visitors : row.pageviews) ?? 0;
+}
+
+function formatDeviceTooltip(params, data, visibleDevices, selectedDevice, metric, isDark) {
   const first = Array.isArray(params) ? params[0] : params;
   const idx = first?.dataIndex;
   const point = idx != null ? data[idx] : null;
   if (!point) return "";
 
-  const dayTotal = visibleDevices.reduce((sum, dev) => sum + (Number(point[dev.key]) || 0), 0);
+  const dataKeyFor = (dev) => (metric === "visitors" ? `${dev.key}Visitors` : dev.key);
+  const dayTotal = visibleDevices.reduce((sum, dev) => sum + (Number(point[dataKeyFor(dev)]) || 0), 0);
 
   const rows = visibleDevices
     .map((dev) => {
-      const val = Number(point[dev.key]) || 0;
+      const val = Number(point[dataKeyFor(dev)]) || 0;
       if (val <= 0 && selectedDevice && selectedDevice !== dev.key) return "";
-      const visits = Number(point[`${dev.key}Visitors`]) || 0;
+      const other = metric === "visitors" ? Number(point[dev.key]) || 0 : Number(point[`${dev.key}Visitors`]) || 0;
+      const otherLabel = metric === "visitors" ? "requests" : "visits";
       const color = isDark ? dev.dark : dev.light;
       const pct = dayTotal > 0 ? Math.round((val / dayTotal) * 100) : 0;
       const dimmed = selectedDevice && selectedDevice !== dev.key ? "opacity:0.4;" : "";
@@ -69,7 +75,7 @@ function formatDeviceTooltip(params, data, visibleDevices, selectedDevice, isDar
           </span>
           <span style="font-family:var(--font-geist-mono),monospace;font-variant-numeric:tabular-nums;">
             ${formatExact(val)} <span style="opacity:0.55;">(${pct}%)</span>
-            <span style="opacity:0.55;font-size:10px;">· ${formatExact(visits)} visits</span>
+            <span style="opacity:0.55;font-size:10px;">· ${formatExact(other)} ${otherLabel}</span>
           </span>
         </div>`;
     })
@@ -85,10 +91,11 @@ function formatDeviceTooltip(params, data, visibleDevices, selectedDevice, isDar
     </div>`;
 }
 
-function buildDeviceBarOption(data, visibleDevices, selectedDevice, isDark) {
+function buildDeviceBarOption(data, visibleDevices, selectedDevice, metric, isDark) {
   const axisColor = isDark ? "rgba(161, 161, 170, 0.85)" : "rgba(113, 113, 122, 0.9)";
   const gridColor = isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(24, 24, 27, 0.08)";
   const categories = data.map((row) => row.date);
+  const dataKeyFor = (dev) => (metric === "visitors" ? `${dev.key}Visitors` : dev.key);
 
   const activeDevices = selectedDevice
     ? visibleDevices.filter((d) => d.key === selectedDevice)
@@ -104,7 +111,7 @@ function buildDeviceBarOption(data, visibleDevices, selectedDevice, isDark) {
       stack: "devices",
       barMaxWidth: 14,
       barCategoryGap: "34%",
-      data: data.map((row) => Number(row[device.key]) || 0),
+      data: data.map((row) => Number(row[dataKeyFor(device)]) || 0),
       itemStyle: {
         color,
         borderRadius: isTop ? [2, 2, 0, 0] : [0, 0, 0, 0],
@@ -164,13 +171,13 @@ function buildDeviceBarOption(data, visibleDevices, selectedDevice, isDark) {
         shadowStyle: { color: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)" },
       },
       formatter: (params) =>
-        formatDeviceTooltip(params, data, visibleDevices, selectedDevice, isDark),
+        formatDeviceTooltip(params, data, visibleDevices, selectedDevice, metric, isDark),
     },
     series,
   };
 }
 
-export function DeviceStackedChart({ data = [], devices = [] }) {
+export function DeviceStackedChart({ data = [], devices = [], metric = "pageviews" }) {
   const mountRef = useRef(null);
   const chartRef = useRef(null);
   const { resolvedTheme } = useTheme();
@@ -181,10 +188,10 @@ export function DeviceStackedChart({ data = [], devices = [] }) {
   const totalsByDevice = useMemo(() => {
     const map = new Map();
     for (const d of devices) {
-      map.set(d.key, d.pageviews ?? 0);
+      map.set(d.key, rowMetricOf(d, metric));
     }
     return map;
-  }, [devices]);
+  }, [devices, metric]);
 
   const visibleDevices = useMemo(
     () =>
@@ -217,13 +224,13 @@ export function DeviceStackedChart({ data = [], devices = [] }) {
     const instance = chartRef.current;
     if (!instance || !data.length) return;
     instance.setOption(
-      buildDeviceBarOption(data, visibleDevices, selectedDevice, isDark),
+      buildDeviceBarOption(data, visibleDevices, selectedDevice, metric, isDark),
       { notMerge: true },
     );
-  }, [data, visibleDevices, selectedDevice, isDark]);
+  }, [data, visibleDevices, selectedDevice, metric, isDark]);
 
   return (
-    <div className="rounded-xl border border-border/75 bg-card p-4">
+    <div className="rounded-xl border border-border/75 bg-card p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h4 className="text-xs font-medium text-foreground">Device types over time</h4>
 
@@ -260,7 +267,7 @@ export function DeviceStackedChart({ data = [], devices = [] }) {
         </div>
       </div>
 
-      <div ref={mountRef} className="mt-3 h-48 w-full" />
+      <div ref={mountRef} className="mt-4 h-72 w-full" />
     </div>
   );
 }

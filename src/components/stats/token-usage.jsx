@@ -53,28 +53,6 @@ function formatRange(range) {
   return `${formatDayMonth(start)} – ${formatDayMonthYear(end)}`;
 }
 
-function formatUpdatedAt(value) {
-  if (!value) return null;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
-  const ist = new Intl.DateTimeFormat("en-IN", {
-    timeZone: "Asia/Kolkata",
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  }).format(date);
-  const diffMs = Date.now() - date.getTime();
-  const diffHours = diffMs / 36e5;
-  let freshness = "";
-  if (diffHours < 1) freshness = "· just now";
-  else if (diffHours < 24) freshness = `· ${Math.round(diffHours)}h ago`;
-  else freshness = `· ${Math.round(diffHours / 24)}d ago`;
-  return `${ist} IST ${freshness}`;
-}
-
 export function TokscaleLink({ children = "Tokscale" }) {
   return (
     <a
@@ -152,17 +130,12 @@ export function TokenUsage({ insights }) {
     chart,
     biggestDay,
     dateRange,
-    updatedAt,
-    submissionFreshness,
     clients,
     modelCount,
     zeroCostTokens,
     zeroCostModelCount,
-    isStale,
   } = insights;
   const range = formatRange(dateRange);
-  const updatedLabel = formatUpdatedAt(updatedAt ?? submissionFreshness?.lastUpdated);
-  const isStaleState = Boolean(isStale) || (updatedAt ? Date.now() - new Date(updatedAt).getTime() > 12 * 36e5 : false);
 
   return (
     <section className="space-y-8">
@@ -220,30 +193,6 @@ export function TokenUsage({ insights }) {
           hint={biggestDay ? formatDayMonthYear(new Date(biggestDay.date)) : null}
         />
       </div>
-
-      {updatedLabel ? (
-        <div
-          className={
-            isStaleState
-              ? "rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200"
-              : "rounded-lg border border-border/60 bg-muted/30 px-3 py-2 text-xs text-muted-foreground"
-          }
-        >
-          <span className="font-medium">{isStaleState ? "Sync delayed · " : "Synced · "}</span>
-          <span className="font-mono tabular-nums">{updatedLabel}</span>
-          {clients?.length ? (
-            <span className="ml-2 hidden sm:inline">· {clients.join(", ")}</span>
-          ) : null}
-          <span className="ml-2">
-            · <TokscaleLink>open on Tokscale</TokscaleLink>
-          </span>
-          {zeroCostTokens > 0 ? (
-            <span className="mt-1 block font-mono text-[11px] leading-relaxed opacity-80">
-              Cost excludes {formatTokens(zeroCostTokens)} unpriced/free tokens; days with unpriced usage are marked cost-incomplete so spend is not lowered.
-            </span>
-          ) : null}
-        </div>
-      ) : null}
 
       {chart?.rows?.length ? <TokenChart chart={chart} /> : null}
 

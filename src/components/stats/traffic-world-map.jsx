@@ -124,7 +124,7 @@ function MapTooltip({ active, metric, total }) {
 
   return (
     <div
-      className="pointer-events-none absolute z-30 min-w-42 -translate-x-1/2 rounded-lg border border-white/12 bg-[#141418]/95 px-3 py-2 text-xs text-[#fafafa] shadow-xl backdrop-blur-md"
+      className="pointer-events-none absolute z-30 min-w-42 -translate-x-1/2 animate-in fade-in-0 zoom-in-95 rounded-lg border border-white/12 bg-[#141418]/95 px-3 py-2 text-xs text-[#fafafa] shadow-xl backdrop-blur-md duration-100"
       style={{ left: `${active.x}px`, top: `${active.y}px` }}
     >
       <div className="mb-1.5 flex items-center justify-between gap-3 border-b border-white/10 pb-1 font-medium">

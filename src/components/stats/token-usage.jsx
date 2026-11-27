@@ -95,19 +95,8 @@ function ModelList({ models }) {
                     {share.toFixed(1)}%
                   </span>
                 </div>
-                <div className="flex shrink-0 items-center gap-3">
-                  <div
-                    className="hidden h-1.5 w-20 overflow-hidden rounded-full bg-muted sm:block"
-                    aria-hidden="true"
-                  >
-                    {share > 0 ? (
-                      <span
-                        className="block h-full min-w-[4px] rounded-full bg-[#2563eb] dark:bg-clay-500"
-                        style={{ width: `${share}%` }}
-                      />
-                    ) : null}
-                  </div>
-                  <span className="shrink-0 font-mono text-xs text-muted-foreground tabular-nums">
+                <div className="flex shrink-0 items-center">
+                  <span className="font-mono text-xs text-muted-foreground tabular-nums">
                     {formatTokens(model.tokens)} · {formatCost(model.cost)}
                   </span>
                 </div>

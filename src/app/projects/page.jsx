@@ -6,9 +6,9 @@ import { projects } from "@/lib/project-data";
 import { createMetadata } from "@/lib/metadata";
 
 export const metadata = createMetadata({
-  title: "Projects",
+  title: "AI, SaaS & Developer Projects",
   description:
-    "Production SaaS products, AI systems, desktop apps, and Next.js engineering projects built by Falak Gala — including OutCallerAI, Waitlyze, Glyph, and DMS.",
+    "Explore production AI systems, SaaS products, desktop apps, and Next.js projects built by software and AI engineer Falak Gala.",
   path: "/projects",
 });
 

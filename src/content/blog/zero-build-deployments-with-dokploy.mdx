@@ -20,7 +20,7 @@ GitHub Actions builds our containers on GitHub-hosted runners, GitHub Container 
 
 ![OutCallerAI deployment architecture: GitHub Actions builds images, GHCR stores them, and Dokploy deploys them on a DigitalOcean Droplet](/writing/outcaller-dokploy-architecture.png)
 
-### The Stack at a Glance
+## The Stack at a Glance
 
 The production system has a few deliberately separate responsibilities:
 
@@ -38,7 +38,7 @@ The production system has a few deliberately separate responsibilities:
 
 This boundary is important. The Droplet is replaceable compute; PostgreSQL is a managed stateful service. A broken application deployment should not put the primary database volume at risk.
 
-### What Happens After a Push to `main`
+## What Happens After a Push to `main`
 
 The entire production path lives in a GitHub Actions workflow. It can also be started manually, and release tags use the same image-building path.
 
@@ -70,7 +70,7 @@ Each image also receives the moving `production` tag. The commit-based tag is an
 
 Only after all three builds succeed does the deployment job call the Dokploy webhooks. If a build fails, production is never asked to redeploy. GitHub's concurrency setting also cancels an older in-progress run when a newer commit arrives on the same ref, preventing obsolete releases from racing the latest one.
 
-### Why Nothing Builds on the Production Server
+## Why Nothing Builds on the Production Server
 
 Many self-hosted deployments clone the repository and run `docker build` directly on the VPS. That works, but it makes production responsible for two jobs: building software and serving traffic.
 
@@ -93,7 +93,7 @@ This gives us several practical advantages:
 
 It also means the Dockerfiles are part of the product. They define a reproducible runtime rather than acting as server-specific setup scripts.
 
-### How the Next.js Image Is Built
+## How the Next.js Image Is Built
 
 The web Dockerfile is a multi-stage build. The dependency stage installs the locked pnpm graph, the builder stage compiles Next.js, and the final stage contains only the standalone production output and static assets.
 
@@ -103,7 +103,7 @@ The final container runs as a non-root user and exposes a health endpoint. Dokpl
 
 One Next.js container can serve several hostnames. Traefik forwards the original `Host` header, and Next.js uses it to distinguish the public site, dashboard, admin interface, and documentation. We do not need four copies of the same web image just to support four subdomains.
 
-### How the FastAPI API Is Deployed
+## How the FastAPI API Is Deployed
 
 The API has its own multi-stage Python image. The builder installs dependencies from the locked `uv` environment and generates the Prisma client. The runtime stage copies the prepared virtual environment and application code, then starts Uvicorn on the API's internal port.
 
@@ -111,7 +111,7 @@ The API entrypoint runs database migrations before starting Uvicorn. Only the AP
 
 The database connection string is a runtime secret configured in Dokploy. It points to DigitalOcean Managed PostgreSQL with TLS enabled; it is never baked into the image or committed to the repository.
 
-### How Prefect Fits Into the Same Platform
+## How Prefect Fits Into the Same Platform
 
 Prefect is split into a control plane and execution processes:
 
@@ -125,7 +125,7 @@ The worker image includes the Prefect flow definitions and worker dependencies, 
 
 Prefect's [work-pool model](https://docs.prefect.io/v3/concepts/work-pools) is a good fit here because deployments target a pool while workers provide the execution capacity. Adding capacity or separating a noisy workload can be as simple as adding another worker service in Dokploy with the appropriate pool.
 
-### Why PostgreSQL Is Managed, Not Another Container
+## Why PostgreSQL Is Managed, Not Another Container
 
 It is tempting to put PostgreSQL on the same Droplet because Dokploy can run databases too. For production application data, I prefer a different failure boundary.
 
@@ -135,7 +135,7 @@ That choice costs more than a local PostgreSQL container, but it reduces the ope
 
 There is still work to do correctly: restrict trusted sources, use TLS verification where supported, keep credentials in Dokploy, configure clients to reconnect across brief maintenance or failover events, and test restores. “Managed” removes undifferentiated maintenance; it does not remove application-level responsibility.
 
-### DNS, Traefik, and HTTPS
+## DNS, Traefik, and HTTPS
 
 Traefik is the single public entry point on the Droplet. It listens on ports 80 and 443 and routes requests by hostname:
 
@@ -152,7 +152,7 @@ Dokploy then generates the Traefik router and service configuration. With HTTPS 
 
 The container port used by a Dokploy domain is an internal routing destination, not a host port exposed directly to the internet. That lets the web and API remain behind Traefik while only the proxy owns the public edge.
 
-### Why Dokploy Works Well on a VPS
+## Why Dokploy Works Well on a VPS
 
 Dokploy gives us a useful middle ground between raw Docker commands and a fully managed platform:
 
@@ -167,7 +167,7 @@ Dokploy gives us a useful middle ground between raw Docker commands and a fully 
 
 The biggest benefit is not that Dokploy makes infrastructure disappear. It makes the common operations visible and repeatable without preventing us from dropping down to Docker, Traefik, or the server when needed.
 
-### Adding Another Project or Self-Hosted Tool
+## Adding Another Project or Self-Hosted Tool
 
 Once the Droplet, Dokploy, registry, and DNS pattern exist, adding a project is pleasantly repetitive:
 
@@ -183,7 +183,7 @@ For common self-hosted software, even that can be shortened. Dokploy maintains a
 
 This makes the same VPS useful beyond the primary product. Internal tools, status pages, analytics, webhook utilities, and experiments can live as separate Dokploy projects with their own domains and environment variables. Resource limits and isolation still matter because a single VPS remains a shared failure domain, but the setup cost for each new service becomes much smaller.
 
-### Tradeoffs I Would Keep in Mind
+## Tradeoffs I Would Keep in Mind
 
 This architecture is intentionally pragmatic, not infinitely scalable.
 
@@ -198,7 +198,7 @@ This architecture is intentionally pragmatic, not infinitely scalable.
 
 If the product outgrows one host, the pre-built-image approach gives us a good migration path. The CI artifacts can be deployed to a larger Dokploy cluster or another container orchestrator without redesigning the application build.
 
-### The Part I Like Most
+## The Part I Like Most
 
 The final workflow is easy to explain to the team:
 
@@ -208,7 +208,9 @@ That sentence hides a lot of careful setup, including multi-stage images, secret
 
 For a product made of Next.js, FastAPI, and Prefect, Dokploy on a DigitalOcean Droplet has been a strong balance of cost, control, and developer experience. We keep the flexibility of containers, avoid builds on the production server, and get a platform-like deployment workflow from infrastructure we can still understand and operate ourselves.
 
-### References
+The next step in this deployment story is [moving high-frequency checks and image builds from GitHub Actions to self-hosted Woodpecker CI](/writing/stop-paying-for-github-actions-self-host-woodpecker-ci).
+
+## References
 
 - [Dokploy applications and deployment webhooks](https://docs.dokploy.com/docs/core/applications)
 - [Dokploy domains and generated Traefik configuration](https://docs.dokploy.com/docs/core/domains)

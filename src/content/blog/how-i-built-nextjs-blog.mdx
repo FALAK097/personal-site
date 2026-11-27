@@ -17,7 +17,7 @@ As the posts became longer and more visual, that small pipeline started accumula
 
 The blog still uses MDX, but it no longer uses the traditional hand-rolled `fs` + `gray-matter` + runtime MDX approach described in the first version of this article. **Today, Fumadocs MDX powers the content layer**, while the surrounding interface remains part of my custom portfolio design.
 
-### What the Blog Uses Today
+## What the Blog Uses Today
 
 The current stack is intentionally split into two layers:
 
@@ -35,7 +35,7 @@ The current stack is intentionally split into two layers:
 
 Fumadocs is being used as a **headless content engine** here. I did not replace the portfolio with a documentation template. The navbar, footer, clay color palette, animations, article cards, share controls, and previous/next navigation are still custom.
 
-### Why I Moved Away from the Original Pipeline
+## Why I Moved Away from the Original Pipeline
 
 The first implementation relied on `fs.readFileSync`, `gray-matter`, and `next-mdx-remote-client` at request/build time, with RSS written out as a side effect. As the writing system grew, I moved to a typed build-time pipeline:
 
@@ -59,7 +59,7 @@ I wanted the next version to provide:
 
 Fumadocs provided those capabilities without forcing me to give up the portfolio's visual identity.
 
-### Defining a Typed Content Collection
+## Defining a Typed Content Collection
 
 Every post now belongs to a Fumadocs collection. Its frontmatter is checked against a schema during development and production builds:
 
@@ -81,7 +81,7 @@ export const blog = defineDocs({
 
 This turns frontmatter from an informal convention into a contract. A missing description or invalid date is discovered during a build rather than after publishing.
 
-### One Source for Every Blog Feature
+## One Source for Every Blog Feature
 
 The generated collection is passed into the Fumadocs source loader:
 
@@ -105,7 +105,7 @@ The same source now drives:
 
 Previously, the RSS file was written as a side effect while rendering the blog page. It now has a dedicated `/rss.xml` route that reads the same published-post collection as everything else.
 
-### Rendering Compiled MDX
+## Rendering Compiled MDX
 
 Fumadocs compiles the article and exposes it as a React component. The article route only needs to find the page and render its body:
 
@@ -125,7 +125,7 @@ return (
 
 Compilation, heading extraction, syntax highlighting, and structured content data are handled before the article reaches the page component.
 
-### Keeping the Design Custom
+## Keeping the Design Custom
 
 The biggest migration requirement was visual continuity. I wanted the stronger content foundation, not a generic documentation layout.
 
@@ -143,7 +143,7 @@ The custom MDX component map still controls:
 
 That means an ordinary Markdown table can become horizontally scrollable on a phone, while a Graph RAG architecture diagram can be displayed as a captioned, full-width figure.
 
-### A Generated, Responsive Table of Contents
+## A Generated, Responsive Table of Contents
 
 Fumadocs extracts the heading tree from every post. The article shell uses that data to render:
 
@@ -155,7 +155,7 @@ Fumadocs extracts the heading tree from every post. The article shell uses that 
 
 This matters for long technical posts. Readers can understand the structure immediately and jump directly to the part they need.
 
-### Code Blocks in Light and Dark Themes
+## Code Blocks in Light and Dark Themes
 
 Code highlighting uses separate Shiki themes:
 
@@ -170,7 +170,7 @@ rehypeCodeOptions: {
 
 The surrounding code-block component adds consistent spacing, horizontal scrolling, rounded borders, and a copy action. Theme-aware token variables keep the light theme genuinely light instead of placing every code example inside a dark rectangle.
 
-### Preparing for Visual Engineering Articles
+## Preparing for Visual Engineering Articles
 
 The migration also introduced small MDX primitives for content that plain Markdown does not express well:
 
@@ -192,7 +192,7 @@ The migration also introduced small MDX primitives for content that plain Markdo
 
 Videos use native browser controls, inline playback, lazy metadata loading, and optional poster images. Figures include meaningful alternative text and captions. These components let an article remain readable in MDX while producing a polished result in the browser.
 
-### Static Generation and SEO
+## Static Generation and SEO
 
 Each published article is generated as a static page. Fumadocs supplies the available slugs, and Next.js pre-renders them during the production build.
 
@@ -206,7 +206,7 @@ Every article receives:
 
 Unknown slugs now return a proper not-found page instead of allowing a filesystem read to throw unexpectedly.
 
-### What I Learned from the Migration
+## What I Learned from the Migration
 
 The original implementation was not a mistake. It was the right amount of infrastructure when the blog was small, and building it taught me how the MDX pipeline fits together.
 
@@ -214,7 +214,7 @@ The useful lesson is knowing when a simple internal abstraction has started beco
 
 Fumadocs now owns content compilation, validation, and structured page data. Next.js owns routing, metadata, and static generation. The portfolio's components own presentation. Those boundaries are much easier to extend than the original all-in-one loader.
 
-### Conclusion
+## Conclusion
 
 The blog remains local, version-controlled, and MDX-based, but its publishing system is now powered by Fumadocs rather than a traditional runtime MDX pipeline.
 

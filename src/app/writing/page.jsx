@@ -6,9 +6,9 @@ import { getAllPosts } from "@/lib/blog-source";
 import { createMetadata } from "@/lib/metadata";
 
 export const metadata = createMetadata({
-  title: "Writing",
+  title: "Engineering Writing: AI, Next.js & Infrastructure",
   description:
-    "Engineering notes, production RAG case studies, Next.js guides, and self-hosting deep dives by Falak Gala.",
+    "Practical engineering guides on production AI, Graph RAG, Next.js, self-hosting, developer tools, and infrastructure by Falak Gala.",
   path: "/writing",
 });
 

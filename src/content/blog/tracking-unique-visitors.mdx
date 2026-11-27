@@ -21,13 +21,13 @@ You don't need cookies, tracking banners, or client-side analytics bloat for a u
   caption="The counter generates an anonymous browser UUID once, validates it on the server, and deduplicates repeat refreshes with zero cookies."
 />
 
-### Installation
+## Installation
 
 ```bash
 npm install @upstash/redis zod
 ```
 
-### File Structure
+## File Structure
 
 ```plaintext
 ├── app/
@@ -38,7 +38,7 @@ npm install @upstash/redis zod
 ├── .env
 ```
 
-### Architecture Overview
+## Architecture Overview
 
 The system has three pieces:
 
@@ -46,7 +46,7 @@ The system has three pieces:
 2. **Server Action** — validates the ID with Zod and caches the count for 60 seconds
 3. **Client Component** — creates a one-time `crypto.randomUUID()` and displays the total in the footer
 
-### Setting Up Upstash Redis
+## Setting Up Upstash Redis
 
 Create a Redis database at Upstash and add these variables to `.env`:
 
@@ -55,7 +55,7 @@ UPSTASH_REDIS_REST_URL=your-redis-url
 UPSTASH_REDIS_REST_TOKEN=your-redis-token
 ```
 
-### Server Action Logic
+## Server Action Logic
 
 This function tracks visitors by storing a **visitorId** in a Redis Set and caching the count for performance.
 
@@ -103,7 +103,7 @@ export async function uniqueVisitors(visitorId) {
 }
 ```
 
-### Client Component
+## Client Component
 
 Generate a stable visitor ID using localStorage:
 
@@ -119,7 +119,7 @@ function generateVisitorId() {
 }
 ```
 
-### Displaying the Visitor Count
+## Displaying the Visitor Count
 
 Here is the important logic to call the server action and show the count:
 
@@ -151,19 +151,19 @@ export function MyComponent() {
 }
 ```
 
-### Performance Considerations
+## Performance Considerations
 
 1. Caching with Redis: results are stored for 60 seconds to reduce read operations
 2. Visitor ID with localStorage: prevents double-counting repeat visits
 3. Redis Sets: efficient structure for tracking uniqueness
 
-### Privacy Considerations
+## Privacy Considerations
 
 1. No personal identifiers are stored
 2. Random UUIDs are used for anonymity
 3. No tracking scripts, cookies, or analytics SDKs
 
-### 2026 Update: Migrating This Counter to Cloudflare D1
+## 2026 Update: Migrating This Counter to Cloudflare D1
 
 When I later moved this site onto Cloudflare Workers via OpenNext, I replaced Upstash Redis with **Cloudflare D1** so the visitor counter, AI cache, and contact rate limiter all stayed on Cloudflare-owned infrastructure without an extra external data dependency.
 
@@ -188,8 +188,10 @@ export async function trackUniqueVisitor(visitorId) {
 
 The client component and Server Action signature (`uniqueVisitors(visitorId)`) stayed completely unchanged—only the backing storage swapped from Upstash Redis to SQLite in D1.
 
-### Wrap-Up
+## Wrap-Up
 
 Whether you back it with **Upstash Redis** on Vercel or **Cloudflare D1** on Workers, keeping visitor counting inside one Zod-validated Server Action gives you a zero-cookie counter without third-party scripts or consent banners.
 
 [View the full site source on GitHub](https://github.com/Falak097/Personal-Site)
+
+For the publishing system around this counter, read [how I built this portfolio blog with Next.js and Fumadocs](/writing/how-i-built-nextjs-blog).

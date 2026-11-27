@@ -30,7 +30,7 @@ export default async function StatsPage({ searchParams }) {
   return (
     <div className="page-shell">
       <Navbar />
-      <main className="page-main-wide">
+      <main className="page-main">
         <div className="space-y-16">
           <PageHeader
             title="stats"

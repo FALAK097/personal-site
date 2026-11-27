@@ -309,14 +309,9 @@ export function TrafficLineChart({ data = [], totals }) {
   ];
 
   return (
-    <div className="rounded-xl border border-border/75 bg-card p-4">
+    <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="space-y-0.5">
-          <h3 className="text-xs font-medium text-foreground">Traffic over time</h3>
-          <p className="text-[11px] text-muted-foreground">
-            Dashed edges indicate partial UTC days at window boundaries
-          </p>
-        </div>
+        <h3 className="text-sm font-medium text-foreground">Traffic over time</h3>
 
         <div
           className="flex flex-wrap items-center gap-1 rounded-lg border border-border/75 bg-muted/35 p-0.5"
@@ -357,7 +352,7 @@ export function TrafficLineChart({ data = [], totals }) {
         </div>
       </div>
 
-      <div ref={mountRef} className="mt-3 h-56 w-full" />
+      <div ref={mountRef} className="mt-4 h-80 w-full" />
     </div>
   );
 }

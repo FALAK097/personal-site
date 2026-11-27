@@ -8,7 +8,7 @@ const TokenAreaChart = dynamic(
   () => import("./token-area-chart").then((module) => module.TokenAreaChart),
   {
     ssr: false,
-    loading: () => <div className="h-80 w-full animate-pulse rounded-lg bg-muted/40" />,
+    loading: () => <div className="h-96 w-full animate-pulse" />,
   },
 );
 
@@ -22,9 +22,9 @@ export function TokenChart({ chart }) {
   const isCost = mode === "cost";
 
   return (
-    <div className="rounded-xl border border-border/75 bg-card p-4">
+    <div>
       <div className="flex items-center justify-between gap-4">
-        <h3 className="text-xs font-medium text-foreground">Weekly tokens &amp; cost</h3>
+        <h3 className="text-sm font-medium text-foreground">Weekly tokens &amp; cost</h3>
         <div
           className="flex h-7 items-center rounded-lg border border-border/75 bg-muted/35 p-0.5"
           role="group"
@@ -48,7 +48,7 @@ export function TokenChart({ chart }) {
           ))}
         </div>
       </div>
-      <div className="mt-2 h-80">
+      <div className="mt-4 h-96">
         <TokenAreaChart
           data={isCost ? chart.costRows : chart.rows}
           clientData={isCost ? chart.clientCostRows : chart.clientRows}

@@ -29,16 +29,14 @@ export default async function StatsPage({ searchParams }) {
   return (
     <div className="page-shell">
       <Navbar />
-      <main className="page-main">
-        <div className="space-y-10">
+      <main className="page-main-wide">
+        <div className="space-y-16">
           <PageHeader
             title="stats"
             intro="A running snapshot of my AI token usage and this site's traffic."
           />
           <TokenUsage insights={insights} />
-          <div className="border-t border-border/70 pt-10">
-            <SiteTraffic traffic={traffic} />
-          </div>
+          <SiteTraffic traffic={traffic} />
         </div>
       </main>
       <Footer />

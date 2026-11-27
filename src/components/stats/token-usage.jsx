@@ -69,7 +69,7 @@ export function TokscaleLink({ children = "Tokscale" }) {
 
 function Metric({ label, value, hint }) {
   return (
-    <div className="rounded-xl border border-border/75 bg-card p-4">
+    <div>
       <p className="font-mono text-lg font-medium tabular-nums tracking-tight">{value}</p>
       <p className="mt-1 text-xs text-muted-foreground">{label}</p>
       {hint ? <p className="mt-0.5 font-mono text-[11px] text-muted-foreground/80">{hint}</p> : null}
@@ -83,31 +83,30 @@ function ModelList({ models }) {
   return (
     <div className="space-y-2.5">
       <h3 className="text-sm font-medium">Models</h3>
-      <div className="rounded-xl border border-border/75 bg-card p-4">
-        <div className="divide-y divide-border/60">
-          {models.map((model) => {
-            const share = Math.min(Math.max(model.share ?? model.tokenShare ?? 0, 0), 100);
-            return (
-              <div
-                key={model.name}
-                className="flex items-center justify-between gap-3 py-2.5 first:pt-0.5 last:pb-0.5"
-              >
-                <div className="flex min-w-0 flex-1 items-center gap-2.5">
-                  <BrandMark brand={brandForModel(model.name)} />
-                  <span className="truncate font-mono text-xs text-foreground">{model.name}</span>
-                  <span className="shrink-0 font-mono text-[11px] text-muted-foreground/75 tabular-nums">
-                    {share.toFixed(1)}%
-                  </span>
-                </div>
-                <div className="flex shrink-0 items-center">
-                  <span className="font-mono text-xs text-muted-foreground tabular-nums">
-                    {formatTokens(model.tokens)} · {formatCost(model.cost)}
-                  </span>
-                </div>
+      <div className="divide-y divide-border/60">
+        {models.map((model) => {
+          const share = Math.min(Math.max(model.share ?? model.tokenShare ?? 0, 0), 100);
+          return (
+            <div
+              key={model.name}
+              title={`${model.name} — ${formatTokens(model.tokens)} tokens · ${formatCost(model.cost)}`}
+              className="flex items-center justify-between gap-3 py-3 first:pt-1 last:pb-1"
+            >
+              <div className="flex min-w-0 flex-1 items-center gap-2.5">
+                <BrandMark brand={brandForModel(model.name)} />
+                <span className="truncate font-mono text-[13px] text-foreground">{model.name}</span>
+                <span className="shrink-0 font-mono text-[11px] text-muted-foreground/75 tabular-nums">
+                  {share.toFixed(1)}%
+                </span>
               </div>
-            );
-          })}
-        </div>
+              <div className="flex shrink-0 items-center">
+                <span className="font-mono text-[13px] text-muted-foreground tabular-nums">
+                  {formatTokens(model.tokens)} · {formatCost(model.cost)}
+                </span>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -169,7 +168,7 @@ export function TokenUsage({ insights }) {
         </p>
       ) : null}
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
         <Metric label="Total tokens" value={formatTokens(stats.totalTokens)} />
         <Metric
           label="Total cost"

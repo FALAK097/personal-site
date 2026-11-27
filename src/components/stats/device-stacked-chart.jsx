@@ -230,9 +230,9 @@ export function DeviceStackedChart({ data = [], devices = [], metric = "pageview
   }, [data, visibleDevices, selectedDevice, metric, isDark]);
 
   return (
-    <div className="rounded-xl border border-border/75 bg-card p-5">
+    <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h4 className="text-xs font-medium text-foreground">Device types over time</h4>
+        <h3 className="text-sm font-medium text-foreground">Device types over time</h3>
 
         <div className="flex flex-wrap items-center gap-3" role="group" aria-label="Filter by device">
           {visibleDevices.map((dev) => {

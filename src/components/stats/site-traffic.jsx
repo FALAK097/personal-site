@@ -272,7 +272,7 @@ function ProportionalRows({
 
 function GeographySection({ countryCount, mapCountries, countries, metric, activeTotal }) {
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-4">
       <div className="flex items-baseline justify-between gap-3">
         <h3 className="text-sm font-medium text-foreground">Geography</h3>
         {countryCount ? (
@@ -282,24 +282,22 @@ function GeographySection({ countryCount, mapCountries, countries, metric, activ
         ) : null}
       </div>
 
-      <div className="overflow-visible rounded-xl border border-border/75 bg-card">
-        <TrafficWorldMapSlot countries={mapCountries} metric={metric} total={activeTotal} />
+      <TrafficWorldMapSlot countries={mapCountries} metric={metric} total={activeTotal} />
 
-        {countries?.length ? (
-          <div className="border-t border-border/60 p-4">
-            <div className="mb-1 flex items-center justify-between">
-              <h4 className="text-xs font-medium text-muted-foreground">Top countries</h4>
-            </div>
-            <ProportionalRows
-              rows={countries}
-              metric={metric}
-              totalForShare={activeTotal}
-              iconKind="country"
-              limit={10}
-            />
+      {countries?.length ? (
+        <div>
+          <div className="mb-1 flex items-center justify-between">
+            <h4 className="text-xs font-medium text-muted-foreground">Top countries</h4>
           </div>
-        ) : null}
-      </div>
+          <ProportionalRows
+            rows={countries}
+            metric={metric}
+            totalForShare={activeTotal}
+            iconKind="country"
+            limit={10}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -313,7 +311,7 @@ function ContentSection({ pages, referrers, metric, activeTotal }) {
   const listMinHeight = pages?.length >= 10 ? "460px" : undefined;
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-4">
       <div className="flex items-baseline justify-between gap-3">
         <h3 className="text-sm font-medium text-foreground">Content</h3>
       </div>

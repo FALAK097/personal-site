@@ -6,9 +6,7 @@ const LazyTrafficLineChart = dynamic(
   () => import("./traffic-line-chart").then((module) => module.TrafficLineChart),
   {
     ssr: false,
-    loading: () => (
-      <div className="h-74 w-full animate-pulse rounded-xl border border-border/70 bg-muted/30" />
-    ),
+    loading: () => <div className="h-80 w-full animate-pulse" />,
   },
 );
 
@@ -16,9 +14,7 @@ const LazyDeviceStackedChart = dynamic(
   () => import("./device-stacked-chart").then((module) => module.DeviceStackedChart),
   {
     ssr: false,
-    loading: () => (
-      <div className="h-64 w-full animate-pulse rounded-xl border border-border/70 bg-muted/30" />
-    ),
+    loading: () => <div className="h-72 w-full animate-pulse" />,
   },
 );
 

@@ -423,6 +423,38 @@ async function postGraphql(token, query, variables) {
   return payload?.data;
 }
 
+// Exclude common bot / CLI / scripted user agents — this plan has no
+// server-side bot classification, so request-level UA patterns are the
+// strongest available filter.
+const BOT_UA_EXCLUSIONS = [
+  "%bot%",
+  "%crawl%",
+  "%curl%",
+  "%headless%",
+  "%HeadlessChrome%",
+  "%spider%",
+  "%python%",
+  "%wget%",
+  "%Go-http-client%",
+  "%okhttp%",
+  "%axios%",
+  "%scrapy%",
+  "%phantomjs%",
+];
+
+function buildZoneFilter(sinceIso, untilIso) {
+  return {
+    datetime_geq: sinceIso,
+    datetime_lt: untilIso,
+    clientRequestHTTPHost: DEFAULT_HOST,
+    // Mirror the dashboard's Traffic panel: only end-user requests, excluding
+    // health checks and Worker/subrequest traffic.
+    requestSource: "eyeball",
+    // Drop scripted / bot traffic from every metric.
+    AND: BOT_UA_EXCLUSIONS.map((pattern) => ({ userAgent_notlike: pattern })),
+  };
+}
+
 async function fetchLiveCloudflareTraffic(days = DEFAULT_DAYS) {
   const { token, zoneId, accountId } = await resolveCloudflareCredentials();
   if (!token) {
@@ -434,14 +466,7 @@ async function fetchLiveCloudflareTraffic(days = DEFAULT_DAYS) {
   const sinceIso = since.toISOString();
   const untilIso = until.toISOString();
 
-  const filter = {
-    datetime_geq: sinceIso,
-    datetime_lt: untilIso,
-    clientRequestHTTPHost: DEFAULT_HOST,
-    // Mirror the dashboard's Traffic panel: only end-user requests, excluding
-    // health checks and Worker/subrequest traffic.
-    requestSource: "eyeball",
-  };
+  const filter = buildZoneFilter(sinceIso, untilIso);
 
   const [zoneResult, rumResult] = await Promise.allSettled([
     postGraphql(token, ZONE_TRAFFIC_QUERY, { zoneTag: zoneId, filter }),
@@ -472,7 +497,7 @@ async function fetchLiveCloudflareTraffic(days = DEFAULT_DAYS) {
 function getCachedLiveTraffic(days) {
   return unstable_cache(
     async () => fetchLiveCloudflareTraffic(days),
-    ["cloudflare-zone-traffic-v5", `days-${days}`],
+    ["cloudflare-zone-traffic-v7", `days-${days}`],
     { revalidate: REVALIDATE_SECONDS, tags: ["cloudflare-site-traffic"] },
   );
 }

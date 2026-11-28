@@ -224,17 +224,16 @@ function RowTooltip({ row, anchor, metric, shareTotals, iconKind }) {
 
 const TOOLTIP_HALF_WIDTH = 92;
 
-function ProportionalRowItem({ row, metric, shareTotals, iconKind, linkInternalPaths, monoLabel }) {
+function ProportionalRowItem({ row, metric, stackScale, shareTotals, iconKind, linkInternalPaths, monoLabel }) {
   const rowRef = useRef(null);
   const [anchor, setAnchor] = useState(null);
 
-  // Bars always show both series: blue = share of all requests, teal = share
-  // of all visits. Each segment is measured against its own series total so
-  // the widths stay meaningful no matter which metric is active.
-  const requestsPct =
-    shareTotals.pageviews > 0 ? Math.min((row.pageviews / shareTotals.pageviews) * 100, 100) : 0;
-  const visitsPct =
-    shareTotals.visitors > 0 ? Math.min((row.visitors / shareTotals.visitors) * 100, 100) : 0;
+  // One stacked bar per row: blue segment = requests, teal segment = visits,
+  // laid end to end and scaled against the largest combined value in the
+  // list, so both series stay visible no matter which metric is active.
+  const scale = stackScale > 0 ? stackScale : 1;
+  const requestsPct = Math.min((row.pageviews / scale) * 100, 100);
+  const visitsPct = Math.min((row.visitors / scale) * 100, 100);
   const val = rowMetricValue(row, metric);
 
   const updateAnchor = (event) => {
@@ -288,23 +287,22 @@ function ProportionalRowItem({ row, metric, shareTotals, iconKind, linkInternalP
         )}
       </div>
 
-      <div className="w-[26%] min-w-16 max-w-56 shrink-0" aria-hidden="true">
-        <div className="h-1 overflow-hidden rounded-full bg-muted">
-          {requestsPct > 0 ? (
-            <span
-              className="block h-full rounded-full bg-[#2563eb] transition-[width] duration-300 dark:bg-[#5cbeff]"
-              style={{ width: `${requestsPct}%`, minWidth: requestsPct > 0 ? "3px" : undefined }}
-            />
-          ) : null}
-        </div>
-        <div className="mt-[3px] h-1 overflow-hidden rounded-full bg-muted">
-          {visitsPct > 0 ? (
-            <span
-              className="block h-full rounded-full bg-[#0d9488] transition-[width] duration-300 dark:bg-[#2dd4bf]"
-              style={{ width: `${visitsPct}%`, minWidth: visitsPct > 0 ? "3px" : undefined }}
-            />
-          ) : null}
-        </div>
+      <div
+        className="flex h-1.5 w-[26%] min-w-16 max-w-56 shrink-0 overflow-hidden rounded-full bg-muted"
+        aria-hidden="true"
+      >
+        {requestsPct > 0 ? (
+          <span
+            className="h-full rounded-full bg-[#2563eb] transition-[width] duration-300 dark:bg-[#5cbeff]"
+            style={{ width: `${requestsPct}%`, minWidth: "3px" }}
+          />
+        ) : null}
+        {visitsPct > 0 ? (
+          <span
+            className="ml-[2px] h-full rounded-full bg-[#0d9488] transition-[width] duration-300 dark:bg-[#2dd4bf]"
+            style={{ width: `${visitsPct}%`, minWidth: "3px" }}
+          />
+        ) : null}
       </div>
 
       <span className="w-14 shrink-0 text-right font-mono text-[13px] font-medium text-foreground tabular-nums">
@@ -338,6 +336,9 @@ function ProportionalRows({
     (a, b) => rowMetricValue(b, metric) - rowMetricValue(a, metric) || b.pageviews - a.pageviews,
   );
   const ranked = typeof limit === "number" ? sorted.slice(0, limit) : sorted;
+  // Scale for the stacked request+visit bars: the largest combined value in
+  // the list fills the track, everything else renders proportionally.
+  const stackScale = ranked.reduce((max, row) => Math.max(max, row.pageviews + row.visitors), 0);
 
   return (
     <div className="divide-y divide-border/60" style={minHeight ? { minHeight } : undefined}>
@@ -346,6 +347,7 @@ function ProportionalRows({
           key={`${row.key ?? row.label}-${row.label}`}
           row={row}
           metric={metric}
+          stackScale={stackScale}
           shareTotals={shareTotals}
           iconKind={iconKind}
           linkInternalPaths={linkInternalPaths}

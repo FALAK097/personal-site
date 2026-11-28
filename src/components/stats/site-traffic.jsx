@@ -3,7 +3,8 @@
 import { ArrowUpRight, Check, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";import {
+import { useEffect, useRef, useState } from "react";
+import {
   DeviceStackedChartSlot,
   TrafficLineChartSlot,
   TrafficWorldMapSlot,
@@ -39,7 +40,7 @@ function CloudflareLogo({ className }) {
 function MetricModeToggle({ metric, onChange }) {
   return (
     <div
-      className="inline-flex h-7 items-center rounded-lg border border-border/75 bg-muted/35 p-0.5"
+      className="inline-flex h-7 shrink-0 items-center rounded-lg border border-border/75 bg-muted/35 p-0.5"
       role="group"
       aria-label="Breakdown metric"
     >
@@ -91,7 +92,7 @@ function RangeDropdown({ days }) {
   }, [open]);
 
   return (
-    <div className="relative" ref={rootRef}>
+    <div className="relative shrink-0" ref={rootRef}>
       <button
         type="button"
         aria-haspopup="listbox"
@@ -171,9 +172,82 @@ function MetricTab({ active, onClick, children }) {
   );
 }
 
-function ProportionalRowItem({ row, metric, denominator, iconKind, linkInternalPaths, monoLabel }) {
+// Dark hover tooltip shared by every breakdown row — same styling as the
+// world map tooltip: header row with icon/label + share, then Requests and
+// Visits with their series colors.
+function RowTooltip({ row, anchor, metric, shareTotals, iconKind }) {
+  if (!anchor || !row) return null;
+
+  const activeValue = rowMetricValue(row, metric);
+  const activeTotal = metric === "visitors" ? shareTotals.visitors : shareTotals.pageviews;
+  const share =
+    activeTotal > 0 && activeValue > 0 ? ((activeValue / activeTotal) * 100).toFixed(1) : null;
+
+  return (
+    <div
+      className="pointer-events-none absolute z-30 min-w-44 max-w-64 animate-in fade-in-0 zoom-in-95 rounded-lg border border-white/12 bg-[#141418]/95 px-3 py-2 text-xs text-[#fafafa] shadow-xl backdrop-blur-md duration-100"
+      style={{
+        left: `${anchor.x}px`,
+        top: `${anchor.y}px`,
+        transform: "translate(-50%, calc(-100% - 10px))",
+      }}
+      role="tooltip"
+    >
+      <div className="mb-1.5 flex items-center justify-between gap-3 border-b border-white/10 pb-1 font-medium">
+        <span className="flex min-w-0 items-center gap-1.5">
+          {iconKind ? <DimensionIcon kind={iconKind} item={row} /> : null}
+          <span className="truncate">{row.label}</span>
+        </span>
+        {share ? (
+          <span className="font-mono text-[10px] text-white/60 tabular-nums">{share}%</span>
+        ) : null}
+      </div>
+      <div className="space-y-1 font-mono text-[11px]">
+        <div className="flex items-center justify-between gap-4">
+          <span className="flex items-center gap-1.5 text-white/70">
+            <span className="size-2 rounded-full bg-[#3b8ef3]" aria-hidden="true" />
+            Requests
+          </span>
+          <span className="font-medium tabular-nums">{formatExact(row.pageviews)}</span>
+        </div>
+        <div className="flex items-center justify-between gap-4">
+          <span className="flex items-center gap-1.5 text-white/70">
+            <span className="size-2 rounded-full bg-[#2dd4bf]" aria-hidden="true" />
+            Visits
+          </span>
+          <span className="font-medium tabular-nums">{formatExact(row.visitors)}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const TOOLTIP_HALF_WIDTH = 92;
+
+function ProportionalRowItem({ row, metric, shareTotals, iconKind, linkInternalPaths, monoLabel }) {
+  const rowRef = useRef(null);
+  const [anchor, setAnchor] = useState(null);
+
+  // Bars always show both series: blue = share of all requests, teal = share
+  // of all visits. Each segment is measured against its own series total so
+  // the widths stay meaningful no matter which metric is active.
+  const requestsPct =
+    shareTotals.pageviews > 0 ? Math.min((row.pageviews / shareTotals.pageviews) * 100, 100) : 0;
+  const visitsPct =
+    shareTotals.visitors > 0 ? Math.min((row.visitors / shareTotals.visitors) * 100, 100) : 0;
   const val = rowMetricValue(row, metric);
-  const pct = denominator > 0 ? Math.min((val / denominator) * 100, 100) : 0;
+
+  const updateAnchor = (event) => {
+    const rect = rowRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    setAnchor({
+      x: Math.min(Math.max(x, TOOLTIP_HALF_WIDTH), Math.max(rect.width - TOOLTIP_HALF_WIDTH, TOOLTIP_HALF_WIDTH)),
+      y: Math.min(Math.max(y, 12), Math.max(rect.height, 12)),
+    });
+  };
+
   const isInternalLink =
     linkInternalPaths &&
     typeof row.label === "string" &&
@@ -194,8 +268,14 @@ function ProportionalRowItem({ row, metric, denominator, iconKind, linkInternalP
 
   return (
     <div
-      title={`${row.label} — ${formatExact(row.pageviews)} requests · ${formatExact(row.visitors)} visits`}
-      className="group flex items-center gap-4 py-3 first:pt-1 last:pb-1"
+      ref={rowRef}
+      onPointerEnter={updateAnchor}
+      onPointerMove={updateAnchor}
+      onPointerDown={updateAnchor}
+      onPointerLeave={() => setAnchor(null)}
+      onPointerCancel={() => setAnchor(null)}
+      aria-label={`${row.label}: ${formatExact(row.pageviews)} requests, ${formatExact(row.visitors)} visits`}
+      className="group relative flex cursor-pointer items-center gap-4 py-3 first:pt-1 last:pb-1"
     >
       <div className="flex min-w-0 flex-1 items-center gap-2.5">
         {iconKind ? <DimensionIcon kind={iconKind} item={row} /> : null}
@@ -208,21 +288,30 @@ function ProportionalRowItem({ row, metric, denominator, iconKind, linkInternalP
         )}
       </div>
 
-      <div
-        className="h-1.5 w-[26%] min-w-16 max-w-56 shrink-0 overflow-hidden rounded-full bg-muted"
-        aria-hidden="true"
-      >
-        {val > 0 ? (
-          <span
-            className="block h-full min-w-[5px] rounded-full bg-[#2563eb] transition-[width] duration-300 dark:bg-clay-500"
-            style={{ width: `${pct}%` }}
-          />
-        ) : null}
+      <div className="w-[26%] min-w-16 max-w-56 shrink-0" aria-hidden="true">
+        <div className="h-1 overflow-hidden rounded-full bg-muted">
+          {requestsPct > 0 ? (
+            <span
+              className="block h-full rounded-full bg-[#2563eb] transition-[width] duration-300 dark:bg-[#5cbeff]"
+              style={{ width: `${requestsPct}%`, minWidth: requestsPct > 0 ? "3px" : undefined }}
+            />
+          ) : null}
+        </div>
+        <div className="mt-[3px] h-1 overflow-hidden rounded-full bg-muted">
+          {visitsPct > 0 ? (
+            <span
+              className="block h-full rounded-full bg-[#0d9488] transition-[width] duration-300 dark:bg-[#2dd4bf]"
+              style={{ width: `${visitsPct}%`, minWidth: visitsPct > 0 ? "3px" : undefined }}
+            />
+          ) : null}
+        </div>
       </div>
 
       <span className="w-14 shrink-0 text-right font-mono text-[13px] font-medium text-foreground tabular-nums">
         {formatCompact(val)}
       </span>
+
+      <RowTooltip row={row} anchor={anchor} metric={metric} shareTotals={shareTotals} iconKind={iconKind} />
     </div>
   );
 }
@@ -230,7 +319,7 @@ function ProportionalRowItem({ row, metric, denominator, iconKind, linkInternalP
 function ProportionalRows({
   rows,
   metric = "pageviews",
-  totalForShare = 0,
+  shareTotals = { pageviews: 0, visitors: 0 },
   iconKind,
   linkInternalPaths = false,
   monoLabel = false,
@@ -240,7 +329,7 @@ function ProportionalRows({
   if (!rows?.length) {
     return (
       <p className="py-6 text-center text-xs text-muted-foreground">
-        No data recorded for this dimension in the last 30 days.
+        No data recorded for this dimension in the selected range.
       </p>
     );
   }
@@ -249,8 +338,6 @@ function ProportionalRows({
     (a, b) => rowMetricValue(b, metric) - rowMetricValue(a, metric) || b.pageviews - a.pageviews,
   );
   const ranked = typeof limit === "number" ? sorted.slice(0, limit) : sorted;
-  const maxVal = Math.max(...ranked.map((row) => rowMetricValue(row, metric)), 1);
-  const denominator = totalForShare > 0 ? totalForShare : maxVal;
 
   return (
     <div className="divide-y divide-border/60" style={minHeight ? { minHeight } : undefined}>
@@ -259,7 +346,7 @@ function ProportionalRows({
           key={`${row.key ?? row.label}-${row.label}`}
           row={row}
           metric={metric}
-          denominator={denominator}
+          shareTotals={shareTotals}
           iconKind={iconKind}
           linkInternalPaths={linkInternalPaths}
           monoLabel={monoLabel}
@@ -269,7 +356,22 @@ function ProportionalRows({
   );
 }
 
-function GeographySection({ countryCount, mapCountries, countries, metric, activeTotal }) {
+// Shared wrapper so every list block gets the same breathing room above and
+// below its heading.
+function BreakdownBlock({ title, trailing, children }) {
+  return (
+    <div className="pt-8 sm:pt-10">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h4 className="text-xs font-medium text-muted-foreground">{title}</h4>
+        {trailing ?? null}
+      </div>
+      {children}
+      <div className="pb-2" aria-hidden="true" />
+    </div>
+  );
+}
+
+function GeographySection({ countryCount, mapCountries, metric, activeTotal }) {
   return (
     <div className="space-y-4">
       <div className="flex items-baseline justify-between gap-3">
@@ -282,26 +384,11 @@ function GeographySection({ countryCount, mapCountries, countries, metric, activ
       </div>
 
       <TrafficWorldMapSlot countries={mapCountries} metric={metric} total={activeTotal} />
-
-      {countries?.length ? (
-        <div className="pt-6">
-          <div className="mb-1 flex items-center justify-between">
-            <h4 className="text-xs font-medium text-muted-foreground">Top countries</h4>
-          </div>
-          <ProportionalRows
-            rows={countries}
-            metric={metric}
-            totalForShare={activeTotal}
-            iconKind="country"
-            limit={10}
-          />
-        </div>
-      ) : null}
     </div>
   );
 }
 
-function ContentSection({ pages, referrers, metric, activeTotal }) {
+function TopPagesSection({ pages, referrers, metric, shareTotals }) {
   const [tab, setTab] = useState("pages");
   const hasReferrers = Array.isArray(referrers) && referrers.length > 0;
   const showingReferrers = tab === "referrers" && hasReferrers;
@@ -309,49 +396,52 @@ function ContentSection({ pages, referrers, metric, activeTotal }) {
   // layout from jumping when switching between tabs.
   const listMinHeight = pages?.length >= 10 ? "460px" : undefined;
 
+  // Referrers are ranked within their own pool, so their bars/tooltip shares
+  // measure against the referrer totals instead of the whole site.
+  const referrerTotals = hasReferrers
+    ? {
+        pageviews: referrers.reduce((sum, r) => sum + (r.pageviews ?? 0), 0),
+        visitors: referrers.reduce((sum, r) => sum + (r.visitors ?? 0), 0),
+      }
+    : shareTotals;
+
   return (
-    <div className="space-y-4">
-      <div className="flex items-baseline justify-between gap-3">
-        <h3 className="text-sm font-medium text-foreground">Content</h3>
-      </div>
+    <BreakdownBlock title="Top pages">
+      {hasReferrers ? (
+        <div className="mb-2 inline-flex h-7 items-center rounded-lg border border-border/75 bg-muted/35 p-0.5">
+          <MetricTab active={tab === "pages"} onClick={() => setTab("pages")}>
+            Pages
+          </MetricTab>
+          <MetricTab active={tab === "referrers"} onClick={() => setTab("referrers")}>
+            Referrers
+          </MetricTab>
+        </div>
+      ) : null}
 
-      <div>
-        {hasReferrers ? (
-          <div className="mb-1.5 inline-flex h-8 items-center rounded-lg border border-border/75 bg-muted/35 p-0.5">
-            <MetricTab active={tab === "pages"} onClick={() => setTab("pages")}>
-              Top paths
-            </MetricTab>
-            <MetricTab active={tab === "referrers"} onClick={() => setTab("referrers")}>
-              Referrers
-            </MetricTab>
-          </div>
-        ) : null}
-
-        {showingReferrers ? (
-          <ProportionalRows
-            rows={referrers}
-            metric={metric}
-            totalForShare={referrers.reduce((sum, r) => sum + rowMetricValue(r, metric), 0)}
-            iconKind="referrer"
-            monoLabel
-            minHeight={listMinHeight}
-          />
-        ) : (
-          <ProportionalRows
-            rows={pages}
-            metric={metric}
-            totalForShare={activeTotal}
-            linkInternalPaths
-            monoLabel
-            minHeight={listMinHeight}
-          />
-        )}
-      </div>
-    </div>
+      {showingReferrers ? (
+        <ProportionalRows
+          rows={referrers}
+          metric={metric}
+          shareTotals={referrerTotals}
+          iconKind="referrer"
+          monoLabel
+          minHeight={listMinHeight}
+        />
+      ) : (
+        <ProportionalRows
+          rows={pages}
+          metric={metric}
+          shareTotals={shareTotals}
+          linkInternalPaths
+          monoLabel
+          minHeight={listMinHeight}
+        />
+      )}
+    </BreakdownBlock>
   );
 }
 
-function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, metric, activeTotal }) {
+function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, metric, shareTotals }) {
   return (
     <div className="space-y-4">
       <h3 className="text-sm font-medium text-foreground">Technology</h3>
@@ -360,20 +450,14 @@ function TechnologySection({ deviceSeries, devices, browsers, operatingSystems, 
         <DeviceStackedChartSlot data={deviceSeries} devices={devices} metric={metric} />
       ) : null}
 
-      <div className="grid grid-cols-1 gap-x-10 gap-y-4 pt-6 sm:grid-cols-2">
-        <div>
-          <div className="mb-1 flex items-center justify-between">
-            <h4 className="text-xs font-medium text-muted-foreground">Top browsers</h4>
-          </div>
-          <ProportionalRows rows={browsers} metric={metric} totalForShare={activeTotal} iconKind="browser" />
-        </div>
+      <div className="grid grid-cols-1 gap-x-10 sm:grid-cols-2">
+        <BreakdownBlock title="Top browsers">
+          <ProportionalRows rows={browsers} metric={metric} shareTotals={shareTotals} iconKind="browser" />
+        </BreakdownBlock>
 
-        <div>
-          <div className="mb-1 flex items-center justify-between">
-            <h4 className="text-xs font-medium text-muted-foreground">Top operating systems</h4>
-          </div>
-          <ProportionalRows rows={operatingSystems} metric={metric} totalForShare={activeTotal} iconKind="os" />
-        </div>
+        <BreakdownBlock title="Top operating systems">
+          <ProportionalRows rows={operatingSystems} metric={metric} shareTotals={shareTotals} iconKind="os" />
+        </BreakdownBlock>
       </div>
     </div>
   );
@@ -414,16 +498,16 @@ export function SiteTraffic({ traffic, metric = "pageviews" }) {
     router.push(`/stats?range=${days}&metric=${value}`, { scroll: false });
   };
 
+  // Series totals drive the dual-color bars and tooltip shares.
+  const shareTotals = { pageviews: totals.pageviews, visitors: totals.visitors };
+
   const activeTotal = metric === "visitors" ? totals.visitors : totals.pageviews;
 
   return (
     <section className="space-y-8">
       <div className="space-y-2">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-baseline gap-3">
-            <h2 className="section-heading">Site traffic</h2>
-            <span className="font-mono text-xs text-muted-foreground">last {days} days</span>
-          </div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="section-heading">Site traffic</h2>
           <div className="flex items-center gap-2">
             <MetricModeToggle metric={metric} onChange={setMetric} />
             <RangeDropdown days={days} />
@@ -451,12 +535,28 @@ export function SiteTraffic({ traffic, metric = "pageviews" }) {
       <GeographySection
         countryCount={countryCount}
         mapCountries={mapCountries}
-        countries={countries}
         metric={metric}
         activeTotal={activeTotal}
       />
 
-      <ContentSection pages={pages} referrers={referrers} metric={metric} activeTotal={activeTotal} />
+      <div className="grid grid-cols-1 gap-x-10 sm:grid-cols-2">
+        <BreakdownBlock title="Top countries">
+          <ProportionalRows
+            rows={countries}
+            metric={metric}
+            shareTotals={shareTotals}
+            iconKind="country"
+            limit={10}
+          />
+        </BreakdownBlock>
+
+        <TopPagesSection
+          pages={pages}
+          referrers={referrers}
+          metric={metric}
+          shareTotals={shareTotals}
+        />
+      </div>
 
       <TechnologySection
         deviceSeries={deviceSeries}
@@ -464,7 +564,7 @@ export function SiteTraffic({ traffic, metric = "pageviews" }) {
         browsers={browsers}
         operatingSystems={operatingSystems}
         metric={metric}
-        activeTotal={activeTotal}
+        shareTotals={shareTotals}
       />
     </section>
   );

@@ -12,6 +12,23 @@ const timeFormatter = new Intl.DateTimeFormat("en-IN", {
   timeZone: "Asia/Kolkata",
 });
 
+const VISITOR_ID_KEY = "visitorId";
+
+// Stable per-browser ID so the D1 lifetime count stays idempotent across
+// reloads and sessions (INSERT OR IGNORE dedupes server-side too).
+function getVisitorId() {
+  try {
+    let id = window.localStorage.getItem(VISITOR_ID_KEY);
+    if (!id) {
+      id = crypto.randomUUID();
+      window.localStorage.setItem(VISITOR_ID_KEY, id);
+    }
+    return id;
+  } catch {
+    return null;
+  }
+}
+
 const LAST_UPDATED = process.env.NEXT_PUBLIC_LAST_UPDATED
   ? new Intl.DateTimeFormat("en-US", {
       month: "short",
@@ -26,14 +43,18 @@ export function Footer() {
   const [mumbaiTime, setMumbaiTime] = useState("--:--");
 
   useEffect(() => {
+    let cancelled = false;
     Promise.resolve()
-      .then(() => siteVisitors())
+      .then(() => siteVisitors(getVisitorId()))
       .then((result) => {
-        if (typeof result?.visitors === "number") {
+        if (!cancelled && typeof result?.visitors === "number") {
           setVisitorCount(result.visitors);
         }
       })
       .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
